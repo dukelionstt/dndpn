@@ -1,5 +1,158 @@
 <h1>{{title}}</h1>
-<quill-editor></quill-editor>
+<quill-editor>
+  <div id="toolbar" quill-editor-toolbar>
+    <span class="ql-formats">
+      <select class="ql-font">
+        <option selected="selected"></option>
+        <option value="serif"></option>
+        <option value="monospace"></option>
+      </select>
+    </span>
+
+    <!-- font size options -->
+    <span class="ql-formats">
+      <select class="ql-size">
+        <option value="small"></option>
+        <option value="normal"></option>
+        <option value="large"></option>
+        <option value="huge"></option>
+      </select>
+    </span>
+
+    <!-- text colour and background colour ie highlight -->
+    <span class="ql-formats">
+      <select class="ql-color">
+        <option selected="selected"></option>
+        <option value="#e60000"></option>
+        <option value="#ff9900"></option>
+        <option value="#ffff00"></option>
+        <option value="#008a00"></option>
+        <option value="#0066cc"></option>
+        <option value="#9933ff"></option>
+        <option value="#ffffff"></option>
+        <option value="#facccc"></option>
+        <option value="#ffebcc"></option>
+        <option value="#ffffcc"></option>
+        <option value="#cce8cc"></option>
+        <option value="#cce0f5"></option>
+        <option value="#ebd6ff"></option>
+        <option value="#bbbbbb"></option>
+        <option value="#f06666"></option>
+        <option value="#ffc266"></option>
+        <option value="#ffff66"></option>
+        <option value="#66b966"></option>
+        <option value="#66a3e0"></option>
+        <option value="#c285ff"></option>
+        <option value="#888888"></option>
+        <option value="#a10000"></option>
+        <option value="#b26b00"></option>
+        <option value="#b2b200"></option>
+        <option value="#006100"></option>
+        <option value="#0047b2"></option>
+        <option value="#6b24b2"></option>
+        <option value="#444444"></option>
+        <option value="#5c0000"></option>
+        <option value="#663d00"></option>
+        <option value="#666600"></option>
+        <option value="#003700"></option>
+        <option value="#002966"></option>
+        <option value="#3d1466"></option>
+      </select>
+      <select class="ql-background">
+        <option value="#000000"></option>
+        <option value="#e60000"></option>
+        <option value="#ff9900"></option>
+        <option value="#ffff00"></option>
+        <option value="#008a00"></option>
+        <option value="#0066cc"></option>
+        <option value="#9933ff"></option>
+        <option selected="selected"></option>
+        <option value="#facccc"></option>
+        <option value="#ffebcc"></option>
+        <option value="#ffffcc"></option>
+        <option value="#cce8cc"></option>
+        <option value="#cce0f5"></option>
+        <option value="#ebd6ff"></option>
+        <option value="#bbbbbb"></option>
+        <option value="#f06666"></option>
+        <option value="#ffc266"></option>
+        <option value="#ffff66"></option>
+        <option value="#66b966"></option>
+        <option value="#66a3e0"></option>
+        <option value="#c285ff"></option>
+        <option value="#888888"></option>
+        <option value="#a10000"></option>
+        <option value="#b26b00"></option>
+        <option value="#b2b200"></option>
+        <option value="#006100"></option>
+        <option value="#0047b2"></option>
+        <option value="#6b24b2"></option>
+        <option value="#444444"></option>
+        <option value="#5c0000"></option>
+        <option value="#663d00"></option>
+        <option value="#666600"></option>
+        <option value="#003700"></option>
+        <option value="#002966"></option>
+        <option value="#3d1466"></option>
+      </select>
+    </span>
+
+    <!-- font styling eg bold -->
+    <span class="ql-formats">
+      <button type="button" class="ql-bold"></button>
+      <button type="button" class="ql-italic"></button>
+      <button type="button" class="ql-underline"></button>
+    </span>
+
+    <!-- misc formatting eg super script etc -->
+    <span class="ql-formats">
+      <button type="button" class="ql-blockquote"></button>
+      <button type="button" class="ql-code-block"></button>
+      <button type="button" class="ql-strike"></button>
+      <button type="button" class="ql-script" value="sub"></button>
+      <button type="button" class="ql-script" value="super"></button>
+    </span>
+
+    <!-- list type eg bullet -->
+    <span class="ql-formats">
+      <button type="button" class="ql-list" value="ordered"></button>
+      <button type="button" class="ql-list" value="bullet"></button>
+    </span>
+
+    <!-- indent out or in -->
+    <span class="ql-formats">
+      <button type="button" class="ql-indent" value="-1"></button>
+      <button type="button" class="ql-indent" value="+1"></button>
+    </span>
+
+    <!-- text block position eg right left etc -->
+    <span class="ql-formats">
+      <select class="ql-align" style="display: none;">
+        <option selected="selected"></option>
+        <option value="center"></option>
+        <option value="right"></option>
+        <option value="justify"></option>
+      </select>
+    </span>
+
+    <!-- text block position eg right left etc -->
+    <span class="ql-formats">
+      <button type="button" class="ql-link"></button>
+    </span>
+
+    <!-- custom buttons -->
+    <span class="ql-formats">
+      <!-- <button onclick="tagMenu('person')"><img src="https://img.icons8.com/ios-glyphs/15/000000/human-head.png"/></button>
+      <button onclick="tagMenu('place')"><img src="https://img.icons8.com/ios-glyphs/15/000000/castle.png"/></button>
+      <button onclick="tagMenu('equipment')"><img src="https://img.icons8.com/ios-glyphs/15/000000/armored-breastplate.png"/></button>
+      <button onclick="tagMenu('misc')"><img src="https://img.icons8.com/ios-glyphs/15/000000/magical-scroll.png"/></button> -->
+      <button onclick="personClick"><img src="https://img.icons8.com/ios-glyphs/15/000000/human-head.png"/></button>
+      <button><img src="https://img.icons8.com/ios-glyphs/15/000000/castle.png"/></button>
+      <button><img src="https://img.icons8.com/ios-glyphs/15/000000/armored-breastplate.png"/></button>
+      <button><img src="https://img.icons8.com/ios-glyphs/15/000000/magical-scroll.png"/></button>
+    </span>
+  </div>
+</quill-editor>
 
 <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
 <!-- * * * * * * * * * * * The content below * * * * * * * * * * * -->
