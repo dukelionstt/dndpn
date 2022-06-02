@@ -1,2 +1,43 @@
 /* You can add global styles to this file, and also import other style files */
 @import '~quill/dist/quill.snow.css';
+
+button.person {
+    border: none;
+    color: #008080;
+    border-bottom: 1px dotted;
+    border-bottom-color: #008080;
+    background-color: white;
+}
+
+button.place {
+    border: none;
+    color: #FE9A76;
+    border-bottom: 1px dotted;
+    border-bottom-color: #FE9A76;
+    background-color: white;
+}
+
+button.equipment {
+    border: none;
+    color: #016936;
+    border-bottom: 1px dotted;
+    border-bottom-color: #016936;
+    background-color: white;
+}
+
+button.misc {
+    border: none;
+    color: #B413EC;
+    border-bottom: 1px dotted;
+    border-bottom-color: #B413EC;
+    background-color: white;
+}
+
+#editor {
+    height: 375px;
+  }
+
+#personWidget{
+    max-height: 125px;
+    overflow-y: auto;
+}

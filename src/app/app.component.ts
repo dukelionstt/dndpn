@@ -3,9 +3,10 @@ import { PersonBlot } from './quill/person.blot';
 import Quill  from "quill";
 
 PersonBlot["blotName"] = 'person';
-PersonBlot["taqName"] = 'button';
+PersonBlot["tagName"] = 'button';
 
 Quill.register(PersonBlot);
+
 
 @Component({
   selector: 'app-root',
@@ -14,10 +15,10 @@ Quill.register(PersonBlot);
 })
 export class AppComponent {
   title = 'dndpn';
+  quill : any;
 
-  quill = new Quill('#toolbar');
-
-  personClick(){
-    range : int = this.quill.getSelection();
+  created(editor: any){
+    this.quill = editor;
   }
+  
 }
