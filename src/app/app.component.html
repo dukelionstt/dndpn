@@ -1,7 +1,26 @@
-<div class="ui grid">
-  <div class="ui two wide column"></div>
-  <div class="ui twelve wide column">
-    <h1>{{title}}</h1>
-    <toolbar></toolbar>
+<h1>{{title}}</h1>
+<nz-layout>
+  <nz-sider>
+    <tag-list></tag-list>
+  </nz-sider>
+  <nz-layout>
+    <nz-content>
+      <toolbar></toolbar>
+    </nz-content>
+  </nz-layout>
+</nz-layout>
+<!-- <div class="ui grid">
+  <div class="ui two wide column">
+    <div class="ui one column grid container">
+      <tag-list></tag-list>
+    </div>
   </div>
-</div>
+  <div class="ui twelve wide column">
+    <div class="ui top attached menu">
+      <toolbar></toolbar>
+    </div>
+    <div div class="ui bottom attached segment pushable" id="sideBarSegment">
+      <sidebar></sidebar>
+    </div>
+  </div>
+</div> -->

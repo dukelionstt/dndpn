@@ -1,0 +1,75 @@
+<!-- todo - look into making menus generic and programmatic -->
+    <!-- Person tag menu options -->
+    <!-- <div id="personItem"> -->
+        <form nz-form>
+            <!-- <div class="ui grid"> -->
+                <!-- default view of side menu -->
+                <!-- <div class="left floated ten wide column">
+                    <h4 class="ui inverted dividing header">
+                        Person Tag Info
+                    </h4>
+                </div> -->
+                <!-- <div class="right floated right aligned six wide column">
+                    <i class="close link icon" onclick="toggleSideBar('person', 'true')"></i>
+                </div>
+                <div class="ui row"></div> -->
+            <!-- </div> -->
+
+            <nz-form-item>
+                <nz-form-label nzFor="personNameTxtBx">Display Text</nz-form-label>
+                <nz-form-control>
+                    <input nz-input type="text" name="personNameTxtBx" id="personNameTxtBx"/>
+                    <!-- <input type="hidden" name="isSelectedPerson" id="isSelectedPerson" />
+                    <input type="hidden" name="rangeIndexPerson" id="rangeIndexPerson" />
+                    <input type="hidden" name="isFromElementPerson" id="isFromElementPerson" />
+                    <input type="hidden" name="previousValPerson" id="previousValPerson" />
+                    <input type="hidden" name="personID" id="personID" /> -->
+                </nz-form-control>
+            </nz-form-item>
+            <!-- addition menu options that are not need as standard, currently hidden by default -->
+            <nz-collapse nzGhost>
+                <nz-collapse-panel
+                    [nzHeader]="'Additional Options'"
+                    [nzActive]="false">
+                    <nz-form-item>
+                        <nz-form-label nzFor="">Notes</nz-form-label>
+                        <nz-form-control>
+                            <textarea nz-input name="personNotesTxtAr" id="personNotesTxtAr"></textarea>
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label nzFor="tagsDropDown">Tags</nz-form-label>
+                        <nz-select #tagsDropDown
+                            nzMode="tags" 
+                            nzPlaceHolder="Tags"
+                            [nzOptions]="listOfTags"
+                            [(ngModel)]="selectedTags" 
+                            [ngModelOptions]="{standalone: true}">
+                            <nz-option *ngFor="let tag of listOfTags" 
+                                [nzLabel]="tag.label"
+                                [nzValue]="tag.value"></nz-option> 
+                        </nz-select>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label nzFor="personDateLbl">Date</nz-form-label>
+                        <nz-form-control>
+                            <input nz-input type="text" id="personDateLbl" [(ngModel)]="dateString" [disabled]="true" [ngModelOptions]="{standalone: true}"/>
+                        </nz-form-control>
+                        
+                    </nz-form-item>
+                </nz-collapse-panel>
+            </nz-collapse>
+            <nz-form-control>
+                <button nz-button nzType="primary" onclick="tagSave('person')" type="button">
+                    Save
+                </button>
+            </nz-form-control>
+        </form>
+    <!-- </div> -->
+<!-- <div class="pusher">
+    <div class="ui basic segment">
+        <div quill-editor>some test word to get my going, dave dwarf ship traffic cone</div>
+        <button onclick="save()">save</button>
+        <button onclick="spaceBar()">space</button>
+    </div>
+</div> -->
