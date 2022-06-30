@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
+import { NzFormTooltipIcon } from 'ng-zorro-antd/form';
 
 @Component({
     selector: 'sidebar',
@@ -8,6 +9,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 })
 export class SidebarComponent implements OnInit{
 
+    validateForm! : FormGroup;
     selectedTags = ['person'];
     listOfTags: Array<{value:string, label:string}> = [];
     date: Date = new Date()
@@ -15,11 +17,18 @@ export class SidebarComponent implements OnInit{
     // dateString:string = this.date.getDay().toLocaleString() +"/"+ this.date.getMonth.toString() +"/"+ this.date.getFullYear.toString();
     dateString:string = this.date.toDateString();
 
+constructor(private formbuilder: FormBuilder){}
+
     ngOnInit(): void {
         this.listOfTags.push({value:'Dave', label:'Dave'});
-        
+
+        // this.validateForm = this.formbuilder.group({
+        //   personNameTxtBx: null,
+        //   personNotesTxtAr: null,
+        //   personDateLbl: null
+        // })
     }
-    
+
     save(){
         // todo
     }
