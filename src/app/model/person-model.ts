@@ -2,7 +2,7 @@
 export interface Person {
   id: number,
   name:string,
-  date: Date,
+  date: string,
   notes: string
 }
 

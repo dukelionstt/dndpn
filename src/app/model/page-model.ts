@@ -4,7 +4,7 @@ export interface Page{
   id:number,
   name: string,
   type: string,
-  date: Date,
+  date: string,
   person: Person[]
 
 }

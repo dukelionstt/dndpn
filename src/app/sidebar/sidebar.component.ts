@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { TagsDropdownService } from "../data/tags-dropdown.service";
+import { PAGE } from "../mock-data/page-mock";
 
 @Component({
     selector: 'sidebar',
@@ -13,6 +14,7 @@ export class SidebarComponent implements OnInit{
     selectedTags = ['person'];
     listOfTags: Array<{value:string, label:string}> = [];
     date: Date = new Date()
+    page = PAGE
 
     // dateString:string = this.date.getDay().toLocaleString() +"/"+ this.date.getMonth.toString() +"/"+ this.date.getFullYear.toString();
     dateString:string = this.date.toDateString();
