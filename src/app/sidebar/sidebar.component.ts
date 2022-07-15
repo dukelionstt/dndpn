@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
-import { NzFormTooltipIcon } from 'ng-zorro-antd/form';
+import { TagsDropdownService } from "../data/tags-dropdown.service";
 
 @Component({
     selector: 'sidebar',
@@ -9,7 +9,7 @@ import { NzFormTooltipIcon } from 'ng-zorro-antd/form';
 })
 export class SidebarComponent implements OnInit{
 
-    validateForm! : FormGroup;
+    // validateForm! : FormGroup;
     selectedTags = ['person'];
     listOfTags: Array<{value:string, label:string}> = [];
     date: Date = new Date()
@@ -17,10 +17,10 @@ export class SidebarComponent implements OnInit{
     // dateString:string = this.date.getDay().toLocaleString() +"/"+ this.date.getMonth.toString() +"/"+ this.date.getFullYear.toString();
     dateString:string = this.date.toDateString();
 
-constructor(private formbuilder: FormBuilder){}
+constructor(private tagsDropdown: TagsDropdownService){}
 
     ngOnInit(): void {
-        this.listOfTags.push({value:'Dave', label:'Dave'});
+        this.listOfTags = this.tagsDropdown.getListOfTags('person');
 
         // this.validateForm = this.formbuilder.group({
         //   personNameTxtBx: null,

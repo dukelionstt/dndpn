@@ -14,47 +14,45 @@
   </div>
 </div>
 <!-- addition menu options that are not need as standard, currently hidden by default -->
-<div nz-row>
   <nz-collapse nzGhost>
     <nz-collapse-panel
         [nzHeader]="'Additional Options'"
         [nzActive]="false">
-  <div nz row>
-    <div nz-col="6">
-      <span nz-typography><strong>Notes</strong></span>
-    </div>
-    <div nz-col="auto">
-      <textarea nz-input name="personNotesTxtAr" id="personNotesTxtAr"></textarea>
-    </div>
-  </div>
-  <div nz row>
-    <div nz-col="6">
-      <span nz-typography><strong>Tags</strong></span>
-    </div>
-    <div nz-col="auto">
-      <nz-select #tagsDropDown
-                            nzMode="tags"
-                            nzPlaceHolder="Tags"
-                            [nzOptions]="listOfTags"
-                            [(ngModel)]="selectedTags"
-                            [ngModelOptions]="{standalone: true}">
-                            <nz-option *ngFor="let tag of listOfTags"
-                                [nzLabel]="tag.label"
-                                [nzValue]="tag.value"></nz-option>
-                        </nz-select>
-    </div>
-  </div>
-  <div nz row>
-    <div nz-col="6">
-      <span nz-typography><strong>Date</strong></span>
-    </div>
-    <div nz-col="auto">
-      <input nz-input type="text" id="personDateLbl" [(ngModel)]="dateString" [disabled]="true"/>
-    </div>
-  </div>
-</nz-collaps-panel>
-</ng-collapse>
-</div>
+      <div nz row>
+        <div nz-col="6">
+          <span nz-typography><strong>Notes</strong></span>
+        </div>
+        <div nz-col="auto">
+          <textarea nz-input name="personNotesTxtAr" id="personNotesTxtAr"></textarea>
+        </div>
+      </div>
+      <div nz row>
+        <div nz-col="6">
+          <span nz-typography><strong>Tags</strong></span>
+        </div>
+        <div nz-col="auto">
+          <nz-select #tagsDropDown
+                                nzMode="tags"
+                                nzPlaceHolder="Tags"
+                                [nzOptions]="listOfTags"
+                                [(ngModel)]="selectedTags"
+                                [ngModelOptions]="{standalone: true}">
+                                <nz-option *ngFor="let tag of listOfTags"
+                                    [nzLabel]="tag.label"
+                                    [nzValue]="tag.value"></nz-option>
+                            </nz-select>
+        </div>
+      </div>
+      <div nz row>
+        <div nz-col="6">
+          <span nz-typography><strong>Date</strong></span>
+        </div>
+        <div nz-col="auto">
+          <input nz-input type="text" id="personDateLbl" [(ngModel)]="dateString" [disabled]="true"/>
+        </div>
+      </div>
+    </nz-collapse-panel>
+  </nz-collapse>
 
     <!-- <div id="personItem"> -->
         <!-- <form nz-form> -->
