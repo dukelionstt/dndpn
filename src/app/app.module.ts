@@ -23,6 +23,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzTypographyModule } from 'ng-zorro-antd/typography';
 
 
 registerLocaleData(en);
@@ -48,7 +49,8 @@ registerLocaleData(en);
     NzInputModule,
     NzButtonModule,
     NzCollapseModule,
-    NzSelectModule
+    NzSelectModule,
+    NzTypographyModule
     
   ],
   providers: [{ provide: NZ_I18N, useValue: en_US }],
