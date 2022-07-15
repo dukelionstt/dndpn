@@ -1,6 +1,8 @@
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
+import { TagsDropdownService } from "../data/tags-dropdown.service";
+import { PAGE } from "../mock-data/page-mock";
 
 @Component({
     selector: 'sidebar',
@@ -8,27 +10,27 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 })
 export class SidebarComponent implements OnInit{
 
+    // validateForm! : FormGroup;
     selectedTags = ['person'];
     listOfTags: Array<{value:string, label:string}> = [];
     date: Date = new Date()
-    type: string = "person"
-    // TagData!: FormGroup;
+    page = PAGE
 
     // dateString:string = this.date.getDay().toLocaleString() +"/"+ this.date.getMonth.toString() +"/"+ this.date.getFullYear.toString();
     dateString:string = this.date.toDateString();
 
-    // constructor(private formBuilder: FormBuilder) {}
+constructor(private tagsDropdown: TagsDropdownService){}
 
     ngOnInit(): void {
-        this.listOfTags.push({value:'Dave', label:'Dave'});
-        
-        // this.TagData =this.formBuilder.group({
-        //     personNameTxtBx: [null],
-        //     personNotesTxtAr: [null],
-        //     personDateLbl: [null],
+        this.listOfTags = this.tagsDropdown.getListOfTags('person');
+
+        // this.validateForm = this.formbuilder.group({
+        //   personNameTxtBx: null,
+        //   personNotesTxtAr: null,
+        //   personDateLbl: null
         // })
     }
-    
+
     save(){
         // todo
     }
