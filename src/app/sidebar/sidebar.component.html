@@ -5,7 +5,7 @@
           <span nz-typography><strong>Display Text</strong></span>
         </div>
         <div nz-col nzSpan="14">
-          <input nz-input type="text" name="personNameTxtBx" id="personNameTxtBx"/>
+          <input #name nz-input type="text" name="personNameTxtBx" id="personNameTxtBx" [(ngModel)]="getPersonName({{name.value}})">
         </div>
     </div>
     <!-- addition menu options that are not need as standard, currently hidden by default -->
@@ -14,7 +14,7 @@
             <nz-collapse-panel
                 [nzHeader]="'Additional Options'"
                 [nzActive]="false">
-                 
+
                     <div nz-col nz-flex="6">
                         <span nz-typography><strong>Notes</strong></span>
                     </div>
@@ -46,7 +46,7 @@
                 </nz-collapse-panel>
             </nz-collapse>
     <!-- </div> -->
-    
+
 
     <!-- <div nz-row>
         <div nz-col>
@@ -108,21 +108,21 @@
                 <div nz-col>
                     <h3 nz-typography>Tags</h3>
                         <nz-select #tagsDropDown
-                        nzMode="tags" 
+                        nzMode="tags"
                         nzPlaceHolder="Tags"
                         [nzOptions]="listOfTags"
-                        [(ngModel)]="selectedTags" 
+                        [(ngModel)]="selectedTags"
                         [ngModelOptions]="{standalone: true}">
-                        <nz-option *ngFor="let tag of listOfTags" 
+                        <nz-option *ngFor="let tag of listOfTags"
                             [nzLabel]="tag.label"
-                            [nzValue]="tag.value"></nz-option> 
+                            [nzValue]="tag.value"></nz-option>
                     </nz-select>
                 </div>
                 <div nz-col>
-                    
+
                     <h3 nz-typography>Date</h3>
                     <input nz-input type="text" id="personDateLbl" [(ngModel)]="dateString" [disabled]="true" [ngModelOptions]="{standalone: true}"/>
-                    
+
                 </div>
             </nz-collapse-panel>
         </nz-collapse>
@@ -161,20 +161,20 @@
                 <nz-form-item>
                     <nz-form-label nzFor="tagsDropDown">Tags</nz-form-label>
                     <nz-select #tagsDropDown
-                        nzMode="tags" 
+                        nzMode="tags"
                         nzPlaceHolder="Tags"
                         [nzOptions]="listOfTags"
-                        [(ngModel)]="selectedTags" 
+                        [(ngModel)]="selectedTags"
                         [ngModelOptions]="{standalone: true}">
-                        <nz-option *ngFor="let tag of listOfTags" 
+                        <nz-option *ngFor="let tag of listOfTags"
                             [nzLabel]="tag.label"
-                            [nzValue]="tag.value"></nz-option> 
+                            [nzValue]="tag.value"></nz-option>
                     </nz-select>
                 </nz-form-item>
                 <nz-form-item>
                     <nz-form-label nzFor="personDateLbl">Date</nz-form-label>
                     <nz-form-control>
-                        <input nz-input type="text" formControlName="personDateLbl" 
+                        <input nz-input type="text" formControlName="personDateLbl"
                         [(ngModel)]="dateString" [disabled]="true" [ngModelOptions]="{standalone: true}"/>
                     </nz-form-control>
                 </nz-form-item>
@@ -184,8 +184,8 @@
                     </button>
                 </nz-form-control>
             </form> -->
-    
-    
+
+
     <!-- <div id="personItem"> -->
         <!-- <form nz-form> -->
             <!-- <div class="ui grid"> -->
@@ -201,7 +201,7 @@
                 <div class="ui row"></div> -->
             <!-- </div> -->
 
-        
+
 
             <!-- <nz-form-item>
                 <nz-form-label nzFor="personNameTxtBx">Display Text</nz-form-label>
@@ -215,7 +215,7 @@
                 <!-- </nz-form-control>
             </nz-form-item> -->
             <!-- addition menu options that are not need as standard, currently hidden by default -->
-            
+
                     <!-- <nz-form-item>
                         <nz-form-label nzFor="">Notes</nz-form-label>
                         <nz-form-control>
@@ -223,7 +223,7 @@
                         </nz-form-control>
                     </nz-form-item> -->
 
-                    
+
                     <!-- <nz-form-item>
                         <nz-form-label nzFor="tagsDropDown">Tags</nz-form-label>
                         <nz-select #tagsDropDown
@@ -237,21 +237,21 @@
                                 [nzValue]="tag.value"></nz-option>
                         </nz-select>
                     </nz-form-item> -->
-                    
+
                     <!-- <nz-form-item>
                         <nz-form-label nzFor="personDateLbl">Date</nz-form-label>
                         <nz-form-control>
                             <input nz-input type="text" id="personDateLbl" [(ngModel)]="dateString" [disabled]="true" [ngModelOptions]="{standalone: true}"/>
                         </nz-form-control>
-                        
+
                     </nz-form-item> -->
-                
+
             <!-- <nz-form-control>
                 <button nz-button nzType="primary" onclick="tagSave('person')" type="button">
                     Save
                 </button>
             </nz-form-control> -->
-        
+
         <!-- </form> -->
     <!-- </div> -->
 <!-- <div class="pusher">
