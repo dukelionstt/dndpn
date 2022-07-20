@@ -4,6 +4,6 @@ export interface NoteBook {
   id:number,
   name: string,
   type: string,
-  date: Date,
+  date: string,
   pages: Page[]
 }

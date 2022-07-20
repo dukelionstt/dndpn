@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { TagsDropdownService } from "../data/tags-dropdown.service";
@@ -13,16 +13,18 @@ import { Person } from "../model/person-model";
 export class SidebarComponent implements OnInit{
 
     // validateForm! : FormGroup;
-    selectedTags = ['person'];
+    selectedTags = [];
     listOfTags: Array<{value:string, label:string}> = [];
     date: Date = new Date()
-    page: Page = PAGE;
+    personEntry!: Person;
 
+    @Input()
+    pages!: Page[];
 
     // dateString:string = this.date.getDay().toLocaleString() +"/"+ this.date.getMonth.toString() +"/"+ this.date.getFullYear.toString();
     dateString:string = this.date.toDateString();
 
-constructor(private tagsDropdown: TagsDropdownService, private person: Person){}
+constructor(private tagsDropdown: TagsDropdownService){}
 
     ngOnInit(): void {
         this.listOfTags = this.tagsDropdown.getListOfTags('person');
@@ -51,11 +53,11 @@ constructor(private tagsDropdown: TagsDropdownService, private person: Person){}
     }
 
     getPersonName(name: string){
-      let nameSections = name.split('|')
-      let tempPerson = this.page.person[Number(nameSections[1])];
-      tempPerson.name = nameSections[0]
-      this.page.person[0] = tempPerson
-      //todo: a tag reference
-      return tempPerson.name
+      // let nameSections = name.split('|')
+      // let tempPerson = this.page.person[Number(nameSections[1])];
+      // tempPerson.name = nameSections[0]
+      // this.page.person[0] = tempPerson
+      // //todo: a tag reference
+      // return tempPerson.name
     }
 }

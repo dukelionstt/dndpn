@@ -5,7 +5,7 @@
           <span nz-typography><strong>Display Text</strong></span>
         </div>
         <div nz-col nzSpan="14">
-          <input #name nz-input type="text" name="personNameTxtBx" id="personNameTxtBx" [(ngModel)]="getPersonName({{name.value}})">
+          <input #name nz-input type="text" name="personNameTxtBx" id="personNameTxtBx" [(ngModel)]="personEntry.name">
         </div>
     </div>
     <!-- addition menu options that are not need as standard, currently hidden by default -->
@@ -19,7 +19,7 @@
                         <span nz-typography><strong>Notes</strong></span>
                     </div>
                     <div nz-col nz-flex="auto">
-                        <textarea nz-input name="personNotesTxtAr" id="personNotesTxtAr"></textarea>
+                        <textarea nz-input name="personNotesTxtAr" id="personNotesTxtAr" [(ngModel]="personEntry.notes"></textarea>
                     </div>
                     <div nz-col nz-flex="6">
                         <span nz-typography><strong>Tags</strong></span>
@@ -29,7 +29,7 @@
                             nzMode="tags"
                             nzPlaceHolder="Tags"
                             [nzOptions]="listOfTags"
-                            [(ngModel)]="selectedTags"
+                            [(ngModel)]="personEntry.misc"
                             [ngModelOptions]="{standalone: true}"
                             style="width: 100%;">
                             <nz-option *ngFor="let tag of listOfTags"
@@ -41,7 +41,7 @@
                         <span nz-typography><strong>Date</strong></span>
                     </div>
                     <div nz-flex="auto">
-                        <input nz-input type="text" id="personDateLbl" [(ngModel)]="dateString" [disabled]="true"/>
+                        <input nz-input type="text" id="personDateLbl" [(ngModel)]="personEntry.date" [disabled]="true"/>
                     </div>
                 </nz-collapse-panel>
             </nz-collapse>
