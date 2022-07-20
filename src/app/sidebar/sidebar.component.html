@@ -5,7 +5,7 @@
           <span nz-typography><strong>Display Text</strong></span>
         </div>
         <div nz-col nzSpan="14">
-          <input #name nz-input type="text" name="personNameTxtBx" id="personNameTxtBx" [(ngModel)]="personEntry.name">
+          <input nz-input type="text" name="personNameTxtBx" id="personNameTxtBx" [(ngModel)]="personEntry.name">
         </div>
     </div>
     <!-- addition menu options that are not need as standard, currently hidden by default -->
@@ -19,7 +19,7 @@
                         <span nz-typography><strong>Notes</strong></span>
                     </div>
                     <div nz-col nz-flex="auto">
-                        <textarea nz-input name="personNotesTxtAr" id="personNotesTxtAr" [(ngModel]="personEntry.notes"></textarea>
+                        <textarea nz-input name="personNotesTxtAr" id="personNotesTxtAr" [(ngModel)]="personEntry.notes"></textarea>
                     </div>
                     <div nz-col nz-flex="6">
                         <span nz-typography><strong>Tags</strong></span>
@@ -125,13 +125,13 @@
 
                 </div>
             </nz-collapse-panel>
-        </nz-collapse>
+        </nz-collapse> -->
         <div nz-col>
             <button nz-button nzType="primary" onclick="tagSave('person')" type="button">
                 Save
             </button>
         </div>
-    </div> -->
+    <!-- </div> -->
 
     <!-- <form nz-form [formGroup]="TagData">
         <nz-form-item>

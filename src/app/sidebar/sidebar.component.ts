@@ -16,15 +16,19 @@ export class SidebarComponent implements OnInit{
     selectedTags = [];
     listOfTags: Array<{value:string, label:string}> = [];
     date: Date = new Date()
-    personEntry!: Person;
+    personEntry: Person = {
+      id: 0,
+      name: '',
+      date: this.date.toDateString(),
+      misc: [],
+      notes: ''
+    };
 
     @Input()
     pages!: Page[];
 
     // dateString:string = this.date.getDay().toLocaleString() +"/"+ this.date.getMonth.toString() +"/"+ this.date.getFullYear.toString();
-    dateString:string = this.date.toDateString();
-
-constructor(private tagsDropdown: TagsDropdownService){}
+    constructor(private tagsDropdown: TagsDropdownService){}
 
     ngOnInit(): void {
         this.listOfTags = this.tagsDropdown.getListOfTags('person');
@@ -45,7 +49,10 @@ constructor(private tagsDropdown: TagsDropdownService){}
     }
 
     tagSave(type:string){
-        //placeholder
+        if(type.match('person')){
+          this.pages[0].person[0] = this.personEntry;
+          console.log(this.pages);
+        }
     }
 
     toggleSideBar(type:string, flag:boolean){
