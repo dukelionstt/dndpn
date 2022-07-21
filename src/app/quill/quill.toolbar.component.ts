@@ -1,4 +1,5 @@
-import { Component, EventEmitter, Output, ViewChild } from "@angular/core";
+import { Component, EventEmitter, Input, Output, ViewChild } from "@angular/core";
+import { Page } from "../model/page-model";
 
 
 
@@ -8,6 +9,11 @@ import { Component, EventEmitter, Output, ViewChild } from "@angular/core";
 })
 
 export class QuillToolbarComponent{
+
+    @Input()
+    pages!: Page[];
+
+    @Output() newQuillEditor = new EventEmitter<any>();
 
     range : any;
     text : string = '';
@@ -25,7 +31,8 @@ export class QuillToolbarComponent{
 
     created(editor: any){
         this.quill = editor;
-      }
+        this.newQuillEditor.emit(this.quill)
+    }
 
     personClick(){
 

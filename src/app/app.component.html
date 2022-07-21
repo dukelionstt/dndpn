@@ -5,7 +5,13 @@
   </nz-sider>
   <nz-layout>
     <nz-content>
-      <toolbar></toolbar>
+      <!-- [pages] is passing main data object for this page
+            (newQuillEditor) is to get the editor object -->
+      <toolbar [pages]="pages"  
+                (newQuillEditor)="setNewQuillEditor($event)"></toolbar>
+      {{this.pages | json}}
+      <button nz-button (click)="save()">Save</button>
+      {{this.document | json}}
     </nz-content>
   </nz-layout>
 </nz-layout>

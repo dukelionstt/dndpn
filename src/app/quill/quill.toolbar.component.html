@@ -160,5 +160,6 @@
     nzTitle="Person Tag Info"
     [nzVisible]="visible"
     (nzOnClose)="close()">
-    <sidebar *nzDrawerContent></sidebar>
+    <!-- [pages] is for the main pages object passed from app comp-->
+    <sidebar *nzDrawerContent [pages]="pages"></sidebar>
 </nz-drawer>

@@ -50,7 +50,7 @@ export class SidebarComponent implements OnInit{
 
     tagSave(type:string){
         if(type.match('person')){
-          this.pages[0].person[0] = this.personEntry;
+          this.pages[0].person.push(this.personEntry);
           console.log(this.pages);
         }
     }
