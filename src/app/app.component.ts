@@ -1,6 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { PersonBlot } from './quill/person.blot';
-import Quill  from "quill";
+import Quill, { Delta }  from "quill";
+
+import { NotebookService } from './data/notebook.service';
+import { NoteBook } from './model/notebook-model';
+import { Page } from './model/page-model';
 
 PersonBlot["blotName"] = 'person';
 PersonBlot["tagName"] = 'button';
@@ -16,9 +20,18 @@ Quill.register(PersonBlot);
 export class AppComponent {
   title = 'dndpn';
   quill : any;
+  document!: any;
+  noteBook: NoteBook = this.noteBookservice.getNoteBook();
+  pages: Page[] = this.noteBook.pages;
 
-  created(editor: any){
+  constructor(private noteBookservice: NotebookService){}
+
+  setNewQuillEditor(editor: any){
     this.quill = editor;
   }
-  
+
+  save(){
+    this.document = this.quill.getContents();
+  }
+
 }
