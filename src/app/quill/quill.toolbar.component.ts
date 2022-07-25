@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output, ViewChild } from "@angular/core";
+import { PERSON } from "../constants";
 import { Page } from "../model/page-model";
 
 
@@ -18,6 +19,7 @@ export class QuillToolbarComponent{
     range : any;
     text : string = '';
     quill: any;
+    sideBarTitle!: string;
 
     visible = false;
 
@@ -36,9 +38,9 @@ export class QuillToolbarComponent{
 
     personClick(){
 
-      this.open();
-
-
+        this.sideBarTitle = PERSON;
+        this.open();
+        
       // this.range = this.quill.getSelection();
       // this.text = this.quill.getText(this.range.index, this.range.length);
 

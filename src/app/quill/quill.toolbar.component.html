@@ -161,5 +161,6 @@
     [nzVisible]="visible"
     (nzOnClose)="close()">
     <!-- [pages] is for the main pages object passed from app comp-->
-    <sidebar *nzDrawerContent [pages]="pages"></sidebar>
+    <sidebar *nzDrawerContent [pages]="pages"
+            [sideBarTitle]="sideBarTitle"></sidebar>
 </nz-drawer>
