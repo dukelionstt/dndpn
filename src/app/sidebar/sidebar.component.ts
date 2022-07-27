@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ITEM, MISC, PERSON, PLACE } from "../constants";
+import { ItemTypesService } from "../data/item.types.service";
 
 import { TagsDropdownService } from "../data/tags-dropdown.service";
 import { PAGE } from "../mock-data/page-mock";
@@ -18,9 +19,10 @@ import { PersonBlot } from "../quill/person.blot";
 export class SidebarComponent implements OnInit{
 
     // validateForm! : FormGroup;
-    
+
     selectedTags = [];
     listOfTags: Array<{value:string, label:string}> = [];
+    listOfItemTypes: Array<{value:string, label:string}> = [];
     date: Date = new Date()
     tagEntry = {
       id: null,
@@ -40,10 +42,12 @@ export class SidebarComponent implements OnInit{
     sideBarTitle!: string;
 
     // dateString:string = this.date.getDay().toLocaleString() +"/"+ this.date.getMonth.toString() +"/"+ this.date.getFullYear.toString();
-    constructor(private tagsDropdown: TagsDropdownService){}
+    constructor(private tagsDropdown: TagsDropdownService,
+                private intemTypeDropdown: ItemTypesService){}
 
     ngOnInit(): void {
-        this.listOfTags = this.tagsDropdown.getListOfTags('person');
+        this.listOfTags = this.tagsDropdown.getListOfTags(this.sideBarTitle);
+        this.listOfItemTypes = this.intemTypeDropdown.getListofItemTypes();
 
         // this.validateForm = this.formbuilder.group({
         //   personNameTxtBx: null,
@@ -92,7 +96,7 @@ export class SidebarComponent implements OnInit{
                     misc: this.tagEntry.misc,
                     notes: this.tagEntry.notes!
                 }
-                return person 
+                return person
             case PLACE:
                 let place: Place = {
                     id: this.tagEntry.id!,
@@ -103,7 +107,7 @@ export class SidebarComponent implements OnInit{
                     misc: this.tagEntry.misc,
                     notes: this.tagEntry.notes!
                 }
-                return place 
+                return place
             case ITEM:
                 let item: Item = {
                     id: this.tagEntry.id!,
@@ -113,7 +117,7 @@ export class SidebarComponent implements OnInit{
                     misc: this.tagEntry.misc,
                     notes: this.tagEntry.notes!
                 }
-                return item 
+                return item
             case MISC:
                 let misc: Misc = {
                     id: this.tagEntry.id!,
@@ -122,7 +126,7 @@ export class SidebarComponent implements OnInit{
                     misc: this.tagEntry.misc,
                     notes: this.tagEntry.notes!
                 }
-                return misc 
+                return misc
             default:
                 break
         }

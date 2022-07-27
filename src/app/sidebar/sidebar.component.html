@@ -9,6 +9,37 @@
         <div nz-col nzSpan="14">
           <input nz-input type="text" name="NameTxtBx" id="NameTxtBx" [(ngModel)]="tagEntry.name">
         </div>
+         <!-- Location for Item -->
+         <div nz-col nz-flex="6" *ngIf="this.sideBarTitle == 'place'">
+          <span nz-typography><strong>Location</strong></span>
+      </div>
+      <div nz-col nz-flex="auto" *ngIf="this.sideBarTitle == 'place'">
+          <input nz-input type="text" name="locationTxtBx" id="locationTxtBx" [(ngModel)]="tagEntry.location">
+      </div>
+      <!-- Area for Item -->
+      <div nz-col nz-flex="6" *ngIf="this.sideBarTitle == 'place'">
+          <span nz-typography><strong>Area</strong></span>
+      </div>
+      <div nz-col nz-flex="auto" *ngIf="this.sideBarTitle == 'place'">
+          <input nz-input type="text" name="areaTxtBx" id="areaTxtBx" [(ngModel)]="tagEntry.area">
+      </div>
+      <!-- Item types dropdown  -->
+      <div nz-col nz-flex="6" *ngIf="this.sideBarTitle == 'item'">
+          <span nz-typography><strong>Item Type</strong></span>
+      </div>
+      <div nz-col nz-flex="auto" *ngIf="this.sideBarTitle == 'item'">
+          <nz-select #itemTypeDropDown
+              nzMode="tags"
+              nzPlaceHolder="Tags"
+              [nzOptions]="listOfItemTypes"
+              [(ngModel)]="tagEntry.itemtype"
+              [ngModelOptions]="{standalone: true}"
+              style="width: 100%;">
+              <nz-option *ngFor="let tag of listOfTags"
+                  [nzLabel]="tag.label"
+                  [nzValue]="tag.value"></nz-option>
+          </nz-select>
+      </div>
     </div>
     <!-- addition menu options that are not need as standard, currently hidden by default -->
     <!-- <div nz-row> -->
@@ -16,37 +47,7 @@
             <nz-collapse-panel
                 [nzHeader]="'Additional Options'"
                 [nzActive]="false">
-                    <!-- Location for Item -->
-                    <div nz-col nz-flex="6" *ngIf="this.sideBarTitle == 'item'">
-                        <span nz-typography><strong>Location</strong></span>
-                    </div>
-                    <div nz-col nz-flex="auto" *ngIf="this.sideBarTitle == 'item'">
-                        <input nz-input type="text" name="locationTxtBx" id="locationTxtBx" [(ngModel)]="tagEntry.location">
-                    </div>
-                    <!-- Area for Item -->
-                    <div nz-col nz-flex="6" *ngIf="this.sideBarTitle == 'item'">
-                        <span nz-typography><strong>Area</strong></span>
-                    </div>
-                    <div nz-col nz-flex="auto" *ngIf="this.sideBarTitle == 'item'">
-                        <input nz-input type="text" name="areaTxtBx" id="areaTxtBx" [(ngModel)]="tagEntry.area">
-                    </div>
-                    <!-- Additional tags for all tags  -->
-                    <div nz-col nz-flex="6">
-                        <span nz-typography><strong>Item Type</strong></span>
-                    </div>
-                    <div nz-col nz-flex="auto">
-                        <nz-select #itemTypeDropDown
-                            nzMode="tags"
-                            nzPlaceHolder="Tags"
-                            [nzOptions]="listOfItemTypes"
-                            [(ngModel)]="tagEntry.itemtype"
-                            [ngModelOptions]="{standalone: true}"
-                            style="width: 100%;">
-                            <nz-option *ngFor="let tag of listOfTags"
-                                [nzLabel]="tag.label"
-                                [nzValue]="tag.value"></nz-option>
-                        </nz-select>
-                    </div>
+
                     <!-- Notes for any tag type-->
                     <div nz-col nz-flex="6">
                         <span nz-typography><strong>Notes</strong></span>
