@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, Output, ViewChild } from "@angular/core";
-import { PERSON } from "../constants";
+import { ITEM, MISC, PERSON, PLACE } from "../constants";
 import { Page } from "../model/page-model";
-
 
 
 @Component({
@@ -21,6 +20,11 @@ export class QuillToolbarComponent{
     quill: any;
     sideBarTitle!: string;
 
+    personTag: string = PERSON
+    placeTag: string = PLACE
+    itemTag: string = ITEM
+    miscTag: string = MISC
+
     visible = false;
 
     open(){
@@ -36,11 +40,17 @@ export class QuillToolbarComponent{
         this.newQuillEditor.emit(this.quill)
     }
 
+    tagMenu(tagType: string){
+      this.sideBarTitle = tagType;
+      this.open();
+
+    }
+
     personClick(){
 
         this.sideBarTitle = PERSON;
         this.open();
-        
+
       // this.range = this.quill.getSelection();
       // this.text = this.quill.getText(this.range.index, this.range.length);
 
