@@ -48,8 +48,8 @@ export class QuillToolbarComponent{
 
     personClick(){
 
-        this.sideBarTitle = PERSON;
-        this.open();
+        // this.sideBarTitle = PERSON;
+        // this.open();
 
       // this.range = this.quill.getSelection();
       // this.text = this.quill.getText(this.range.index, this.range.length);
