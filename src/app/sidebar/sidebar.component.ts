@@ -48,7 +48,6 @@ export class SidebarComponent implements OnInit{
     ngOnInit(): void {
         this.listOfTags = this.tagsDropdown.getListOfTags(this.sideBarTitle);
         this.listOfItemTypes = this.intemTypeDropdown.getListofItemTypes();
-
         // this.validateForm = this.formbuilder.group({
         //   personNameTxtBx: null,
         //   personNotesTxtAr: null,

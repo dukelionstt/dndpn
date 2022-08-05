@@ -157,7 +157,7 @@
     [nzClosable]="true"
     [nzMaskClosable]="true"
     nzPlacement='right'
-    nzTitle="Person Tag Info"
+    nzTitle="{{ this.sideBarTitle | titlecase }} Tag Info"
     [nzVisible]="visible"
     (nzOnClose)="close()">
     <!-- [pages] is for the main pages object passed from app comp-->
