@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from "@angular/core";
 import { ITEM, MISC, PERSON, PLACE } from "../constants";
 import { Page } from "../model/page-model";
+import { TagEntry } from "../model/tag-entry-model";
 
 
 @Component({
@@ -14,7 +15,7 @@ export class QuillToolbarComponent implements OnInit{
     pages!: Page[];
 
     @Input()
-    textSelection!: string;
+    tagEntry!: TagEntry;
 
     @Output() newQuillEditor = new EventEmitter<any>();
 
@@ -22,6 +23,7 @@ export class QuillToolbarComponent implements OnInit{
     text : string = '';
     quill: any;
     sideBarTitle!: string;
+    textPresent!: boolean;
 
     personTag: string = PERSON
     placeTag: string = PLACE
@@ -40,10 +42,30 @@ export class QuillToolbarComponent implements OnInit{
         this.icons.set(ITEM, '<img src="https://img.icons8.com/ios-glyphs/15/016936/armored-breastplate.png"/>')
         this.icons.set(MISC, '<img src="https://img.icons8.com/ios-glyphs/15/B413EC/magical-scroll.png"/>')
 
-        this.textSelection = this.text;
+        this.tagEntry = {
+            id: 0,
+            name: '',
+            date: '',
+            misc: [],
+            notes: '',
+            location: '',
+            area: '',
+            itemtype: []
+
+        }
     }
     
     onNewTagSave(event: any){
+        if(this.textPresent){
+            this.quill.deleteText(this.range.index, this.text.length)
+        
+            this.quill.insertEmbed(this.range.index, this.sideBarTitle, this.icons.get(this.sideBarTitle)+this.text+'|93');
+            this.quill.setSelection(this.range.index + this.text.length , this.range.index + this.text.length);
+        } else {
+            this.quill.insertEmbed(this.range.index, this.sideBarTitle, this.icons.get(this.sideBarTitle)+this.pages[0].person[event].name+'|93');
+            this.quill.setSelection(this.range.index + this.text.length , this.range.index + this.text.length);
+        }
+
         this.close();
     }
 
@@ -52,6 +74,7 @@ export class QuillToolbarComponent implements OnInit{
     }
 
     close(){
+        
         this.visible = false;
     }
 
@@ -64,19 +87,21 @@ export class QuillToolbarComponent implements OnInit{
 
     tagMenu(tagType: string){
       this.sideBarTitle = tagType;
-      this.quill.focus()
       this.range = this.quill.getSelection();
-      this.text = this.quill.getText(this.range.index, this.range.length);
+      
+      if(this.range.length == 0 || this.range == null){
+        this.tagEntry.name = ''
+        this.tagEntry.misc = [this.sideBarTitle]
 
-      if(this.text == null){
-        this.text = ''
+        this.textPresent = false;
+      } else {
+        this.tagEntry.name = this.text = this.quill.getText(this.range.index, this.range.length);
+        this.tagEntry.misc = [this.sideBarTitle, this.text]
+
+        this.textPresent = true;
       }
 
-      this.textSelection = this.text;
       this.open();
-
-      
-
     }
 
     personClick(){

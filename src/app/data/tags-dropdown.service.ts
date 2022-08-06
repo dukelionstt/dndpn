@@ -35,7 +35,7 @@ export class TagsDropdownService {
 rawTags?.forEach( tag => {
   dropdown.push({
     label: tag.name,
-    value: tag.type
+    value: tag.name
   });
 });
 

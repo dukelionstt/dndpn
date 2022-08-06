@@ -23,7 +23,7 @@ export class SidebarComponent implements OnInit, OnChanges{
     sideBarTitle!: string;
 
     @Input()
-    textSelection!: string;
+    tagEntry!: TagEntry;
 
     @Output()
     newTagSave = new EventEmitter<any>();
@@ -32,7 +32,7 @@ export class SidebarComponent implements OnInit, OnChanges{
     listOfTags: Array<{value:string, label:string}> = [];
     listOfItemTypes: Array<{value:string, label:string}> = [];
     date: Date = new Date()
-    tagEntry!: TagEntry;
+    
 
     
 
@@ -43,7 +43,6 @@ export class SidebarComponent implements OnInit, OnChanges{
     ngOnInit(): void {
         this.listOfTags = this.tagsDropdown.getListOfTags(this.sideBarTitle);
         this.listOfItemTypes = this.intemTypeDropdown.getListofItemTypes();
-
         
         // this.validateForm = this.formbuilder.group({
         //   personNameTxtBx: null,
@@ -53,24 +52,24 @@ export class SidebarComponent implements OnInit, OnChanges{
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        for(const propName in changes){
-            if(propName == 'textSelection'){
-                if(changes[propName].currentValue != ''){
-                    this.tagEntry.name = changes[propName].currentValue
-                    this.tagEntry.misc = [this.sideBarTitle, changes[propName].currentValue]
-                }
-            } else if(propName == 'sideBarTitle'){
-                if(changes[propName].currentValue != ''){
-                    if(this.tagEntry.name != undefined || this.tagEntry.name != ''){
-                        this.tagEntry.misc = [this.sideBarTitle, this.tagEntry.name]
-                    } else {
-                        this.tagEntry.misc = [this.sideBarTitle]
-                    }
+        // for(const propName in changes){
+        //     if(propName == 'textSelection'){
+        //         if(changes[propName].currentValue != ''){
+        //             this.tagEntry.name = changes[propName].currentValue
+        //             this.tagEntry.misc = [this.sideBarTitle, changes[propName].currentValue]
+        //         }
+        //     } else if(propName == 'sideBarTitle'){
+        //         if(changes[propName].currentValue != ''){
+        //             if(this.tagEntry.name != undefined || this.tagEntry.name != ''){
+        //                 this.tagEntry.misc = [this.sideBarTitle, this.tagEntry.name]
+        //             } else {
+        //                 this.tagEntry.misc = [this.sideBarTitle]
+        //             }
                     
-                }
-            }
-            console.log(propName)
-        }
+        //         }
+        //     }
+        //     console.log(propName)
+        // }
     }
 
     save(){
@@ -97,7 +96,7 @@ export class SidebarComponent implements OnInit, OnChanges{
             break;
         }
 
-        this.newTagSave.emit();
+        this.newTagSave.emit(1);
     }
 
     toggleSideBar(type:string, flag:boolean){
