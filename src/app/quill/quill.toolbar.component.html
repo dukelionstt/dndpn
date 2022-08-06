@@ -162,5 +162,7 @@
     (nzOnClose)="close()">
     <!-- [pages] is for the main pages object passed from app comp-->
     <sidebar *nzDrawerContent [pages]="pages"
-            [sideBarTitle]="sideBarTitle"></sidebar>
+            [sideBarTitle]="sideBarTitle"
+            [textSelection]="textSelection"
+            (newTagSave)="onNewTagSave($event)"></sidebar>
 </nz-drawer>

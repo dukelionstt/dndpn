@@ -1,45 +1,40 @@
-import { Component, Input, OnInit } from "@angular/core";
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Component, Input, OnChanges, OnInit, Output, SimpleChanges, EventEmitter } from "@angular/core";
 import { ITEM, MISC, PERSON, PLACE } from "../constants";
 import { ItemTypesService } from "../data/item.types.service";
 
 import { TagsDropdownService } from "../data/tags-dropdown.service";
-import { PAGE } from "../mock-data/page-mock";
 import { Item } from "../model/item-model";
 import { Misc } from "../model/misc-model";
 import { Page } from "../model/page-model";
 import { Person } from "../model/person-model";
 import { Place } from "../model/place-model";
-import { PersonBlot } from "../quill/person.blot";
+import { TagEntry } from "../model/tag-entry-model";
 
 @Component({
     selector: 'sidebar',
     templateUrl: './sidebar.component.html'
 })
-export class SidebarComponent implements OnInit{
-
-    // validateForm! : FormGroup;
-
-    selectedTags = [];
-    listOfTags: Array<{value:string, label:string}> = [];
-    listOfItemTypes: Array<{value:string, label:string}> = [];
-    date: Date = new Date()
-    tagEntry = {
-      id: null,
-      name: null,
-      date: this.date.toDateString(),
-      misc: [],
-      notes: null,
-      location: null,
-      area: null,
-      itemtype: []
-    };
+export class SidebarComponent implements OnInit, OnChanges{
 
     @Input()
     pages!: Page[];
 
     @Input()
     sideBarTitle!: string;
+
+    @Input()
+    textSelection!: string;
+
+    @Output()
+    newTagSave = new EventEmitter<any>();
+
+    selectedTags = [];
+    listOfTags: Array<{value:string, label:string}> = [];
+    listOfItemTypes: Array<{value:string, label:string}> = [];
+    date: Date = new Date()
+    tagEntry!: TagEntry;
+
+    
 
     // dateString:string = this.date.getDay().toLocaleString() +"/"+ this.date.getMonth.toString() +"/"+ this.date.getFullYear.toString();
     constructor(private tagsDropdown: TagsDropdownService,
@@ -48,11 +43,34 @@ export class SidebarComponent implements OnInit{
     ngOnInit(): void {
         this.listOfTags = this.tagsDropdown.getListOfTags(this.sideBarTitle);
         this.listOfItemTypes = this.intemTypeDropdown.getListofItemTypes();
+
+        
         // this.validateForm = this.formbuilder.group({
         //   personNameTxtBx: null,
         //   personNotesTxtAr: null,
         //   personDateLbl: null
         // })
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+        for(const propName in changes){
+            if(propName == 'textSelection'){
+                if(changes[propName].currentValue != ''){
+                    this.tagEntry.name = changes[propName].currentValue
+                    this.tagEntry.misc = [this.sideBarTitle, changes[propName].currentValue]
+                }
+            } else if(propName == 'sideBarTitle'){
+                if(changes[propName].currentValue != ''){
+                    if(this.tagEntry.name != undefined || this.tagEntry.name != ''){
+                        this.tagEntry.misc = [this.sideBarTitle, this.tagEntry.name]
+                    } else {
+                        this.tagEntry.misc = [this.sideBarTitle]
+                    }
+                    
+                }
+            }
+            console.log(propName)
+        }
     }
 
     save(){
@@ -78,6 +96,8 @@ export class SidebarComponent implements OnInit{
                 this.pages[0].misc.push(this.convertEntry(this.sideBarTitle));
             break;
         }
+
+        this.newTagSave.emit();
     }
 
     toggleSideBar(type:string, flag:boolean){
