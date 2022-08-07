@@ -1,7 +1,7 @@
-<div nz-row>
+<!-- <div nz-row> -->
     <div nz-col *ngFor="let widget of this.widgets">
         <nz-card [nzBorderless]="false"
-        nzTitle="widget.title"
+        nzTitle="{{widget.title}}"
         [nzActions]="[actionSetting, actionEdit, actionEllipsis]"
         [nzLoading]="loading">
             <button nz-button nzShape="round" 
@@ -17,4 +17,4 @@
             <i nz-icon nzType="ellipsis"></i>
           </ng-template>
     </div>
-</div>
+<!-- </div> -->

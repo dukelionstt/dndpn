@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from "@angular/core";
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from "@angular/core";
 import { ITEM, MISC, PERSON, PLACE } from "../constants";
 import { Page } from "../model/page-model";
 import { TagEntry } from "../model/tag-entry-model";
@@ -9,7 +9,7 @@ import { TagEntry } from "../model/tag-entry-model";
     templateUrl: './quill.toolbar.component.html'
 })
 
-export class QuillToolbarComponent implements OnInit{
+export class QuillToolbarComponent implements OnInit, OnChanges{
 
     @Input()
     pages!: Page[];
@@ -59,14 +59,22 @@ export class QuillToolbarComponent implements OnInit{
         if(this.textPresent){
             this.quill.deleteText(this.range.index, this.text.length)
         
-            this.quill.insertEmbed(this.range.index, this.sideBarTitle, this.icons.get(this.sideBarTitle)+this.text+'|93');
+            // this.quill.insertEmbed(this.range.index, this.sideBarTitle, this.icons.get(this.sideBarTitle)+this.text+'|93');
+            this.quill.insertEmbed(this.range.index, this.sideBarTitle, this.forValue(this.text, this.sideBarTitle));
             this.quill.setSelection(this.range.index + this.text.length , this.range.index + this.text.length);
         } else {
-            this.quill.insertEmbed(this.range.index, this.sideBarTitle, this.icons.get(this.sideBarTitle)+this.pages[0].person[event].name+'|93');
+            // this.quill.insertEmbed(this.range.index, this.sideBarTitle, this.icons.get(this.sideBarTitle)+this.pages[0].person[event].name+'|93');
+            this.quill.insertEmbed(this.range.index, this.sideBarTitle, this.forValue(this.pages[0].person[event].name, this.sideBarTitle));
             this.quill.setSelection(this.range.index + this.text.length , this.range.index + this.text.length);
         }
 
         this.close();
+    }
+
+    private forValue(text: string, icontype: string){
+        let spanOpenTag = '<span nz-tooltip [nzTooltipTitle]="toolTipTemplate" nzTooltipPlacement="leftBottom" (click)="tempAction()" >'
+        let spanCloseTag = '</span>'
+        return spanOpenTag + this.icons.get(icontype) + text + '|93 ' + spanCloseTag 
     }
 
     open(){
@@ -102,6 +110,31 @@ export class QuillToolbarComponent implements OnInit{
       }
 
       this.open();
+    }
+
+    tempAction(){
+        console.log("clicked")
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+        for(const propName in changes){
+        //     if(propName == 'textSelection'){
+        //         if(changes[propName].currentValue != ''){
+        //             this.tagEntry.name = changes[propName].currentValue
+        //             this.tagEntry.misc = [this.sideBarTitle, changes[propName].currentValue]
+        //         }
+        //     } else if(propName == 'sideBarTitle'){
+        //         if(changes[propName].currentValue != ''){
+        //             if(this.tagEntry.name != undefined || this.tagEntry.name != ''){
+        //                 this.tagEntry.misc = [this.sideBarTitle, this.tagEntry.name]
+        //             } else {
+        //                 this.tagEntry.misc = [this.sideBarTitle]
+        //             }
+                    
+        //         }
+        //     }
+            console.log(propName)
+        }
     }
 
     personClick(){
