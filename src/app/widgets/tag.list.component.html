@@ -1,11 +1,20 @@
-<div class="column">
-    <h3 class="ui top attached header">{{tag}}</h3>
-    <div class="ui piled attached segment">
-        <a class="ui tiny orange horizontal basic label">test 1</a>
-        <a class="ui tiny orange horizontal basic label">test 2</a>
-        <a class="ui tiny orange horizontal basic label">test 3</a>
-        <a class="ui tiny orange horizontal basic label">test 4</a>
-        <a class="ui tiny orange horizontal basic label">test 5</a>
-        <a class="ui tiny orange horizontal basic label">test 6</a>
+<!-- <div nz-row> -->
+    <div nz-col *ngFor="let widget of this.widgets">
+        <nz-card [nzBorderless]="false"
+        nzTitle="{{widget.title}}"
+        [nzActions]="[actionSetting, actionEdit, actionEllipsis]"
+        [nzLoading]="loading">
+            <button nz-button nzShape="round" 
+            *ngFor="let tag of widget.content"><img src=""/>{{tag.tag}}</button>
+        </nz-card>
+        <ng-template #actionSetting>
+            <i nz-icon nzType="setting"></i>
+          </ng-template>
+          <ng-template #actionEdit>
+            <i nz-icon nzType="edit"></i>
+          </ng-template>
+          <ng-template #actionEllipsis>
+            <i nz-icon nzType="ellipsis"></i>
+          </ng-template>
     </div>
-</div>
+<!-- </div> -->
