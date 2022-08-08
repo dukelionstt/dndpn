@@ -10,8 +10,7 @@ export class PersonBlot extends Embed {
     let popupContent = "Click to view data and edit";
 
     let values = value.split('|');
-
-    let outerHtml = '<button class="'+ PERSON + '" (click)="tempAction()" ></button>'
+    
     // node.setAttribute("class", "ui small teal basic label");
     node.setAttribute("class", "person");
     // node.setAttribute("onclick", "tempAction()");
