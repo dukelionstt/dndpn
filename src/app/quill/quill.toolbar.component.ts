@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2 } from "@angular/core";
 import { ITEM, MISC, PERSON, PLACE } from "../constants";
 import { Page } from "../model/page-model";
 import { TagEntry } from "../model/tag-entry-model";
@@ -23,6 +23,7 @@ export class QuillToolbarComponent implements OnInit{
     quill: any;
     sideBarTitle!: string;
     textPresent!: boolean;
+    listenerPresent!: boolean;
 
     personTag: string = PERSON
     placeTag: string = PLACE
@@ -32,14 +33,20 @@ export class QuillToolbarComponent implements OnInit{
     visible = false;
 
     icons = new Map();
+    buttonEvents = new Map();
 
-    constructor(){}
+    constructor( private renderer:Renderer2, private elementRef: ElementRef){}
 
     ngOnInit(): void {
         this.icons.set(PERSON, '<img src="https://img.icons8.com/ios-glyphs/15/008080/human-head.png"/>')
         this.icons.set(PLACE, '<img src="https://img.icons8.com/ios-glyphs/15/FE9A76/castle.png"/>')
         this.icons.set(ITEM, '<img src="https://img.icons8.com/ios-glyphs/15/016936/armored-breastplate.png"/>')
         this.icons.set(MISC, '<img src="https://img.icons8.com/ios-glyphs/15/B413EC/magical-scroll.png"/>')
+
+        this.buttonEvents.set(PERSON, 0);
+        this.buttonEvents.set(PLACE, 0);
+        this.buttonEvents.set(ITEM, 0);
+        this.buttonEvents.set(MISC, 0);
 
         this.tagEntry = {
             id: 0,
@@ -52,13 +59,14 @@ export class QuillToolbarComponent implements OnInit{
             itemtype: []
 
         }
+        this.listenerPresent = false;
     }
-    
+
     // Need to bring in id handeling for the tags as this will fix bug of gettting name from person object
     onNewTagSave(event: any){
         if(this.textPresent){
             this.quill.deleteText(this.range.index, this.text.length)
-        
+
             // this.quill.insertEmbed(this.range.index, this.sideBarTitle, this.icons.get(this.sideBarTitle)+this.text+'|93');
             this.quill.insertEmbed(this.range.index, this.sideBarTitle, this.forValue(this.text, this.sideBarTitle));
             this.quill.setSelection(this.range.index + this.text.length , this.range.index + this.text.length);
@@ -72,11 +80,20 @@ export class QuillToolbarComponent implements OnInit{
             this.textPresent = false;
         }
 
+        this.attachClickEvent(this.sideBarTitle)
+
         this.close();
     }
 
     private forValue(text: string, icontype: string){
-        return  this.icons.get(icontype) + text + '|93 ' 
+        return  this.icons.get(icontype) + text + '|93 '
+    }
+
+    private attachClickEvent(buttonClass: string){
+      let count = this.buttonEvents.get(buttonClass) + 1
+      let queryString = '//button[@class="'+ buttonClass +'"]['+ count +']'
+
+      this.elementRef.nativeElement.querySelector(queryString).addEventListener('click', this.temphandeler(event))
     }
 
     open(){
@@ -84,8 +101,12 @@ export class QuillToolbarComponent implements OnInit{
     }
 
     close(){
-        
+
         this.visible = false;
+    }
+
+    temphandeler(event: any){
+      console.log(event);
     }
 
     created(editor: any){
@@ -98,7 +119,7 @@ export class QuillToolbarComponent implements OnInit{
     tagMenu(tagType: string){
       this.sideBarTitle = tagType;
       this.range = this.quill.getSelection();
-      
+
       if(this.range.length == 0 || this.range == null){
         this.tagEntry.name = ''
         this.tagEntry.misc = [this.sideBarTitle]
@@ -113,6 +134,8 @@ export class QuillToolbarComponent implements OnInit{
 
       this.open();
     }
+
+
 
     personClick(){
 
