@@ -90,10 +90,15 @@ export class QuillToolbarComponent implements OnInit{
     }
 
     private attachClickEvent(buttonClass: string){
-      let count = this.buttonEvents.get(buttonClass) + 1
-      let queryString = '//button[@class="'+ buttonClass +'"]['+ count +']'
+      let count = this.buttonEvents.get(buttonClass)
+      // let queryString = '//button[@class="'+ buttonClass +'"]['+ count +']'
+      let queryString = '.'+ buttonClass
 
-      this.elementRef.nativeElement.querySelector(queryString).addEventListener('click', this.temphandeler(event))
+      let button = this.elementRef.nativeElement.querySelectorAll(queryString)[count]
+      this.renderer.listen(button, 'click', (event) => this.temphandeler(event));
+    //   button.addEventListener('click', this.temphandeler(this));
+      count++
+      this.buttonEvents.set(buttonClass, count);
     }
 
     open(){
