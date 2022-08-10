@@ -32,9 +32,9 @@ export class SidebarComponent implements OnInit, OnChanges{
     listOfTags: Array<{value:string, label:string}> = [];
     listOfItemTypes: Array<{value:string, label:string}> = [];
     date: Date = new Date()
-    
 
-    
+
+
 
     // dateString:string = this.date.getDay().toLocaleString() +"/"+ this.date.getMonth.toString() +"/"+ this.date.getFullYear.toString();
     constructor(private tagsDropdown: TagsDropdownService,
@@ -43,7 +43,7 @@ export class SidebarComponent implements OnInit, OnChanges{
     ngOnInit(): void {
         this.listOfTags = this.tagsDropdown.getListOfTags(this.sideBarTitle);
         this.listOfItemTypes = this.intemTypeDropdown.getListofItemTypes();
-        
+
         // this.validateForm = this.formbuilder.group({
         //   personNameTxtBx: null,
         //   personNotesTxtAr: null,
@@ -65,7 +65,7 @@ export class SidebarComponent implements OnInit, OnChanges{
         //             } else {
         //                 this.tagEntry.misc = [this.sideBarTitle]
         //             }
-                    
+
         //         }
         //     }
         //     console.log(propName)
@@ -81,22 +81,12 @@ export class SidebarComponent implements OnInit, OnChanges{
     }
 
     tagSave(){
-        switch(this.sideBarTitle){
-            case PERSON:
-                this.pages[0].person.push(this.convertEntry(this.sideBarTitle));
-            break;
-            case PLACE:
-                this.pages[0].place.push(this.convertEntry(this.sideBarTitle));
-            break;
-            case ITEM:
-                this.pages[0].item.push(this.convertEntry(this.sideBarTitle));
-            break;
-            case MISC:
-                this.pages[0].misc.push(this.convertEntry(this.sideBarTitle));
-            break;
-        }
+      let tags = this.pages[0].tags.get(this.sideBarTitle);
+      let id = tags.length
+      tags.push(this.convertEntry(this.sideBarTitle));
+      this.pages[0].tags.set(this.sideBarTitle, tags);
 
-        this.newTagSave.emit(1);
+      this.newTagSave.emit(id);
     }
 
     toggleSideBar(type:string, flag:boolean){

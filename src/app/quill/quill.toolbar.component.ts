@@ -62,42 +62,47 @@ export class QuillToolbarComponent implements OnInit{
         this.listenerPresent = false;
     }
 
-    // Need to bring in id handeling for the tags as this will fix bug of gettting name from person object
-    onNewTagSave(event: any){
-        if(this.textPresent){
-            this.quill.deleteText(this.range.index, this.text.length)
+    //id resolved next step is to stop duplicate entries is the user clicks on the tag and no change has occured to the
+    //values passed in by the opening button.
+    onNewTagSave(id: number){
 
-            // this.quill.insertEmbed(this.range.index, this.sideBarTitle, this.icons.get(this.sideBarTitle)+this.text+'|93');
-            this.quill.insertEmbed(this.range.index, this.sideBarTitle, this.forValue(this.text, this.sideBarTitle));
-            this.quill.setSelection(this.range.index + this.text.length , this.range.index + this.text.length);
+      if(this.textPresent){
+          this.quill.deleteText(this.range.index, this.text.length)
+          this.quill.insertEmbed(this.range.index, this.sideBarTitle, this.forValue(this.text, this.sideBarTitle));
+          this.quill.setSelection(this.range.index + this.text.length , this.range.index + this.text.length);
 
-            this.textPresent = false;
-        } else {
-            // this.quill.insertEmbed(this.range.index, this.sideBarTitle, this.icons.get(this.sideBarTitle)+this.pages[0].person[event].name+'|93');
-            this.quill.insertEmbed(this.range.index, this.sideBarTitle, this.forValue(this.pages[0].person[event].name, this.sideBarTitle));
-            this.quill.setSelection(this.range.index + this.text.length , this.range.index + this.text.length);
+          this.textPresent = false;
+      } else {
+          this.quill.insertEmbed(this.range.index, this.sideBarTitle, this.forValue(this.pages[0].tags.get(this.sideBarTitle)[id].name, this.sideBarTitle));
+          this.quill.setSelection(this.range.index + this.text.length , this.range.index + this.text.length);
 
-            this.textPresent = false;
-        }
+          this.textPresent = false;
+      }
 
-        this.attachClickEvent(this.sideBarTitle)
+      this.attachClickEvent(this.sideBarTitle, id)
 
-        this.close();
+      this.close();
     }
 
     private forValue(text: string, icontype: string){
-        return  this.icons.get(icontype) + text + '|93 '
+        return  this.icons.get(icontype) + text
     }
 
-    private attachClickEvent(buttonClass: string){
+    private attachClickEvent(buttonClass: string, id: number){
+      // maintains the number of entries on the page for each tag type, which allows the correct
+      //button to get its event handler
       let count = this.buttonEvents.get(buttonClass)
-      // let queryString = '//button[@class="'+ buttonClass +'"]['+ count +']'
       let queryString = '.'+ buttonClass
 
-      let button = this.elementRef.nativeElement.querySelectorAll(queryString)[count]
-      this.renderer.listen(button, 'click', (event) => this.temphandeler(event));
-    //   button.addEventListener('click', this.temphandeler(this));
+      //finds the button all the buttons on the page that matches the class passed in eg person
+      //then the count that has be retireved above allows us to find this latest version
+      let button = this.elementRef.nativeElement.querySelectorAll(queryString)[count];
+      //adds the event to the button
+      this.renderer.listen(button, 'click', (event) => this.temphandeler(event, id, buttonClass));
+
+      //increment the button so we can find the new one on the next call
       count++
+      //store the increment
       this.buttonEvents.set(buttonClass, count);
     }
 
@@ -110,8 +115,51 @@ export class QuillToolbarComponent implements OnInit{
         this.visible = false;
     }
 
-    temphandeler(event: any){
-      console.log(event);
+    temphandeler(event: any, id: number, type: string){
+      let tagData = this.pages[0].tags.get(type)[id]
+      this.displayDataSidebar(tagData, type);
+      this.sideBarTitle = type
+      this.open();
+    }
+
+    private displayDataSidebar(tagData: any, type: string){
+
+      switch(type){
+        case PERSON:
+            this.tagEntry.id = tagData.id
+            this.tagEntry.name = tagData.name
+            this.tagEntry.date = tagData.date
+            this.tagEntry.misc = tagData.misc
+            this.tagEntry.notes = tagData.notes
+        break;
+        case PLACE:
+            this.tagEntry.id = tagData.id
+            this.tagEntry.name = tagData.name
+            this.tagEntry.location = tagData.location
+            this.tagEntry.area = tagData.area
+            this.tagEntry.date = tagData.date
+            this.tagEntry.misc = tagData.misc
+            this.tagEntry.notes = tagData.notes
+        break;
+        case ITEM:
+            this.tagEntry.id = tagData.id
+            this.tagEntry.name = tagData.name
+            this.tagEntry.itemtype = tagData.itemtype
+            this.tagEntry.date = tagData.date
+            this.tagEntry.misc = tagData.misc
+            this.tagEntry.notes = tagData.notes
+        break;
+        case MISC:
+            this.tagEntry.id = tagData.id
+            this.tagEntry.name = tagData.name
+            this.tagEntry.date = tagData.date
+            this.tagEntry.misc = tagData.misc
+            this.tagEntry.notes = tagData.notes
+        break;
+        default:
+            break
+    }
+
     }
 
     created(editor: any){
