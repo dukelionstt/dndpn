@@ -16,13 +16,17 @@ export class QuillToolbarComponent implements OnInit{
     @Input()
     tagEntry!: TagEntry;
 
+    @Input()
+    quill!: any;
+
     @Output() newQuillEditor = new EventEmitter<any>();
 
     range : any;
     text : string = '';
-    quill: any;
+
     sideBarTitle!: string;
     textPresent!: boolean;
+    content!: any;
 
     personTag: string = PERSON
     placeTag: string = PLACE
@@ -52,13 +56,22 @@ export class QuillToolbarComponent implements OnInit{
             itemtype: []
 
         }
+        this.content = { "ops": [
+                            { "insert": "This is some " },
+                            {
+                                "attributes": { "0": "p", "1": "e", "2": "r", "3": "s", "4": "o", "5": "n" },
+                                "insert": { "person": 'Dave' }
+                            },
+                            { "insert": " content for future " },{"attributes": { "0": "p", "1": "e", "2": "r", "3": "s", "4": "o", "5": "n" },"insert": { "person": 'Cat' }
+                            },{ "insert": "etc.\n" } ] };
+
     }
-    
+
     // Need to bring in id handeling for the tags as this will fix bug of gettting name from person object
     onNewTagSave(event: any){
         if(this.textPresent){
             this.quill.deleteText(this.range.index, this.text.length)
-        
+
             // this.quill.insertEmbed(this.range.index, this.sideBarTitle, this.icons.get(this.sideBarTitle)+this.text+'|93');
             this.quill.insertEmbed(this.range.index, this.sideBarTitle, this.forValue(this.text, this.sideBarTitle));
             this.quill.setSelection(this.range.index + this.text.length , this.range.index + this.text.length);
@@ -76,7 +89,7 @@ export class QuillToolbarComponent implements OnInit{
     }
 
     private forValue(text: string, icontype: string){
-        return  this.icons.get(icontype) + text + '|93 ' 
+        return  this.icons.get(icontype) + text + '|93 '
     }
 
     open(){
@@ -84,7 +97,7 @@ export class QuillToolbarComponent implements OnInit{
     }
 
     close(){
-        
+
         this.visible = false;
     }
 
@@ -92,13 +105,16 @@ export class QuillToolbarComponent implements OnInit{
         this.quill = editor;
         this.newQuillEditor.emit(this.quill)
 
+        this.quill.setContents(this.content)
+
         this.quill.focus()
+        this.quill.setSelection(13,1)
     }
 
     tagMenu(tagType: string){
       this.sideBarTitle = tagType;
       this.range = this.quill.getSelection();
-      
+
       if(this.range.length == 0 || this.range == null){
         this.tagEntry.name = ''
         this.tagEntry.misc = [this.sideBarTitle]

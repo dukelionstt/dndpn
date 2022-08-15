@@ -4,8 +4,9 @@
         nzTitle="{{widget.title}}"
         [nzActions]="[actionSetting, actionEdit, actionEllipsis]"
         [nzLoading]="loading">
-            <button nz-button nzShape="round" 
-            *ngFor="let tag of widget.content"><img src=""/>{{tag.tag}}</button>
+            <button nz-button nzShape="round"
+            *ngFor="let tag of widget.content"
+            (click)="goToTagInPage(tag.index)"><img [src]="getImgSrc(widget.title)"/>{{tag.tag}}</button>
         </nz-card>
         <ng-template #actionSetting>
             <i nz-icon nzType="setting"></i>
