@@ -24,6 +24,9 @@ export class QuillToolbarComponent implements OnInit{
     sideBarTitle!: string;
     textPresent!: boolean;
     listenerPresent!: boolean;
+    updateIndicator!: boolean;
+    changeIndicator!: boolean;
+    updateType!: string;
 
     personTag: string = PERSON
     placeTag: string = PLACE
@@ -56,36 +59,58 @@ export class QuillToolbarComponent implements OnInit{
             notes: '',
             location: '',
             area: '',
-            itemtype: []
+            itemtype: [],
+            range: 0,
+            buttonIndex: 0,
+            lenght: 0
 
         }
         this.listenerPresent = false;
+        this.updateIndicator = false;
+        this.changeIndicator = false;
     }
 
     //id resolved next step is to stop duplicate entries is the user clicks on the tag and no change has occured to the
     //values passed in by the opening button.
     onNewTagSave(id: number){
 
-      if(this.textPresent){
+      if(this.updateIndicator){
+        if(this.changeIndicator){
+          let range = this.pages[0].tags.get(this.updateType)[id].range
+          let length = this.pages[0].tags.get(this.updateType)[id].name.length
+
+          this.quill.removeFormat(range, length);
+          this.updateTextInPage(range, this.updateType, this.pages[0].tags.get(this.updateType)[id].name)
+        }
+        this.attachClickEvent(this.sideBarTitle, id)
+        this.updateIndicator = false
+        this.changeIndicator = false
+
+      } else {
+        if(this.textPresent){
           this.quill.deleteText(this.range.index, this.text.length)
-          this.quill.insertEmbed(this.range.index, this.sideBarTitle, this.forValue(this.text, this.sideBarTitle));
-          this.quill.setSelection(this.range.index + this.text.length , this.range.index + this.text.length);
+          this.updateTextInPage(this.range.index, this.sideBarTitle, this.forValue(this.text, this.sideBarTitle));
 
           this.textPresent = false;
       } else {
-          this.quill.insertEmbed(this.range.index, this.sideBarTitle, this.forValue(this.pages[0].tags.get(this.sideBarTitle)[id].name, this.sideBarTitle));
-          this.quill.setSelection(this.range.index + this.text.length , this.range.index + this.text.length);
+          this.updateTextInPage(this.range.index, this.sideBarTitle, this.forValue(this.pages[0].tags.get(this.sideBarTitle)[id].name, this.sideBarTitle));
 
           this.textPresent = false;
       }
 
-      this.attachClickEvent(this.sideBarTitle, id)
+        this.attachClickEvent(this.sideBarTitle, id)
+      }
 
       this.close();
     }
 
     private forValue(text: string, icontype: string){
         return  this.icons.get(icontype) + text
+    }
+
+    private updateTextInPage(index: number, type: string, text: string){
+      this.quill.insertEmbed(index, type, this.forValue(this.text, this.sideBarTitle));
+          this.quill.setSelection(index + text.length , index + text.length);
     }
 
     private attachClickEvent(buttonClass: string, id: number){
@@ -95,10 +120,20 @@ export class QuillToolbarComponent implements OnInit{
       let queryString = '.'+ buttonClass
 
       //finds the button all the buttons on the page that matches the class passed in eg person
-      //then the count that has be retireved above allows us to find this latest version
-      let button = this.elementRef.nativeElement.querySelectorAll(queryString)[count];
+      //and there is also two systems to find out which button this is, first is a running count map for all
+      //new button added to the page. The 
+      let button: any;
+      if(this.changeIndicator){
+        button = this.elementRef.nativeElement.querySelectorAll(queryString)[this.pages[0].tags.get(buttonClass).metaData.buttonIndex];
+      } else {
+        button = this.elementRef.nativeElement.querySelectorAll(queryString)[count];
+      }
       //adds the event to the button
-      this.renderer.listen(button, 'click', (event) => this.temphandeler(event, id, buttonClass));
+      this.renderer.listen(button, 'click', (event) => this.tagViewAndUpdate(event, id, buttonClass));
+
+      //recording the number of the button in order of buttons for that type so that if the text
+      //is channge we can assign the correct button
+      this.pages[0].tags.get(buttonClass)[id].metaData.buttonIndex = count
 
       //increment the button so we can find the new one on the next call
       count++
@@ -115,10 +150,13 @@ export class QuillToolbarComponent implements OnInit{
         this.visible = false;
     }
 
-    temphandeler(event: any, id: number, type: string){
+    tagViewAndUpdate(event: any, id: number, type: string){
       let tagData = this.pages[0].tags.get(type)[id]
       this.displayDataSidebar(tagData, type);
+      
       this.sideBarTitle = type
+      this.updateIndicator = true;
+      this.updateType = type;
       this.open();
     }
 
@@ -131,6 +169,7 @@ export class QuillToolbarComponent implements OnInit{
             this.tagEntry.date = tagData.date
             this.tagEntry.misc = tagData.misc
             this.tagEntry.notes = tagData.notes
+            this.tagEntry.range = tagData.range
         break;
         case PLACE:
             this.tagEntry.id = tagData.id
@@ -140,6 +179,7 @@ export class QuillToolbarComponent implements OnInit{
             this.tagEntry.date = tagData.date
             this.tagEntry.misc = tagData.misc
             this.tagEntry.notes = tagData.notes
+            this.tagEntry.range = tagData.range
         break;
         case ITEM:
             this.tagEntry.id = tagData.id
@@ -148,6 +188,7 @@ export class QuillToolbarComponent implements OnInit{
             this.tagEntry.date = tagData.date
             this.tagEntry.misc = tagData.misc
             this.tagEntry.notes = tagData.notes
+            this.tagEntry.range = tagData.range
         break;
         case MISC:
             this.tagEntry.id = tagData.id
@@ -155,6 +196,7 @@ export class QuillToolbarComponent implements OnInit{
             this.tagEntry.date = tagData.date
             this.tagEntry.misc = tagData.misc
             this.tagEntry.notes = tagData.notes
+            this.tagEntry.range = tagData.range
         break;
         default:
             break
@@ -184,29 +226,9 @@ export class QuillToolbarComponent implements OnInit{
 
         this.textPresent = true;
       }
+      this.tagEntry.range = this.range.index
 
       this.open();
-    }
-
-
-
-    personClick(){
-
-        // this.sideBarTitle = PERSON;
-        // this.open();
-
-      // this.range = this.quill.getSelection();
-      // this.text = this.quill.getText(this.range.index, this.range.length);
-
-      // this.quill.deleteText(this.range.index, this.text.length)
-
-      // this.quill.insertEmbed(this.range.index, 'person', '<img src="https://img.icons8.com/ios-glyphs/15/008080/human-head.png"/>'+this.text+'|93');
-      // this.quill.setSelection(this.range.index + this.text.length , this.range.index + this.text.length);
-
-    }
-
-    getImageUrl(imageType: string){
-
     }
 
 }

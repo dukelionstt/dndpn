@@ -142,10 +142,6 @@
 
         <!-- custom buttons -->
         <span class="ql-formats">
-            <!-- <button onclick="tagMenu('person')"><img src="https://img.icons8.com/ios-glyphs/15/000000/human-head.png"/></button>
-            <button onclick="tagMenu('place')"><img src="https://img.icons8.com/ios-glyphs/15/000000/castle.png"/></button>
-            <button onclick="tagMenu('equipment')"><img src="https://img.icons8.com/ios-glyphs/15/000000/armored-breastplate.png"/></button>
-            <button onclick="tagMenu('misc')"><img src="https://img.icons8.com/ios-glyphs/15/000000/magical-scroll.png"/></button> -->
             <button (click)="tagMenu(this.personTag)"><img src="https://img.icons8.com/ios-glyphs/15/000000/human-head.png"/></button>
             <button (click)="tagMenu(this.placeTag)"><img src="https://img.icons8.com/ios-glyphs/15/000000/castle.png"/></button>
             <button (click)="tagMenu(this.itemTag)"><img src="https://img.icons8.com/ios-glyphs/15/000000/armored-breastplate.png"/></button>
@@ -164,7 +160,10 @@
     <sidebar *nzDrawerContent [pages]="pages"
             [sideBarTitle]="sideBarTitle"
             [tagEntry]="tagEntry"
-            (newTagSave)="onNewTagSave($event)"></sidebar>
+            (newTagSave)="onNewTagSave($event)"
+            [updateIndicator]="updateIndicator"
+            [changeIndicator]="changeIndicator"
+            [updateType]="updateType"></sidebar>
 </nz-drawer>
 <ng-template #toolTipTemplate>
     <p>test text</p>
