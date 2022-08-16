@@ -83,7 +83,7 @@ export class QuillToolbarComponent implements OnInit{
         this.updateIndicator = false;
         this.changeIndicator = false;
 
-        this.loadPageContent()
+        
 
     }
 
