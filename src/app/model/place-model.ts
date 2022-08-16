@@ -1,3 +1,4 @@
+import { MetaData } from "./meta-data-model";
 
 export interface Place {
   id: number,
@@ -6,6 +7,7 @@ export interface Place {
   area:string,
   date: string,
   notes: string,
-  misc: string[]
+  misc: string[],
+  metaData: MetaData
 }
 

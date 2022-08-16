@@ -1,5 +1,5 @@
 <!-- <div nz-row> -->
-    <div nz-col *ngFor="let widget of this.widgets">
+    <!-- <div nz-col *ngFor="let widget of this.widgets">
         <nz-card [nzBorderless]="false"
         nzTitle="{{widget.title}}"
         [nzActions]="[actionSetting, actionEdit, actionEllipsis]"
@@ -17,5 +17,24 @@
           <ng-template #actionEllipsis>
             <i nz-icon nzType="ellipsis"></i>
           </ng-template>
-    </div>
+    </div> -->
+    <div nz-col *ngFor="let tag of this.pages[0].tags | keyvalue">
+      <nz-card [nzBorderless]="false"
+      nzTitle="{{tag.key}}"
+      [nzActions]="[actionSetting, actionEdit, actionEllipsis]"
+      [nzLoading]="loading">
+          <button nz-button nzShape="round"
+          *ngFor="let widget of tag.value"
+          (click)="goToTagInPage(widget.metaData.range)"><img [src]="getImgSrc(tag.key)"/>{{widget.name}}</button>
+      </nz-card>
+      <ng-template #actionSetting>
+          <i nz-icon nzType="setting"></i>
+        </ng-template>
+        <ng-template #actionEdit>
+          <i nz-icon nzType="edit"></i>
+        </ng-template>
+        <ng-template #actionEllipsis>
+          <i nz-icon nzType="ellipsis"></i>
+        </ng-template>
+  </div>
 <!-- </div> -->

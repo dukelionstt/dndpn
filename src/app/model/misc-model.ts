@@ -1,3 +1,4 @@
+import { MetaData } from "./meta-data-model"
 
 export interface Misc {
   id: number,
@@ -5,5 +6,6 @@ export interface Misc {
   date: string,
   notes: string,
   misc: string[]
+  metaData: MetaData
 }
 

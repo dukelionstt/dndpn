@@ -31,7 +31,8 @@ export class AppComponent {
   }
 
   save(){
-    this.document = this.quill.getContents();
+    // this.document = this.quill.getContents();
+    this.document = this.quill.root.innerHTML;
   }
 
 }

@@ -6,5 +6,8 @@ export interface TagEntry{
     notes: string,
     location: string,
     area: string,
-    itemtype: string[]
+    itemtype: string[],
+    range: number,
+    buttonIndex: number,
+    lenght: number
 }
