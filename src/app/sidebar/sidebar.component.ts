@@ -73,32 +73,32 @@ export class SidebarComponent implements OnInit{
         let id = 0;
         if(this.updateIndicator){
             tags = this.pages[0].tags.get(this.updateType);
-            id = tags.id
+            id = this.tagEntry.id
 
-            if(tags.name != this.tagEntry.name){
+            if(tags[id].name != this.tagEntry.name){
                 this.changeIndicator = true;
             }
-            tags[id] = this.convertEntry(this.updateType);
+            tags[id] = this.convertEntry(this.updateType, id);
             this.pages[0].tags.set(this.sideBarTitle, tags);
 
         } else {
             tags = this.pages[0].tags.get(this.sideBarTitle);
             id = tags.length
-            tags.push(this.convertEntry(this.sideBarTitle));
+            tags.push(this.convertEntry(this.sideBarTitle, id));
             this.pages[0].tags.set(this.sideBarTitle, tags);
         }
 
         
 
-        this.newTagSave.emit(id);
+        this.newTagSave.emit([id, this.changeIndicator]);
     }
 
-    convertEntry(objectType: string): any{
+    convertEntry(objectType: string, id: number): any{
 
         switch(objectType){
             case PERSON:
                 let person: Person = {
-                    id: this.tagEntry.id!,
+                    id: id,
                     name: this.tagEntry.name!,
                     date: this.tagEntry.date,
                     misc: this.tagEntry.misc,
@@ -112,7 +112,7 @@ export class SidebarComponent implements OnInit{
                 return person
             case PLACE:
                 let place: Place = {
-                    id: this.tagEntry.id!,
+                    id: id,
                     name: this.tagEntry.name!,
                     location: this.tagEntry.location!,
                     area: this.tagEntry.area!,
@@ -128,7 +128,7 @@ export class SidebarComponent implements OnInit{
                 return place
             case ITEM:
                 let item: Item = {
-                    id: this.tagEntry.id!,
+                    id: id,
                     name: this.tagEntry.name!,
                     type: this.tagEntry.itemtype,
                     date: this.tagEntry.date,
@@ -143,7 +143,7 @@ export class SidebarComponent implements OnInit{
                 return item
             case MISC:
                 let misc: Misc = {
-                    id: this.tagEntry.id!,
+                    id: id,
                     name: this.tagEntry.name!,
                     date: this.tagEntry.date,
                     misc: this.tagEntry.misc,

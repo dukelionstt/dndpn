@@ -14,7 +14,7 @@ export const PERSONS: Person[] = [
     }
   },
   {date: '', 
-    id: 0,
+    id: 1,
     name: 'Cat', 
     notes: '', 
     misc: [], 
@@ -23,5 +23,5 @@ export const PERSONS: Person[] = [
       length: 3,
       range: 34
     }
-  },
+  }
 ]
