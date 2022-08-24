@@ -44,7 +44,7 @@ export class QuillToolbarComponent implements OnInit{
 
     icons = new Map();
     buttonEvents = new Map();
-    
+
 
     constructor( private renderer:Renderer2, private elementRef: ElementRef, private log: LoggerService){}
 
@@ -79,13 +79,14 @@ export class QuillToolbarComponent implements OnInit{
         this.updateIndicator = false;
         this.changeIndicator = false;
         this.loadingContent = false;
-        
+
         this.log.info(`initilising variables for puill tool bar:: finished`)
     }
 
     private loadPageContent(){
       this.log.info(`setting text content :: Started`);
-      this.quill.setContents(this.pages[0].page)
+      // this.quill.setContents(this.pages[0].page)
+      this.quill.root.innerHTML = this.pages[0].page;
       this.log.info(`setting text content :: Finished`);
 
       this.log.info(`Applying event handlers to taged words :: Started`);
@@ -103,8 +104,8 @@ export class QuillToolbarComponent implements OnInit{
           this.log.debug(`Attacking click of ${tag.name}`)
           this.attachClickEvent(tagtype, tag.metaData.buttonIndex)
         }
-        this.buttonEvents.set(tagtype, tagSet.length+1)
-        this.log.info(`buttonevent tracker updated for ${tagtype} to ${tagSet.length+1}`)
+        this.buttonEvents.set(tagtype, tagSet.length)
+        this.log.info(`buttonevent tracker updated for ${tagtype} to ${tagSet.length}`)
     }
 
     //id resolved next step is to stop duplicate entries is the user clicks on the tag and no change has occured to the
@@ -128,8 +129,8 @@ export class QuillToolbarComponent implements OnInit{
 
           this.quill.removeFormat(range, length);
           this.log.debug(`previous word removed`)
-          this.updateTextInPage(range, this.updateType, this.pages[0].tags.get(this.updateType)[id].name)
-        
+          this.updateTextInPage(range, this.updateType, this.forValue(this.pages[0].tags.get(this.updateType)[id].name, this.updateType))
+
           this.attachClickEvent(this.sideBarTitle, id)
           this.changeIndicator = false
         }
@@ -182,10 +183,11 @@ export class QuillToolbarComponent implements OnInit{
 
       //finds the button all the buttons on the page that matches the class passed in eg person
       //and there is also two systems to find out which button this is, first is a running count map for all
-      //new button added to the page. The 
+      //new button added to the page. The
       let button: any;
       if(this.changeIndicator || this.loadingContent){
         this.log.debug(`Running a change : ${this.changeIndicator} or loading : ${this.loadingContent}`)
+        this.log.debug(`Updating button that matches index number: ${this.pages[0].tags.get(buttonClass)[id].metaData.buttonIndex}`)
         button = this.elementRef.nativeElement.querySelectorAll(queryString)[this.pages[0].tags.get(buttonClass)[id].metaData.buttonIndex];
       } else {
         this.log.debug(`Running a new button`)
@@ -207,7 +209,7 @@ export class QuillToolbarComponent implements OnInit{
         //store the increment
         this.buttonEvents.set(buttonClass, count);
         this.log.debug(`button set ${buttonClass} has been updated to ${count}`)
-        
+
       }
       this.log.info(`attach click envent :: Finish`)
     }
@@ -224,7 +226,7 @@ export class QuillToolbarComponent implements OnInit{
     tagViewAndUpdate(event: any, id: number, type: string){
       let tagData = this.pages[0].tags.get(type)[id]
       this.displayDataSidebar(tagData, type);
-      
+
       this.sideBarTitle = type
       this.updateIndicator = true;
       this.updateType = type;
@@ -241,6 +243,7 @@ export class QuillToolbarComponent implements OnInit{
             this.tagEntry.misc = tagData.misc
             this.tagEntry.notes = tagData.notes
             this.tagEntry.range = tagData.metaData.range
+            this.tagEntry.buttonIndex = tagData.metaData.buttonIndex
         break;
         case PLACE:
             this.tagEntry.id = tagData.id
@@ -251,6 +254,7 @@ export class QuillToolbarComponent implements OnInit{
             this.tagEntry.misc = tagData.misc
             this.tagEntry.notes = tagData.notes
             this.tagEntry.range = tagData.metaData.range
+            this.tagEntry.buttonIndex = tagData.metaData.buttonIndex
         break;
         case ITEM:
             this.tagEntry.id = tagData.id
@@ -260,6 +264,7 @@ export class QuillToolbarComponent implements OnInit{
             this.tagEntry.misc = tagData.misc
             this.tagEntry.notes = tagData.notes
             this.tagEntry.range = tagData.metaData.range
+            this.tagEntry.buttonIndex = tagData.metaData.buttonIndex
         break;
         case MISC:
             this.tagEntry.id = tagData.id
@@ -268,6 +273,7 @@ export class QuillToolbarComponent implements OnInit{
             this.tagEntry.misc = tagData.misc
             this.tagEntry.notes = tagData.notes
             this.tagEntry.range = tagData.metaData.range
+            this.tagEntry.buttonIndex = tagData.metaData.buttonIndex
         break;
         default:
             break
@@ -277,7 +283,7 @@ export class QuillToolbarComponent implements OnInit{
 
     created(editor: any){
         this.log.info(`Quill editor created`)
-        
+
         this.quill = editor;
         this.newQuillEditor.emit(this.quill)
         this.log.info(`new editor announced and shared`)
@@ -292,7 +298,7 @@ export class QuillToolbarComponent implements OnInit{
         } finally {
           this.loadingContent = false;
         }
-        
+
 
         this.quill.focus()
     }

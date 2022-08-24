@@ -88,7 +88,7 @@ export class SidebarComponent implements OnInit{
             this.pages[0].tags.set(this.sideBarTitle, tags);
         }
 
-        
+
 
         this.newTagSave.emit([id, this.changeIndicator]);
     }
@@ -106,7 +106,7 @@ export class SidebarComponent implements OnInit{
                     metaData: {
                         range: this.tagEntry.range,
                         length: this.tagEntry.name.length,
-                        buttonIndex: 0
+                        buttonIndex: this.tagEntry.buttonIndex
                     }
                 }
                 return person
@@ -122,7 +122,7 @@ export class SidebarComponent implements OnInit{
                     metaData: {
                         range: this.tagEntry.range,
                         length: this.tagEntry.name.length,
-                        buttonIndex: 0
+                        buttonIndex: this.tagEntry.buttonIndex
                     }
                 }
                 return place
@@ -137,7 +137,7 @@ export class SidebarComponent implements OnInit{
                     metaData: {
                         range: this.tagEntry.range,
                         length: this.tagEntry.name.length,
-                        buttonIndex: 0
+                        buttonIndex: this.tagEntry.buttonIndex
                     }
                 }
                 return item
@@ -151,7 +151,7 @@ export class SidebarComponent implements OnInit{
                     metaData: {
                         range: this.tagEntry.range,
                         length: this.tagEntry.name.length,
-                        buttonIndex: 0
+                        buttonIndex: this.tagEntry.buttonIndex
                     }
                 }
                 return misc
