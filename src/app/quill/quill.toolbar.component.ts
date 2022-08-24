@@ -34,6 +34,8 @@ export class QuillToolbarComponent implements OnInit{
     changeIndicator!: boolean;
     loadingContent!: boolean;
     updateType!: string;
+    toolType!: string;
+    toolId!: number;
 
     personTag: string = PERSON
     placeTag: string = PLACE
@@ -221,6 +223,11 @@ export class QuillToolbarComponent implements OnInit{
     close(){
 
         this.visible = false;
+    }
+
+    toolTipIdAndTypeSet(event: any){
+      this.toolId = event.id
+      this.toolType = event.type
     }
 
     tagViewAndUpdate(event: any, id: number, type: string){

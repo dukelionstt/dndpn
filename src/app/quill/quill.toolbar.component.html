@@ -166,6 +166,7 @@
             [updateType]="updateType"></sidebar>
 </nz-drawer>
 <ng-template #toolTipTemplate>
-    <p>test text</p>
-    <button>test</button>
+    <tooltip [toolType]="type"
+              [toolId]="id"
+              [pages]="pages"></tooltip>
 </ng-template>
