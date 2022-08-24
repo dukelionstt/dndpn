@@ -8,9 +8,7 @@ export interface Page{
   name: string,
   type: string,
   date: string,
-  person: Person[],
-  place: Place[],
-  item: Item[],
-  misc: Misc[]
+  tags: Map<string, any>,
+  page: any
 
 }

@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, Output, SimpleChanges, EventEmitter } from "@angular/core";
+import { Component, Input, OnInit, Output, EventEmitter } from "@angular/core";
 import { ITEM, MISC, PERSON, PLACE } from "../constants";
 import { ItemTypesService } from "../data/item.types.service";
 
@@ -14,7 +14,7 @@ import { TagEntry } from "../model/tag-entry-model";
     selector: 'sidebar',
     templateUrl: './sidebar.component.html'
 })
-export class SidebarComponent implements OnInit, OnChanges{
+export class SidebarComponent implements OnInit{
 
     @Input()
     pages!: Page[];
@@ -25,6 +25,15 @@ export class SidebarComponent implements OnInit, OnChanges{
     @Input()
     tagEntry!: TagEntry;
 
+    @Input()
+    updateIndicator!: boolean;
+
+    @Input()
+    changeIndicator!: boolean;
+
+    @Input()
+    updateType!: string;
+
     @Output()
     newTagSave = new EventEmitter<any>();
 
@@ -32,9 +41,9 @@ export class SidebarComponent implements OnInit, OnChanges{
     listOfTags: Array<{value:string, label:string}> = [];
     listOfItemTypes: Array<{value:string, label:string}> = [];
     date: Date = new Date()
-    
 
-    
+
+
 
     // dateString:string = this.date.getDay().toLocaleString() +"/"+ this.date.getMonth.toString() +"/"+ this.date.getFullYear.toString();
     constructor(private tagsDropdown: TagsDropdownService,
@@ -43,33 +52,12 @@ export class SidebarComponent implements OnInit, OnChanges{
     ngOnInit(): void {
         this.listOfTags = this.tagsDropdown.getListOfTags(this.sideBarTitle);
         this.listOfItemTypes = this.intemTypeDropdown.getListofItemTypes();
-        
+
         // this.validateForm = this.formbuilder.group({
         //   personNameTxtBx: null,
         //   personNotesTxtAr: null,
         //   personDateLbl: null
         // })
-    }
-
-    ngOnChanges(changes: SimpleChanges): void {
-        // for(const propName in changes){
-        //     if(propName == 'textSelection'){
-        //         if(changes[propName].currentValue != ''){
-        //             this.tagEntry.name = changes[propName].currentValue
-        //             this.tagEntry.misc = [this.sideBarTitle, changes[propName].currentValue]
-        //         }
-        //     } else if(propName == 'sideBarTitle'){
-        //         if(changes[propName].currentValue != ''){
-        //             if(this.tagEntry.name != undefined || this.tagEntry.name != ''){
-        //                 this.tagEntry.misc = [this.sideBarTitle, this.tagEntry.name]
-        //             } else {
-        //                 this.tagEntry.misc = [this.sideBarTitle]
-        //             }
-                    
-        //         }
-        //     }
-        //     console.log(propName)
-        // }
     }
 
     save(){
@@ -81,68 +69,90 @@ export class SidebarComponent implements OnInit, OnChanges{
     }
 
     tagSave(){
-        switch(this.sideBarTitle){
-            case PERSON:
-                this.pages[0].person.push(this.convertEntry(this.sideBarTitle));
-            break;
-            case PLACE:
-                this.pages[0].place.push(this.convertEntry(this.sideBarTitle));
-            break;
-            case ITEM:
-                this.pages[0].item.push(this.convertEntry(this.sideBarTitle));
-            break;
-            case MISC:
-                this.pages[0].misc.push(this.convertEntry(this.sideBarTitle));
-            break;
+        let tags: any;
+        let id = 0;
+        if(this.updateIndicator){
+            tags = this.pages[0].tags.get(this.updateType);
+            id = this.tagEntry.id
+
+            if(tags[id].name != this.tagEntry.name){
+                this.changeIndicator = true;
+            }
+            tags[id] = this.convertEntry(this.updateType, id);
+            this.pages[0].tags.set(this.sideBarTitle, tags);
+
+        } else {
+            tags = this.pages[0].tags.get(this.sideBarTitle);
+            id = tags.length
+            tags.push(this.convertEntry(this.sideBarTitle, id));
+            this.pages[0].tags.set(this.sideBarTitle, tags);
         }
 
-        this.newTagSave.emit(1);
+
+
+        this.newTagSave.emit([id, this.changeIndicator]);
     }
 
-    toggleSideBar(type:string, flag:boolean){
-        //placeholder
-    }
-
-    convertEntry(objectType: string): any{
+    convertEntry(objectType: string, id: number): any{
 
         switch(objectType){
             case PERSON:
                 let person: Person = {
-                    id: this.tagEntry.id!,
+                    id: id,
                     name: this.tagEntry.name!,
                     date: this.tagEntry.date,
                     misc: this.tagEntry.misc,
-                    notes: this.tagEntry.notes!
+                    notes: this.tagEntry.notes!,
+                    metaData: {
+                        range: this.tagEntry.range,
+                        length: this.tagEntry.name.length,
+                        buttonIndex: this.tagEntry.buttonIndex
+                    }
                 }
                 return person
             case PLACE:
                 let place: Place = {
-                    id: this.tagEntry.id!,
+                    id: id,
                     name: this.tagEntry.name!,
                     location: this.tagEntry.location!,
                     area: this.tagEntry.area!,
                     date: this.tagEntry.date,
                     misc: this.tagEntry.misc,
-                    notes: this.tagEntry.notes!
+                    notes: this.tagEntry.notes!,
+                    metaData: {
+                        range: this.tagEntry.range,
+                        length: this.tagEntry.name.length,
+                        buttonIndex: this.tagEntry.buttonIndex
+                    }
                 }
                 return place
             case ITEM:
                 let item: Item = {
-                    id: this.tagEntry.id!,
+                    id: id,
                     name: this.tagEntry.name!,
                     type: this.tagEntry.itemtype,
                     date: this.tagEntry.date,
                     misc: this.tagEntry.misc,
-                    notes: this.tagEntry.notes!
+                    notes: this.tagEntry.notes!,
+                    metaData: {
+                        range: this.tagEntry.range,
+                        length: this.tagEntry.name.length,
+                        buttonIndex: this.tagEntry.buttonIndex
+                    }
                 }
                 return item
             case MISC:
                 let misc: Misc = {
-                    id: this.tagEntry.id!,
+                    id: id,
                     name: this.tagEntry.name!,
                     date: this.tagEntry.date,
                     misc: this.tagEntry.misc,
-                    notes: this.tagEntry.notes!
+                    notes: this.tagEntry.notes!,
+                    metaData: {
+                        range: this.tagEntry.range,
+                        length: this.tagEntry.name.length,
+                        buttonIndex: this.tagEntry.buttonIndex
+                    }
                 }
                 return misc
             default:
