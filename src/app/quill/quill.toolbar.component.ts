@@ -62,20 +62,7 @@ export class QuillToolbarComponent implements OnInit{
         this.buttonEvents.set(ITEM, 0);
         this.buttonEvents.set(MISC, 0);
 
-        this.tagEntry = {
-            id: 0,
-            name: '',
-            date: '',
-            misc: [],
-            notes: '',
-            location: '',
-            area: '',
-            itemtype: [],
-            range: 0,
-            buttonIndex: 0,
-            lenght: 0
-
-        }
+        this.tagEntry = this.setupOrClearTagEntry();
 
         this.listenerPresent = false;
         this.updateIndicator = false;
@@ -83,6 +70,23 @@ export class QuillToolbarComponent implements OnInit{
         this.loadingContent = false;
 
         this.log.info(`initilising variables for puill tool bar:: finished`)
+    }
+
+    private setupOrClearTagEntry(){
+      return {
+        id: 0,
+        name: '',
+        date: '',
+        misc: [],
+        notes: '',
+        location: '',
+        area: '',
+        itemtype: [],
+        range: 0,
+        buttonIndex: 0,
+        lenght: 0
+
+      }
     }
 
     private loadPageContent(){
@@ -131,7 +135,7 @@ export class QuillToolbarComponent implements OnInit{
 
           this.quill.removeFormat(range, length);
           this.log.debug(`previous word removed`)
-          this.updateTextInPage(range, this.updateType, this.forValue(this.pages[0].tags.get(this.updateType)[id].name, this.updateType))
+          this.updateTextInPage(range, this.updateType, this.forValue(this.pages[0].tags.get(this.updateType)[id].name, this.updateType, id))
 
           this.attachClickEvent(this.sideBarTitle, id)
           this.changeIndicator = false
@@ -144,12 +148,12 @@ export class QuillToolbarComponent implements OnInit{
           this.log.debug(`text present true`)
           this.quill.deleteText(this.range.index, this.text.length)
           this.log.debug(`Removed the previous word`)
-          this.updateTextInPage(this.range.index, this.sideBarTitle, this.forValue(this.text, this.sideBarTitle));
+          this.updateTextInPage(this.range.index, this.sideBarTitle, this.forValue(this.text, this.sideBarTitle, id));
 
           this.textPresent = false;
       } else {
         this.log.debug(`text present false`)
-          this.updateTextInPage(this.range.index, this.sideBarTitle, this.forValue(this.pages[0].tags.get(this.sideBarTitle)[id].name, this.sideBarTitle));
+          this.updateTextInPage(this.range.index, this.sideBarTitle, this.forValue(this.pages[0].tags.get(this.sideBarTitle)[id].name, this.sideBarTitle, id));
 
           this.textPresent = false;
       }
@@ -160,9 +164,42 @@ export class QuillToolbarComponent implements OnInit{
       this.close();
     }
 
-    private forValue(text: string, icontype: string){
+    private forValue(text: string, icontype: string, id: number){
       this.log.debug(`setting ${this.icons.get(icontype) + text}`)
-      return  this.icons.get(icontype) + text
+      return  this.icons.get(icontype) + text + this.setTooltip(icontype, id);
+    }
+
+    private setTooltip(type: string, id: number){
+
+      let tooltip = '';
+
+      switch(type){
+        case PERSON:
+          tooltip = '<div class="tooltip"><p>Notes:' + this.pages[0].tags.get(type)[id].notes + '</p></div>'
+        break;
+        case PLACE:
+          tooltip = '<div class="tooltip">' +
+                    '<p>Location:' + this.pages[0].tags.get(type)[id].location + '</p>' +
+                    '<p>Area:' + this.pages[0].tags.get(type)[id].area + '</p>' +
+                    '<p>Notes:' + this.pages[0].tags.get(type)[id].notes + '</p>' +
+                  '</div>'
+        break;
+        case ITEM:
+          tooltip = '<div class="tooltip">' +
+                '<p>Type:' + this.pages[0].tags.get(type)[id].type + '</p>' +
+                '<p>Notes:' + this.pages[0].tags.get(type)[id].notes + '</p>' +
+              '</div>'
+        break;
+        case MISC:
+          tooltip = '<div class="tooltip">' +
+                '<p>Notes:' + this.pages[0].tags.get(type)[id].notes + '</p>' +
+              '</div>'
+        break;
+        default:
+        break;
+      }
+
+      return tooltip;
     }
 
     private updateTextInPage(index: number, type: string, text: string){
@@ -197,6 +234,7 @@ export class QuillToolbarComponent implements OnInit{
       }
       //adds the event to the button
       this.renderer.listen(button, 'click', (event) => this.tagViewAndUpdate(event, id, buttonClass));
+      this.renderer.listen(button, 'hover', (event) => this.toolTipIdAndTypeSet(event, id, buttonClass));
       this.log.debug(`click applied to button wth id = ${id}`)
 
       if(!this.changeIndicator && !this.loadingContent){
@@ -221,13 +259,13 @@ export class QuillToolbarComponent implements OnInit{
     }
 
     close(){
-
         this.visible = false;
+        this.tagEntry = this.setupOrClearTagEntry();
     }
 
-    toolTipIdAndTypeSet(event: any){
-      this.toolId = event.id
-      this.toolType = event.type
+    toolTipIdAndTypeSet(event: any, id: number, type: string){
+      this.toolId = id
+      this.toolType = type
     }
 
     tagViewAndUpdate(event: any, id: number, type: string){
@@ -284,7 +322,7 @@ export class QuillToolbarComponent implements OnInit{
         break;
         default:
             break
-    }
+      }
 
     }
 
