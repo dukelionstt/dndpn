@@ -1,0 +1,9 @@
+{
+    "id": 1,
+    "name": "testing Notebook",
+    "date": "26/08/2022",
+    "type": "DND",
+    "pages": [
+        "src/app/mock-data/page-mock.json"
+    ]
+}
