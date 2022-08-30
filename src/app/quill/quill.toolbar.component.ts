@@ -269,13 +269,17 @@ export class QuillToolbarComponent implements OnInit{
     }
 
     tagViewAndUpdate(event: any, id: number, type: string){
+      this.log.info(`starting the tag update view`)
       let tagData = this.pages[0].tags.get(type)[id]
+      this.log.debug(tagData)
       this.displayDataSidebar(tagData, type);
 
       this.sideBarTitle = type
       this.updateIndicator = true;
       this.updateType = type;
+      this.log.debug(`opening the side menu`)
       this.open();
+      this.log.info(`finishing the tag update view`)
     }
 
     private displayDataSidebar(tagData: any, type: string){

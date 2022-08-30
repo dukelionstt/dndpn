@@ -1,8 +1,12 @@
 var express = require('express');
 var app = express();
 var fs = require("fs");
+const bodyParser = require("body-parser");
 
-const apiUrl = "/file/"
+const apiUrl = "/api/file/"
+
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 app.get('/test', function (req, res) {
    res.send('Hello World smeg heads');
@@ -19,7 +23,8 @@ app.post(apiUrl + 'get', function(req, res){
 
 app.post(apiUrl + 'save', function(req, res){
   const fileConent = req.body.fileConent
-  const fileName = req.body.fileConent
+  let fileName = req.body.fileConent
+
   fs.wrtieFile(fileName, fileConent, err => {
     if(err){
       res.body = JSON.parse('{ "message" : "could not save file "' + fileName + ', "error" : "' + err + '"}')

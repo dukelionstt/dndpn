@@ -9,7 +9,7 @@
         "id": 0,
         "name": "Dave", 
         "notes": "", 
-        "misc": [], 
+        "misc": ["Dave", "Person"], 
         "metaData": {
           "buttonIndex": 0,
           "length": 4,
@@ -21,7 +21,7 @@
         "id": 1,
         "name": "Cat", 
         "notes": "", 
-        "misc": [], 
+        "misc": ["Cat", "Person"], 
         "metaData": {
           "buttonIndex": 1,
           "length": 3,
