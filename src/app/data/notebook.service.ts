@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { EventEmitter, Injectable, Output } from '@angular/core';
 import { LoggerService } from '../logger.service';
 import { NOTEBOOK } from '../mock-data/notebook-mock';
-// import { ipcRenderer } from 'electron'
+import { Observable } from 'rxjs';
 
 
 @Injectable({
@@ -11,23 +11,21 @@ import { NOTEBOOK } from '../mock-data/notebook-mock';
 export class NotebookService {
   // notebookPath: string = __dirname + 'src/app/mock-data/notebook-mock.json';
 
-  getNoteBook(){
+  getNoteBook(): Observable<any> {
+    console.log("setting api")
+    return this.http.post<any>("https://putsreq.com/QBHL6qYUM0QANvDakaPG", {name: "Smeg Head"})
 
-    let noteBook: any;
-
-    // fetch("E:/backup/dndpn/src/app/mock-data/notebook-mock.json")
-    // .then(responce => responce.text())
-    // .then(data => {
-    //   this.log.debug(data);
-    //   noteBook = data
-    // })
-    this.log.debug("calling api")
-    this.log.debug(this.http.get<string>("https://localhost:8081/test"));
-    this.log.debug("api called")
-
-    return NOTEBOOK
+    // return NOTEBOOK
   }
 
-  constructor(private log: LoggerService, private http: HttpClient) { 
+  constructor(private log: LoggerService, private http: HttpClient) {
+  }
+
+  callAPi(){
+    this.notePadServer.getSomething().subscribe(data => {
+      console.log("api called")
+      console.log(`api content ${data.message}`)
+      console.log('api finished')
+    })
   }
 }
