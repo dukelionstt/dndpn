@@ -36,7 +36,12 @@ registerLocaleData(en);
     AppComponent,
     QuillToolbarComponent,
     TagListComponent,
+<<<<<<< HEAD
     SidebarComponent ],
+=======
+    SidebarComponent
+  ],
+>>>>>>> develop
   imports: [
     BrowserModule,
     QuillModule.forRoot(),

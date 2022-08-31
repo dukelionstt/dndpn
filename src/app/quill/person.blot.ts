@@ -8,7 +8,7 @@ export class PersonBlot extends Embed {
   static create(value:string) {
     let node = super.create(value);
 
-    node.setAttribute("class", PERSON);
+    node.setAttribute("class", PERSON + " bottom");
     node.innerHTML = value;
 
     return node;
