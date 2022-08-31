@@ -2,12 +2,38 @@
 @import '~quill/dist/quill.snow.css';
 
 
-button.person {
-    border: none;
-    color: #008080;
-    border-bottom: 1px dotted;
-    border-bottom-color: #008080;
-    background-color: white;
+.person {
+
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg id='squiggle-link' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:ev='http://www.w3.org/2001/xml-events' viewBox='0 0 20 4'%3E%3Cstyle type='text/css'%3E.squiggle{animation:shift .75s linear infinite;}@keyframes shift {from {transform:translateX(0);}to {transform:translateX(-20px);}}%3C/style%3E%3Cpath fill='none' stroke='%23008080' stroke-width='1' class='squiggle' d='M0,3.5 c 5,0,5,-3,10,-3 s 5,3,10,3 c 5,0,5,-3,10,-3 s 5,3,10,3'/%3E%3C/svg%3E");
+  background-position: 0 100%;
+  background-size: auto 6px;
+  background-repeat: repeat-x;
+  text-decoration: none;
+  border: none;
+  position: relative;
+    /* color: #008080; */
+    /* border-bottom: 1px dotted; */
+    /* border-bottom-color: #008080; */
+    /* background-color: white; */
+  transition: all 0.3s ease-in-out;
+}
+
+.personHighlight {
+  position: relative;
+}
+
+.personHighlight::before {
+  /* Highlight color */
+  background-color: #008080;
+
+  content: "";
+  position: absolute;
+  width: calc(100% + 4px);
+  height: 60%;
+  left: -2px;
+  bottom: 0;
+  z-index: -1;
+  transform: rotate(-2deg);
 }
 
 button.place {
@@ -42,7 +68,10 @@ button.misc {
     max-height: 125px;
     overflow-y: auto;
 }
-html, body { height: 100%; }
+html, body {
+  height: 100%;
+}
+
 /* body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; } */
 
 
@@ -51,25 +80,39 @@ html, body { height: 100%; }
     visibility: hidden;
     z-index: 1;
     opacity: .40;
-    
+
     width: 150px;
     padding: 0px 20px;
 
     background: #333;
-    
+
     position: absolute;
     top:-140%;
     left: -25%;
-    
+
 
     border-radius: 9px;
     /* font: 16px; */
 
     transform: translateY(9px);
     transition: all 0.3s ease-in-out;
-    
+
     box-shadow: 0 0 3px rgba(56, 54, 54, 0.86);
 }
+
+/* .tooltip::after {
+  content: " ";
+  width: 0;
+  height: 0;
+
+  border-style: solid;
+  border-width: 12px 12.5px 0 12.5px;
+  border-color: #333 transparent transparent transparent;
+
+  position: absolute;
+  left: 40%;
+
+} */
 
 .person:hover .tooltip{
 
@@ -83,25 +126,25 @@ html, body { height: 100%; }
 }
 @keyframes odsoky {
     0%{
-    transform: translateY(6px); 
+    transform: translateY(6px);
     }
 
     100%{
-    transform: translateY(1px); 
+    transform: translateY(1px);
     }
 
 }
 
 /*hover ToolTip*/
-.person:hover {transform: translateY(6px);}
+/* .person:hover {transform: translateY(6px);} */
 
 
 
 /*bottom*/
 
-.person .tooltip { top:115%; left:-20%; }
+.bottom .tooltip { top:115%; left:-20%; }
 
-.person .tooltip::after{
+.bottom .tooltip::after{
     top:-17%;
     left:40%;
     transform: rotate(180deg);
