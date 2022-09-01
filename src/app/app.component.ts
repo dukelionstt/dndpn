@@ -6,6 +6,7 @@ import { NotebookService } from './data/notebook.service';
 import { NoteBook } from './model/notebook-model';
 import { Page } from './model/page-model';
 import { LoggerService } from './logger.service';
+import { NOTEBOOK } from './mock-data/notebook-mock';
 
 PersonBlot["blotName"] = 'person';
 PersonBlot["tagName"] = 'button';
@@ -24,17 +25,21 @@ export class AppComponent implements OnInit {
   document!: any;
   noteBook!: NoteBook;
   pages!: Page[];
+  highlightMap!: Map<string, number[]>;
 
   constructor(private noteBookservice: NotebookService, private log: LoggerService){}
 
   ngOnInit(): void {
     this.log.info(`setting up notebook`)
-    this.noteBookservice.getNoteBook().subscribe((data: any) => {
-      this.log.info(`notebook setup start`)
-      this.noteBook = this.noteBookservice.buildNoteBook(data)
-      this.pages = this.noteBook.pages
-      this.log.info(`notebook setup finish`)
-    });
+    // this.noteBookservice.getNoteBook().subscribe((data: any) => {
+    //   this.log.info(`notebook setup start`)
+    //   this.noteBook = this.noteBookservice.buildNoteBook(data)
+    //   this.pages = this.noteBook.pages
+    //   this.log.info(`notebook setup finish`)
+    // });
+
+    this.noteBook = NOTEBOOK
+    this.pages = this.noteBook.pages
     
   }
 
@@ -51,6 +56,11 @@ export class AppComponent implements OnInit {
     } catch(error){
       this.log.error(`notebook not saved`)
     }
+  }
+
+  highlightTag(map: Map<string, number[]>){
+    this.log.debug(`Event recieved, got ${map}, setting that to highlightMap`)
+    this.highlightMap = map
   }
 
 }

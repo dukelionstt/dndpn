@@ -2,14 +2,16 @@
 <nz-layout>
   <nz-sider>
     <tag-list [quill]="quill"
-              [pages]="pages"></tag-list>
+              [pages]="pages"
+              (highlightTag)="highlightTag($event)"></tag-list>
   </nz-sider>
   <nz-layout>
     <nz-content>
       <!-- [pages] is passing main data object for this page
             (newQuillEditor) is to get the editor object -->
       <toolbar [pages]="pages"
-                (newQuillEditor)="setNewQuillEditor($event)"></toolbar>
+                (newQuillEditor)="setNewQuillEditor($event)"
+                [highlightMap]="highlightMap"></toolbar>
       {{this.pages | json}}
       <button nz-button (click)="save()">Save</button>
       {{this.document}}

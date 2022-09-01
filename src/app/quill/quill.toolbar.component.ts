@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2 } from "@angular/core";
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, OnChanges, SimpleChange } from "@angular/core";
 import { ITEM, MISC, PERSON, PLACE } from "../constants";
 import { LoggerService } from "../logger.service";
 import { Page } from "../model/page-model";
@@ -19,6 +19,9 @@ export class QuillToolbarComponent implements OnInit{
 
     @Input()
     quill!: any;
+
+    @Input()
+    highlightMap!: Map<string, number[]>;
 
     @Output() newQuillEditor = new EventEmitter<any>();
     // @Output() pagesChange = new EventEmitter<any>();
@@ -370,6 +373,37 @@ export class QuillToolbarComponent implements OnInit{
       this.tagEntry.range = this.range.index
 
       this.open();
+    }
+
+    ngOnChanges(changes: {[propKey: string]: SimpleChange}){
+      for(let propName in changes){
+        this.log.debug(`changed detected ${propName}`)
+        if(propName == "highlightMap"){
+          let change = changes[propName]
+          if(change.isFirstChange()){
+            this.log.debug(`First time highlightedMap is set with ${this.highlightMap}`)
+          } else {
+              this.highlightMap.forEach((val: number[], key:string) => {
+                this.highlightTag(val, key)
+              })
+          }
+        }
+      }
+    }
+
+    highlightTag(ids: number[], type: string){
+        
+      for(let id of ids){
+        this.applyHighlight(id, type)
+      }
+
+    }
+
+    private applyHighlight(id: number, type: string){
+      let button = this.elementRef.nativeElement.querySelectorAll("."+type)[id]
+      
+      // this.renderer.removeClass(button, "person")
+      this.renderer.addClass(button, type+"Highlight")
     }
 
 }

@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Renderer2, Sanitizer } from "@angular/core";
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, Sanitizer } from "@angular/core";
 import { DomSanitizer } from "@angular/platform-browser";
 import { ITEM, MISC, PERSON, PLACE } from "../constants";
 import { WidgetsListService } from "../data/widgets.list.service";
@@ -21,6 +21,8 @@ export class TagListComponent implements OnInit{
 
   @Input()
   pages!: Page[];
+
+  @Output() highlightTag = new EventEmitter();
 
   tag = 'person';
 
@@ -48,13 +50,11 @@ export class TagListComponent implements OnInit{
 
   goToTagInPage(index:number, type: string){
     // this.quill.setSelection(index,1)
-    this.log.debug(`widget tag clicked, following passed in - index: ${index} & type: ${type}`)
-    this.log.debug(`queryselector sring: ${"."+type}`)
-    let button = this.elementRef.nativeElement.querySelectorAll("."+type)[index]
-    this.log.debug(button)
-    this.renderer.removeClass(button, "person")
-    this.renderer.addClass(button, type+"Highlight")
-
+    let temp = new Map<string, number[]>();
+    temp.set(type, [index])
+    this.log.debug(`highlight tag called, index:${index} & type:${type} passed. This is in tag list component`)
+    this.highlightTag.emit(temp)
+    temp.clear
   }
 
   getImgSrc(imgtype: string){
