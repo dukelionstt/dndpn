@@ -3,7 +3,7 @@
 
 
 .person {
-
+  /* Geoff Graham Squiggle effect on code penn*/
   background-image: url("data:image/svg+xml;charset=utf8,%3Csvg id='squiggle-link' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:ev='http://www.w3.org/2001/xml-events' viewBox='0 0 20 4'%3E%3Cstyle type='text/css'%3E.squiggle{animation:shift .75s linear infinite;}@keyframes shift {from {transform:translateX(0);}to {transform:translateX(-20px);}}%3C/style%3E%3Cpath fill='none' stroke='%23008080' stroke-width='1' class='squiggle' d='M0,3.5 c 5,0,5,-3,10,-3 s 5,3,10,3 c 5,0,5,-3,10,-3 s 5,3,10,3'/%3E%3C/svg%3E");
   background-position: 0 100%;
   background-size: auto 6px;
@@ -23,7 +23,7 @@
 }
 
 .personHighlight::before {
-  /* Highlight color */
+  /* Alvaro - Cool highlight text on code pen */
   background-color: #008080;
 
   content: "";
@@ -72,10 +72,8 @@ html, body {
   height: 100%;
 }
 
-/* body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; } */
 
-
-/* tooltip */
+/* tooltip from Omar Dsooky - CSSToolTip Smooth animation on codepen */
 .tooltip {
     visibility: hidden;
     z-index: 1;
@@ -100,19 +98,6 @@ html, body {
     box-shadow: 0 0 3px rgba(56, 54, 54, 0.86);
 }
 
-/* .tooltip::after {
-  content: " ";
-  width: 0;
-  height: 0;
-
-  border-style: solid;
-  border-width: 12px 12.5px 0 12.5px;
-  border-color: #333 transparent transparent transparent;
-
-  position: absolute;
-  left: 40%;
-
-} */
 
 .person:hover .tooltip{
 
@@ -134,11 +119,6 @@ html, body {
     }
 
 }
-
-/*hover ToolTip*/
-/* .person:hover {transform: translateY(6px);} */
-
-
 
 /*bottom*/
 
