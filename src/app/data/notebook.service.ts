@@ -12,8 +12,6 @@ import { Page } from '../model/page-model';
   providedIn: 'root'
 })
 export class NotebookService {
-  // notebookPath: string = __dirname + 'src/app/mock-data/notebook-mock.json';
-  notebook!: NoteBook;
 
   constructor(private log: LoggerService, private http: HttpClient, private file: FileService) {
   }
@@ -21,6 +19,18 @@ export class NotebookService {
   getNoteBook(){
     this.log.info(`Get notbook service called`)
     return this.file.getFile("E:/backup/dndpn/src/app/mock-data/notebook-mock.json")
+  }
+
+  saveNoteBook(notebook: NoteBook){
+    this.log.info(`saving notebook file service started`)
+    let success = false;
+    this.file.saveFile("E:\\backup\\dndpn\\src\\app\\mock-data\\notebook-mock.json", JSON.stringify(notebook))
+    .subscribe(data => {
+      this.log.debug(data)
+      if(!data.saved){
+        throw data.message
+      } 
+    });
   }
 
   buildNoteBook(obj: any){
@@ -32,7 +42,8 @@ export class NotebookService {
       date: obj.date,
       name: obj.name,
       type: obj.type,
-      pages: this.getPages(obj.pages)
+      pages: this.getPages(obj.pagesLocation),
+      pagesLocation: obj.pagesLocation
     }
     this.log.debug(`Current state of notebook:`)
     this.log.debug(notebook)

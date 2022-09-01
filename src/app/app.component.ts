@@ -45,6 +45,12 @@ export class AppComponent implements OnInit {
   save(){
     // this.document = this.quill.getContents();
     this.document = this.quill.root.innerHTML;
+    try{
+      this.noteBookservice.saveNoteBook(this.noteBook)
+      this.log.info("notebook saved")
+    } catch(error){
+      this.log.error(`notebook not saved`)
+    }
   }
 
 }

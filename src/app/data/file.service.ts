@@ -18,4 +18,9 @@ export class FileService {
     this.log.info(`get file service for ${fileName} called`)
     return this.http.post<any>(this.fileURL + "get", {fileName: fileName})
   }
+
+  saveFile(fileName: string, content:string){
+    this.log.info(`save file service for ${fileName} called`)
+    return this.http.post<any>(this.fileURL+"save",  {fileContent: content, fileName:fileName});
+  }
 }

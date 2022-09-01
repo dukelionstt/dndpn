@@ -2,6 +2,7 @@ var express = require('express');
 var app = express();
 var fs = require("fs");
 const bodyParser = require("body-parser");
+const router = express.Router();
 
 const apiUrl = "/api/file/"
 
@@ -22,15 +23,22 @@ app.post(apiUrl + 'get', function(req, res){
 })
 
 app.post(apiUrl + 'save', function(req, res){
-  const fileConent = req.body.fileConent
-  let fileName = req.body.fileConent
+  const fileContent = req.body.fileContent
+  let fileName = req.body.fileName
 
-  fs.wrtieFile(fileName, fileConent, err => {
+  console.log(req)
+  console.log(fileContent)
+  console.log(fileName)
+
+  fs.writeFile(fileName, fileContent, err => {
     if(err){
-      res.body = JSON.parse('{ "message" : "could not save file "' + fileName + ', "error" : "' + err + '"}')
-    }
+      res.send(SON.parse('{ "saved": false, "message" : "could not save file "' + fileName + ', "error" : "' + err + '"}'))
+    }    
 
   })
+
+  res.send(JSON.parse('{"saved":true}'));
+
 })
 
 var server = app.listen(8081, function () {
