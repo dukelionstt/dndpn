@@ -25,7 +25,7 @@ export class AppComponent implements OnInit {
   document!: any;
   noteBook!: NoteBook;
   pages!: Page[];
-  highlightMap!: Map<string, number[]>;
+  highlightConfig!: {active: boolean, map: Map<string,number[]>}
 
   constructor(private noteBookservice: NotebookService, private log: LoggerService){}
 
@@ -40,7 +40,7 @@ export class AppComponent implements OnInit {
 
     this.noteBook = NOTEBOOK
     this.pages = this.noteBook.pages
-    
+
   }
 
   setNewQuillEditor(editor: any){
@@ -58,9 +58,9 @@ export class AppComponent implements OnInit {
     }
   }
 
-  highlightTag(map: Map<string, number[]>){
-    this.log.debug(`Event recieved, got ${map}, setting that to highlightMap`)
-    this.highlightMap = map
+  highlightTag(config: any){
+    this.log.debug(`Event recieved, got ${config}, setting that to highlightMap`)
+    this.highlightConfig = config
   }
 
 }

@@ -21,7 +21,7 @@ export class QuillToolbarComponent implements OnInit{
     quill!: any;
 
     @Input()
-    highlightMap!: Map<string, number[]>;
+    highlightConfig!: {active: boolean, map: Map<string,number[]>}
 
     @Output() newQuillEditor = new EventEmitter<any>();
     // @Output() pagesChange = new EventEmitter<any>();
@@ -377,33 +377,42 @@ export class QuillToolbarComponent implements OnInit{
 
     ngOnChanges(changes: {[propKey: string]: SimpleChange}){
       for(let propName in changes){
-        this.log.debug(`changed detected ${propName}`)
-        if(propName == "highlightMap"){
+        // this.log.debug(`changed detected ${propName}`)
+        if(propName == "highlightConfig"){
           let change = changes[propName]
           if(change.isFirstChange()){
-            this.log.debug(`First time highlightedMap is set with ${this.highlightMap}`)
+            this.log.debug(`First time highlightedMap is set with ${this.highlightConfig}`)
           } else {
-              this.highlightMap.forEach((val: number[], key:string) => {
-                this.highlightTag(val, key)
+            this.log.debug(`acting on change, iterating map`)
+              this.highlightConfig.map.forEach((val: number[], key:string) => {
+                this.log.debug(`finding button with type: ${key} and passing arry ${val}`)
+                this.highlightTag(val, key, this.highlightConfig.active)
               })
           }
         }
       }
     }
 
-    highlightTag(ids: number[], type: string){
-        
+    highlightTag(ids: number[], type: string, active: boolean){
+      this.log.debug(`iterating array`)
       for(let id of ids){
-        this.applyHighlight(id, type)
+        this.log.debug(`first button wit id ${id} and type ${type} and this will be an active=${active} highlight`)
+        this.applyHighlight(id, type, active)
       }
 
     }
 
-    private applyHighlight(id: number, type: string){
+    private applyHighlight(id: number, type: string, active: boolean){
       let button = this.elementRef.nativeElement.querySelectorAll("."+type)[id]
-      
-      // this.renderer.removeClass(button, "person")
-      this.renderer.addClass(button, type+"Highlight")
+      this.log.debug(`button found ${button}`)
+      if(active){
+        this.log.debug(`hughlighting`)
+        this.renderer.addClass(button, type+"Highlight")
+      } else {
+        this.log.debug(`reverting`)
+        this.renderer.removeClass(button, type+"Highlight")
+        this.renderer.addClass(button, type)
+      }
     }
 
 }
