@@ -25,6 +25,7 @@ export class AppComponent implements OnInit {
   document!: any;
   noteBook!: NoteBook;
   pages!: Page[];
+  active!: boolean;
   highlightConfig!: {active: boolean, map: Map<string,number[]>}
 
   constructor(private noteBookservice: NotebookService, private log: LoggerService){}
@@ -61,6 +62,7 @@ export class AppComponent implements OnInit {
   highlightTag(config: any){
     this.log.debug(`Event recieved, got ${config}, setting that to highlightMap`)
     this.highlightConfig = config
+    this.active = config.active
   }
 
 }

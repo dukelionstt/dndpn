@@ -21,6 +21,9 @@ export class QuillToolbarComponent implements OnInit{
     quill!: any;
 
     @Input()
+    active!: boolean;
+
+    @Input()
     highlightConfig!: {active: boolean, map: Map<string,number[]>}
 
     @Output() newQuillEditor = new EventEmitter<any>();
@@ -378,7 +381,7 @@ export class QuillToolbarComponent implements OnInit{
     ngOnChanges(changes: {[propKey: string]: SimpleChange}){
       for(let propName in changes){
         // this.log.debug(`changed detected ${propName}`)
-        if(propName == "highlightConfig"){
+        if(propName == "active"){
           let change = changes[propName]
           if(change.isFirstChange()){
             this.log.debug(`First time highlightedMap is set with ${this.highlightConfig}`)

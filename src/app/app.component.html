@@ -11,7 +11,8 @@
             (newQuillEditor) is to get the editor object -->
       <toolbar [pages]="pages"
                 (newQuillEditor)="setNewQuillEditor($event)"
-                [highlightConfig]="highlightConfig"></toolbar>
+                [highlightConfig]="highlightConfig"
+                [active]="active"></toolbar>
       {{this.pages | json}}
       <button nz-button (click)="save()">Save</button>
       {{this.document}}

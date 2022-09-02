@@ -61,11 +61,13 @@ export class TagListComponent implements OnInit{
     // this.quill.setSelection(index,1)
     this.log.info(`highlight process :: Starting`)
 
+    let button = this.elementRef.nativeElement.querySelector(type+index)
+
     if(this.active){
-      // this.activeClass = ''
+      this.renderer.removeClass(button, type+"Highlight")
       this.active = false
     } else {
-      // this.activeClass = type + 'Highlight'
+      this.renderer.addClass(button, type+"Highlight");
       this.active = true
     }
 

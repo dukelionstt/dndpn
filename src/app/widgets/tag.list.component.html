@@ -25,7 +25,8 @@
       [nzLoading]="loading">
           <button nz-button nzShape="round"
           *ngFor="let widget of tag.value"
-          (click)="goToTagInPage(widget.metaData.buttonIndex, tag.key)"><img [src]="getImgSrc(tag.key)"/>{{widget.name}}</button>
+          (click)="goToTagInPage(widget.metaData.buttonIndex, tag.key)"
+          id="{{tag.key}}{{widget.metaData.buttonIndex}}"><img [src]="getImgSrc(tag.key)"/>{{widget.name}}</button>
       </nz-card>
       <ng-template #actionSetting>
           <i nz-icon nzType="setting"></i>
