@@ -20,13 +20,18 @@
     </div> -->
     <div nz-col *ngFor="let tag of this.pages[0].tags | keyvalue">
       <nz-card [nzBorderless]="false"
-      nzTitle="{{tag.key}}"
-      [nzActions]="[actionSetting, actionEdit, actionEllipsis]"
-      [nzLoading]="loading">
-          <button nz-button nzShape="round"
-          *ngFor="let widget of tag.value"
-          (click)="goToTagInPage(widget.metaData.buttonIndex, tag.key)"
-          id="{{tag.key}}{{widget.metaData.buttonIndex}}"><img [src]="getImgSrc(tag.key)"/>{{widget.name}}</button>
+                nzTitle="{{tag.key}}"
+                [nzActions]="[actionSetting, actionEdit, actionEllipsis]"
+                [nzLoading]="loading"
+                #tagCard>
+          <!-- <button nz-button nzShape="round" -->
+          <button class="{{tag.key}}TagButton"
+                    *ngFor="let widget of tag.value"
+                    (click)="goToTagInPage($event, widget.metaData.buttonIndex, tag.key)"
+                    id="{{tag.key}}{{widget.metaData.buttonIndex}}"
+                    #tagButton>
+            <img [src]="getImgSrc(tag.key)"/>{{widget.name}}
+          </button>
       </nz-card>
       <ng-template #actionSetting>
           <i nz-icon nzType="setting"></i>

@@ -24,7 +24,7 @@ export class QuillToolbarComponent implements OnInit{
     active!: boolean;
 
     @Input()
-    highlightConfig!: {active: boolean, map: Map<string,number[]>}
+    highlightConfig!: {active: boolean, map: Map<boolean, Map<string,number[]>>}
 
     @Output() newQuillEditor = new EventEmitter<any>();
     // @Output() pagesChange = new EventEmitter<any>();
@@ -384,12 +384,14 @@ export class QuillToolbarComponent implements OnInit{
         if(propName == "active"){
           let change = changes[propName]
           if(change.isFirstChange()){
-            this.log.debug(`First time highlightedMap is set with ${this.highlightConfig}`)
+            this.log.debug(`First time highlightedMap is set with `)
           } else {
             this.log.debug(`acting on change, iterating map`)
-              this.highlightConfig.map.forEach((val: number[], key:string) => {
-                this.log.debug(`finding button with type: ${key} and passing arry ${val}`)
-                this.highlightTag(val, key, this.highlightConfig.active)
+              this.highlightConfig.map.forEach((tags: Map<string, number[]>, active:boolean) => {
+                this.log.debug(`Working through active: ${active} buttons first`)
+                tags.forEach((ids: number[], type: string) => {
+                  this.highlightTag(ids, type, active)
+                })
               })
           }
         }

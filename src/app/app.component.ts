@@ -26,7 +26,7 @@ export class AppComponent implements OnInit {
   noteBook!: NoteBook;
   pages!: Page[];
   active!: boolean;
-  highlightConfig!: {active: boolean, map: Map<string,number[]>}
+  highlightConfig!: {active: boolean, map: Map<boolean, Map<string,number[]>>}
 
   constructor(private noteBookservice: NotebookService, private log: LoggerService){}
 
