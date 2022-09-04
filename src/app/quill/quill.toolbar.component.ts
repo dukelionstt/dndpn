@@ -3,6 +3,7 @@ import { ITEM, MISC, PERSON, PLACE } from "../constants";
 import { LoggerService } from "../logger.service";
 import { Page } from "../model/page-model";
 import { TagEntry } from "../model/tag-entry-model";
+import { HiglightEditorTagsService } from "../widgets/higlight.editor.tags.service";
 
 
 @Component({
@@ -27,9 +28,6 @@ export class QuillToolbarComponent implements OnInit{
     highlightConfig!: {send: boolean, map: Map<boolean, Map<string,number[]>>}
 
     @Output() newQuillEditor = new EventEmitter<any>();
-
-    @Output() highlightMessageRecieved = new EventEmitter<any>();
-    // @Output() pagesChange = new EventEmitter<any>();
 
     range : any;
     text : string = '';
@@ -56,7 +54,8 @@ export class QuillToolbarComponent implements OnInit{
     buttonEvents = new Map();
 
 
-    constructor( private renderer:Renderer2, private elementRef: ElementRef, private log: LoggerService){}
+    constructor( private renderer:Renderer2, private elementRef: ElementRef, private log: LoggerService,
+                  private highlightTagService: HiglightEditorTagsService){}
 
     ngOnInit(): void {
         this.log.info(`initilising variables for puill tool bar:: Started`)
@@ -76,6 +75,8 @@ export class QuillToolbarComponent implements OnInit{
         this.updateIndicator = false;
         this.changeIndicator = false;
         this.loadingContent = false;
+
+        this.highlightTagService.highLightTag.subscribe(tags => this.highlightTag(tags.ids, tags.type, tags.active))
 
         this.log.info(`initilising variables for puill tool bar:: finished`)
     }
@@ -380,33 +381,33 @@ export class QuillToolbarComponent implements OnInit{
       this.open();
     }
 
-    ngOnChanges(changes: {[propKey: string]: SimpleChange}){
-      for(let propName in changes){
-        // this.log.debug(`changed detected ${propName}`)
-        if(propName == "sending"){
-          this.log.debug(`change in ${propName} detected`)
-          if(this.sending){
-            this.log.debug(`Recieved new message, highlighting tags`)
-            this.log.debug(`highlighting complete`)
-            this.highlightMessageRecieved.emit(true)
-          } else {
-            this.log.debug(`Message acknowledgement ignoring`)
-          }
-          // let change = changes[propName]
-          // if(change.isFirstChange()){
-          //   this.log.debug(`First time highlightedMap is set with `)
-          // } else {
-          //   this.log.debug(`acting on change, iterating map`)
-          //     this.highlightConfig.map.forEach((tags: Map<string, number[]>, active:boolean) => {
-          //       this.log.debug(`Working through active: ${active} buttons first`)
-          //       tags.forEach((ids: number[], type: string) => {
-          //         this.highlightTag(ids, type, active)
-          //       })
-          //     })
-          // }
-        }
-      }
-    }
+    // ngOnChanges(changes: {[propKey: string]: SimpleChange}){
+    //   for(let propName in changes){
+    //     // this.log.debug(`changed detected ${propName}`)
+    //     if(propName == "sending"){
+    //       this.log.debug(`change in ${propName} detected`)
+    //       if(this.sending){
+    //         this.log.debug(`Recieved new message, highlighting tags`)
+    //         this.log.debug(`highlighting complete`)
+    //         this.highlightMessageRecieved.emit(true)
+    //       } else {
+    //         this.log.debug(`Message acknowledgement ignoring`)
+    //       }
+    //       // let change = changes[propName]
+    //       // if(change.isFirstChange()){
+    //       //   this.log.debug(`First time highlightedMap is set with `)
+    //       // } else {
+    //       //   this.log.debug(`acting on change, iterating map`)
+    //       //     this.highlightConfig.map.forEach((tags: Map<string, number[]>, active:boolean) => {
+    //       //       this.log.debug(`Working through active: ${active} buttons first`)
+    //       //       tags.forEach((ids: number[], type: string) => {
+    //       //         this.highlightTag(ids, type, active)
+    //       //       })
+    //       //     })
+    //       // }
+    //     }
+    //   }
+    // }
 
     highlightTag(ids: number[], type: string, active: boolean){
       this.log.debug(`iterating array`)

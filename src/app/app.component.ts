@@ -25,22 +25,20 @@ export class AppComponent implements OnInit {
   document!: any;
   noteBook!: NoteBook;
   pages!: Page[];
-  sending!: boolean;
-  highlightConfig!: {send: boolean, map: Map<boolean, Map<string,number[]>>}
 
   constructor(private noteBookservice: NotebookService, private log: LoggerService){}
 
   ngOnInit(): void {
     this.log.info(`setting up notebook`)
-    // this.noteBookservice.getNoteBook().subscribe((data: any) => {
-    //   this.log.info(`notebook setup start`)
-    //   this.noteBook = this.noteBookservice.buildNoteBook(data)
-    //   this.pages = this.noteBook.pages
-    //   this.log.info(`notebook setup finish`)
-    // });
+    this.noteBookservice.getNoteBook().subscribe((data: any) => {
+      this.log.info(`notebook setup start`)
+      this.noteBook = this.noteBookservice.buildNoteBook(data)
+      this.pages = this.noteBook.pages
+      this.log.info(`notebook setup finish`)
+    });
 
-    this.noteBook = NOTEBOOK
-    this.pages = this.noteBook.pages
+    // this.noteBook = NOTEBOOK
+    // this.pages = this.noteBook.pages
 
   }
 
@@ -56,18 +54,6 @@ export class AppComponent implements OnInit {
       this.log.info("notebook saved")
     } catch(error){
       this.log.error(`notebook not saved`)
-    }
-  }
-
-  highlightTag(config: any){
-    this.log.debug(`Event recieved, got ${config}, setting that to highlightMap`)
-    this.highlightConfig = config
-    this.sending = config.send
-  }
-
-  resetSendingFlag(event: any){
-    if(event){
-      this.sending = false
     }
   }
 

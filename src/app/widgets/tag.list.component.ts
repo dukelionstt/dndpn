@@ -5,6 +5,8 @@ import { WidgetsListService } from "../data/widgets.list.service";
 import { LoggerService } from "../logger.service";
 import { Page } from "../model/page-model";
 import { Widget } from "../model/widget-model";
+import { QuillToolbarComponent } from "../quill/quill.toolbar.component";
+import { HiglightEditorTagsService } from "./higlight.editor.tags.service";
 
 const POST_FIX_ACTIVE = "TagButtonActive"
 const POST_FIX = "TagButton"
@@ -24,7 +26,8 @@ export class TagListComponent implements OnInit{
   @Input()
   pages!: Page[];
 
-  @Output() highlightTag = new EventEmitter();
+  @Input()
+  quilltoolbar!: QuillToolbarComponent;
 
   @ViewChild('tagButton')
   tagButton!: ElementRef;
@@ -39,14 +42,15 @@ export class TagListComponent implements OnInit{
   previousButton!: any;
   previousID!: number;
   previousType!: string;
+  previousState!: boolean;
   icons = new Map();
   tags = new Map();
-  highlightConfig!: {send: boolean, map: Map<boolean, Map<string,number[]>>}
 
   constructor(private widgetsList: WidgetsListService,
               private log: LoggerService,
               private elementRef: ElementRef,
-              private renderer: Renderer2){}
+              private renderer: Renderer2,
+              private highlightTagService: HiglightEditorTagsService){}
 
   ngOnInit(): void {
       this.loading = true
@@ -60,93 +64,45 @@ export class TagListComponent implements OnInit{
       this.loading = false;
       this.active = false;
       this.isNewButton = false;
-      this.highlightConfig = {
-        map:new Map<boolean, Map<string,number[]>>(),
-        send: false
-      }
     }
 
   goToTagInPage(event: any, index:number, type: string){
 
-    this.log.info(`highlight process :: Starting`)
+    this.log.info(`highlight process :: Started`)
     this.log.debug(`highlight tag called, index:${index} & type:${type} passed. This is in tag list component`)
 
     this.log.debug(type+index)
     this.log.debug(event)
-    let pathIndex = this.findButtonElement(event.path)
-    let temp = new Map<string, number[]>();
-    let tempPrevious = new Map<string, number[]>();
-    let indexList: number[] = [index];
-    let indexPevious: number[] = [];
+    let pathIndex = this.findButtonElement(event.path);
 
+    
+  
     if(this.isNewButton){
-      this.log.debug(`Different button clicked so toggle`)
-      this.log.debug(`Previous button is:`)
-      this.log.debug(this.previousButton)
-      this.log.debug(`This pervioius index = ${this.previousIndex}`)
-      this.previousButton[this.previousIndex].classList = this.updateClassList(this.previousButton[this.previousIndex].classList, type, this.active)
-      this.log.debug(`previous button should have updated`)
-      this.log.debug(this.previousButton)
-      indexPevious.push(this.previousIndex)
-      tempPrevious.set(type, indexPevious)
-
-      this.log.debug(`now changing the new button, currently set to:`)
-      this.log.debug(event.path[pathIndex])
-      event.path[pathIndex].classList = this.updateClassList(event.path[pathIndex].classList, type, !this.active)
-      this.log.debug(`cahnged the button, currently set to:`)
-      this.log.debug(event.path[pathIndex])
+      this.log.info(`tag button toggle present, switching highlights`)
+      this.previousState = !this.previousState
+      this.previousButton[this.previousIndex].classList = this.updateClassList(this.previousButton[this.previousIndex].classList, this.previousType, this.previousState)
+      this.highlightTagService.sendHighlightTag([this.previousID], this.previousType, this.previousState)
+      this.isNewButton = false
+      this.log.info(`tag button toggle present, highlights switched`)
     } else {
-      event.path[pathIndex].classList = this.updateClassList(event.path[pathIndex].classList, type, this.active)
+      this.active = !this.active
     }
+    
+    event.path[pathIndex].classList = this.updateClassList(event.path[pathIndex].classList, type, this.active)
+    this.highlightTagService.sendHighlightTag([index], type, this.active);
+    this.log.info(`new tag button entries highlighted`)
 
     this.previousButton = event.path
     this.previousIndex = pathIndex
     this.previousID = index
     this.previousType = type
+    this.previousState = this.active
 
-    this.log.debug(`the previous button is:`)
-    this.log.debug(this.previousButton)
-
-    if(this.active){
-      if(this.isNewButton){
-        this.isNewButton = false
-        // this.highlightConfig.map.set(!this.active, temp)
-        // this.highlightConfig.active = !this.active
-      }else {
-        this.active = false
-        // this.highlightConfig.map.set(this.active, temp)
-        // this.highlightConfig.active = this.active
-      }
-    } else {
-      this.active = true
-      // this.highlightConfig.map.set(this.active, temp)
-      // this.highlightConfig.active = this.active
-    }
-
-    temp.set(type, indexList)
-
-    
-
-    // this.log.debug(`length of previous list: ${tempPrevious.size}`)
-    // this.highlightConfig.map.set(!this.active, tempPrevious)
-
-    this.highlightConfig.map.set(this.active, temp)
-    this.highlightConfig.send = true
-    
-
-    this.log.debug(`event object formed`)
-    this.log.debug(this.highlightConfig)
-
-    
-    this.highlightTag.emit(this.highlightConfig)
-
-    temp.clear
-
-
-    this.log.info(`highlight process :: Starting`)
+    this.log.info(`highlight process :: Finished`)
   }
 
   private findButtonElement(path: any){
+    this.log.info(`find button element :: Started`)
     let index = 0;
     for(let element of path){
       if(element.nodeName == "BUTTON"){
@@ -154,8 +110,10 @@ export class TagListComponent implements OnInit{
           this.log.debug(`The previous element: ${this.previousButton[this.previousIndex].id}`)
           this.log.debug(`new element to be checked: ${element.id}`)
           if(this.previousButton[this.previousIndex].id != element.id){
-            this.log.debug(`changing the is new button to true`)
-            this.isNewButton = true
+            if(this.previousState){
+              this.log.debug(`changing the is new button to true`)
+              this.isNewButton = true
+            }
           }
         }
         break
@@ -163,17 +121,21 @@ export class TagListComponent implements OnInit{
         index++
       }
     }
+    this.log.info(`find button element :: Finished`)
     return index
   }
 
   private updateClassList(classList: DOMTokenList, type: string, active: boolean){
+    this.log.info(`updateing tag button :: Started`)
+    this.log.info(`updating ${type} tag button status to active: ${active}`)
     this.log.debug(`altering class list`)
     this.log.debug(classList)
     let index = 0;
     
-    if(!active){
+    if(active){
       try {
         classList.replace(type+POST_FIX, type+POST_FIX_ACTIVE)
+        this.log.info(`${type} tag button active`)
         this.log.debug(`class list changed`)
         this.log.debug(classList)
       } catch(error) {
@@ -183,6 +145,7 @@ export class TagListComponent implements OnInit{
     } else {
       try {
         classList.replace(type+POST_FIX_ACTIVE, type+POST_FIX)
+        this.log.info(`${type} tag button de-active`)
         this.log.debug(`class list changed`)
         this.log.debug(classList)
       } catch(error) {
@@ -190,7 +153,7 @@ export class TagListComponent implements OnInit{
         this.log.error(error)
       }
     }
-
+    this.log.info(`updateing tag button :: Finished`)
     return classList
   }
 
