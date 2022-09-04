@@ -41,7 +41,7 @@ export class TagListComponent implements OnInit{
   previousType!: string;
   icons = new Map();
   tags = new Map();
-  highlightConfig!: {active: boolean, map: Map<boolean, Map<string,number[]>>}
+  highlightConfig!: {send: boolean, map: Map<boolean, Map<string,number[]>>}
 
   constructor(private widgetsList: WidgetsListService,
               private log: LoggerService,
@@ -62,7 +62,7 @@ export class TagListComponent implements OnInit{
       this.isNewButton = false;
       this.highlightConfig = {
         map:new Map<boolean, Map<string,number[]>>(),
-        active: false
+        send: false
       }
     }
 
@@ -77,7 +77,7 @@ export class TagListComponent implements OnInit{
     let temp = new Map<string, number[]>();
     let tempPrevious = new Map<string, number[]>();
     let indexList: number[] = [index];
-    let indexPevious: number[] = [this.previousIndex];
+    let indexPevious: number[] = [];
 
     if(this.isNewButton){
       this.log.debug(`Different button clicked so toggle`)
@@ -87,6 +87,7 @@ export class TagListComponent implements OnInit{
       this.previousButton[this.previousIndex].classList = this.updateClassList(this.previousButton[this.previousIndex].classList, type, this.active)
       this.log.debug(`previous button should have updated`)
       this.log.debug(this.previousButton)
+      indexPevious.push(this.previousIndex)
       tempPrevious.set(type, indexPevious)
 
       this.log.debug(`now changing the new button, currently set to:`)
@@ -94,7 +95,6 @@ export class TagListComponent implements OnInit{
       event.path[pathIndex].classList = this.updateClassList(event.path[pathIndex].classList, type, !this.active)
       this.log.debug(`cahnged the button, currently set to:`)
       this.log.debug(event.path[pathIndex])
-      this.isNewButton = false
     } else {
       event.path[pathIndex].classList = this.updateClassList(event.path[pathIndex].classList, type, this.active)
     }
@@ -108,16 +108,31 @@ export class TagListComponent implements OnInit{
     this.log.debug(this.previousButton)
 
     if(this.active){
-      this.active = false
+      if(this.isNewButton){
+        this.isNewButton = false
+        // this.highlightConfig.map.set(!this.active, temp)
+        // this.highlightConfig.active = !this.active
+      }else {
+        this.active = false
+        // this.highlightConfig.map.set(this.active, temp)
+        // this.highlightConfig.active = this.active
+      }
     } else {
       this.active = true
+      // this.highlightConfig.map.set(this.active, temp)
+      // this.highlightConfig.active = this.active
     }
 
     temp.set(type, indexList)
 
+    
+
+    // this.log.debug(`length of previous list: ${tempPrevious.size}`)
+    // this.highlightConfig.map.set(!this.active, tempPrevious)
+
     this.highlightConfig.map.set(this.active, temp)
-    this.highlightConfig.map.set(!this.active, tempPrevious)
-    this.highlightConfig.active = this.active
+    this.highlightConfig.send = true
+    
 
     this.log.debug(`event object formed`)
     this.log.debug(this.highlightConfig)

@@ -21,12 +21,14 @@ export class QuillToolbarComponent implements OnInit{
     quill!: any;
 
     @Input()
-    active!: boolean;
+    sending!: boolean;
 
     @Input()
-    highlightConfig!: {active: boolean, map: Map<boolean, Map<string,number[]>>}
+    highlightConfig!: {send: boolean, map: Map<boolean, Map<string,number[]>>}
 
     @Output() newQuillEditor = new EventEmitter<any>();
+
+    @Output() highlightMessageRecieved = new EventEmitter<any>();
     // @Output() pagesChange = new EventEmitter<any>();
 
     range : any;
@@ -381,19 +383,27 @@ export class QuillToolbarComponent implements OnInit{
     ngOnChanges(changes: {[propKey: string]: SimpleChange}){
       for(let propName in changes){
         // this.log.debug(`changed detected ${propName}`)
-        if(propName == "active"){
-          let change = changes[propName]
-          if(change.isFirstChange()){
-            this.log.debug(`First time highlightedMap is set with `)
+        if(propName == "sending"){
+          this.log.debug(`change in ${propName} detected`)
+          if(this.sending){
+            this.log.debug(`Recieved new message, highlighting tags`)
+            this.log.debug(`highlighting complete`)
+            this.highlightMessageRecieved.emit(true)
           } else {
-            this.log.debug(`acting on change, iterating map`)
-              this.highlightConfig.map.forEach((tags: Map<string, number[]>, active:boolean) => {
-                this.log.debug(`Working through active: ${active} buttons first`)
-                tags.forEach((ids: number[], type: string) => {
-                  this.highlightTag(ids, type, active)
-                })
-              })
+            this.log.debug(`Message acknowledgement ignoring`)
           }
+          // let change = changes[propName]
+          // if(change.isFirstChange()){
+          //   this.log.debug(`First time highlightedMap is set with `)
+          // } else {
+          //   this.log.debug(`acting on change, iterating map`)
+          //     this.highlightConfig.map.forEach((tags: Map<string, number[]>, active:boolean) => {
+          //       this.log.debug(`Working through active: ${active} buttons first`)
+          //       tags.forEach((ids: number[], type: string) => {
+          //         this.highlightTag(ids, type, active)
+          //       })
+          //     })
+          // }
         }
       }
     }
