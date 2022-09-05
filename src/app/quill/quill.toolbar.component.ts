@@ -1,3 +1,4 @@
+import { HttpUrlEncodingCodec } from "@angular/common/http";
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, OnChanges, SimpleChange } from "@angular/core";
 import { ITEM, MISC, PERSON, PLACE } from "../constants";
 import { LoggerService } from "../logger.service";
@@ -53,6 +54,8 @@ export class QuillToolbarComponent implements OnInit{
     icons = new Map();
     buttonEvents = new Map();
 
+    htmlDecoder = new HttpUrlEncodingCodec();
+
 
     constructor( private renderer:Renderer2, private elementRef: ElementRef, private log: LoggerService,
                   private highlightTagService: HiglightEditorTagsService){}
@@ -101,7 +104,7 @@ export class QuillToolbarComponent implements OnInit{
     private loadPageContent(){
       this.log.info(`setting text content :: Started`);
       // this.quill.setContents(this.pages[0].page)
-      this.quill.root.innerHTML = this.pages[0].page;
+      this.quill.root.innerHTML = this.htmlDecoder.decodeValue(this.pages[0].page);
       this.log.info(`setting text content :: Finished`);
 
       this.log.info(`Applying event handlers to taged words :: Started`);
@@ -123,7 +126,7 @@ export class QuillToolbarComponent implements OnInit{
         this.log.info(`buttonevent tracker updated for ${tagtype} to ${tagSet.length}`)
     }
 
-    //id resolved next step is to stop duplicate entries is the user clicks on the tag and no change has occured to the
+    
     //values passed in by the opening button.
     onNewTagSave(event: any[]){
       this.log.info(`newTagSave process :: Started`)
@@ -171,6 +174,7 @@ export class QuillToolbarComponent implements OnInit{
       }
 
       this.close();
+      this.log.info(`newTagSave process :: Finished`)
     }
 
     private forValue(text: string, icontype: string, id: number){
@@ -212,12 +216,12 @@ export class QuillToolbarComponent implements OnInit{
     }
 
     private updateTextInPage(index: number, type: string, text: string){
-      this.log.info(`updating the page :: Starting`)
+      this.log.info(`updating text in page :: Starting`)
       this.log.debug(`padded in, index = ${index}, type = ${type} and text = ${text}`)
 
-      this.quill.insertEmbed(index, type,text, type);
+      this.quill.insertEmbed(index, type,text);
       this.quill.setSelection(index + text.length , index + text.length);
-      this.log.info(`updating the page :: Finnished`)
+      this.log.info(`updating text in page :: Finnished`)
     }
 
     private attachClickEvent(buttonClass: string, id: number){

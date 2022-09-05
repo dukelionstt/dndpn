@@ -16,9 +16,9 @@ export class NotebookService {
   constructor(private log: LoggerService, private http: HttpClient, private file: FileService) {
   }
 
-  getNoteBook(){
+ getNoteBook(){
     this.log.info(`Get notbook service called`)
-    return this.file.getFile("E:/backup/dndpn/src/app/mock-data/notebook-mock.json")
+    return this.file.getFile("E:\\backup\\dndpn\\src\\app\\mock-data\\notebook-mock.json")
   }
 
   saveNoteBook(notebook: NoteBook){

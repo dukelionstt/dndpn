@@ -11,7 +11,7 @@
       <toolbar [pages]="pages"
                 (newQuillEditor)="setNewQuillEditor($event)"></toolbar>
       {{this.pages | json}}
-      <button nz-button (click)="save()">Save</button>
+      <button nz-button (click)="savePage(0)">Save</button>
       {{this.document}}
     </nz-content>
   </nz-layout>
