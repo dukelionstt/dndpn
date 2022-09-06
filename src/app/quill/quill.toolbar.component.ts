@@ -4,6 +4,8 @@ import { ITEM, MISC, PERSON, PLACE } from "../constants";
 import { LoggerService } from "../logger.service";
 import { Page } from "../model/page-model";
 import { TagEntry } from "../model/tag-entry-model";
+import { Tag } from "../model/tag-model";
+import { Tags } from "../model/tags-model";
 import { HiglightEditorTagsService } from "../widgets/higlight.editor.tags.service";
 
 
@@ -108,7 +110,7 @@ export class QuillToolbarComponent implements OnInit{
       this.log.info(`setting text content :: Finished`);
 
       this.log.info(`Applying event handlers to taged words :: Started`);
-      for(let [key, value] of this.pages[0].tags){
+      for(let [key, value] of Object.entries(this.pages[0].tags)){
         this.log.info(`Working through ${key} set:: Started`);
         this.updateButtons(value, key)
         this.log.info(`Working through ${key} set:: Finished`);
@@ -139,15 +141,15 @@ export class QuillToolbarComponent implements OnInit{
         this.log.debug(`update indicator present`)
         if(this.changeIndicator){
           this.log.debug(`Change indicator present`)
-
-          let range = this.pages[0].tags.get(this.updateType)[id].metaData.range
-          let length = this.pages[0].tags.get(this.updateType)[id].name.length
+          
+          let range = this.pages[0].tags[this.updateType as keyof Tags][id].metaData.range
+          let length = this.pages[0].tags[this.updateType as keyof Tags][id].name.length
 
           this.log.debug(`Setting the following: range = ${range} and length = ${length}`)
 
           this.quill.removeFormat(range, length);
           this.log.debug(`previous word removed`)
-          this.updateTextInPage(range, this.updateType, this.forValue(this.pages[0].tags.get(this.updateType)[id].name, this.updateType, id))
+          this.updateTextInPage(range, this.updateType, this.forValue(this.pages[0].tags[this.updateType as keyof Tags][id].name, this.updateType, id))
 
           this.attachClickEvent(this.sideBarTitle, id)
           this.changeIndicator = false
@@ -165,7 +167,7 @@ export class QuillToolbarComponent implements OnInit{
           this.textPresent = false;
       } else {
         this.log.debug(`text present false`)
-          this.updateTextInPage(this.range.index, this.sideBarTitle, this.forValue(this.pages[0].tags.get(this.sideBarTitle)[id].name, this.sideBarTitle, id));
+          this.updateTextInPage(this.range.index, this.sideBarTitle, this.forValue(this.pages[0].tags[this.sideBarTitle as keyof Tags][id].name, this.sideBarTitle, id));
 
           this.textPresent = false;
       }
@@ -188,24 +190,24 @@ export class QuillToolbarComponent implements OnInit{
 
       switch(type){
         case PERSON:
-          tooltip = '<div class="tooltip"><p>Notes:' + this.pages[0].tags.get(type)[id].notes + '</p></div>'
+          tooltip = '<div class="tooltip"><p>Notes:' + this.pages[0].tags.person[id].notes + '</p></div>'
         break;
         case PLACE:
           tooltip = '<div class="tooltip">' +
-                    '<p>Location:' + this.pages[0].tags.get(type)[id].location + '</p>' +
-                    '<p>Area:' + this.pages[0].tags.get(type)[id].area + '</p>' +
-                    '<p>Notes:' + this.pages[0].tags.get(type)[id].notes + '</p>' +
+                    '<p>Location:' + this.pages[0].tags.place[id].location + '</p>' +
+                    '<p>Area:' + this.pages[0].tags.place[id].area + '</p>' +
+                    '<p>Notes:' + this.pages[0].tags.place[id].notes + '</p>' +
                   '</div>'
         break;
         case ITEM:
           tooltip = '<div class="tooltip">' +
-                '<p>Type:' + this.pages[0].tags.get(type)[id].type + '</p>' +
-                '<p>Notes:' + this.pages[0].tags.get(type)[id].notes + '</p>' +
+                '<p>Type:' + this.pages[0].tags.item[id].type + '</p>' +
+                '<p>Notes:' + this.pages[0].tags.item[id].notes + '</p>' +
               '</div>'
         break;
         case MISC:
           tooltip = '<div class="tooltip">' +
-                '<p>Notes:' + this.pages[0].tags.get(type)[id].notes + '</p>' +
+                '<p>Notes:' + this.pages[0].tags.misc[id].notes + '</p>' +
               '</div>'
         break;
         default:
@@ -239,8 +241,8 @@ export class QuillToolbarComponent implements OnInit{
       let button: any;
       if(this.changeIndicator || this.loadingContent){
         this.log.debug(`Running a change : ${this.changeIndicator} or loading : ${this.loadingContent}`)
-        this.log.debug(`Updating button that matches index number: ${this.pages[0].tags.get(buttonClass)[id].metaData.buttonIndex}`)
-        button = this.elementRef.nativeElement.querySelectorAll(queryString)[this.pages[0].tags.get(buttonClass)[id].metaData.buttonIndex];
+        this.log.debug(`Updating button that matches index number: ${this.pages[0].tags[buttonClass as keyof Tags][id].metaData.buttonIndex}`)
+        button = this.elementRef.nativeElement.querySelectorAll(queryString)[this.pages[0].tags[buttonClass as keyof Tags][id].metaData.buttonIndex];
       } else {
         this.log.debug(`Running a new button`)
         button = this.elementRef.nativeElement.querySelectorAll(queryString)[count];
@@ -253,7 +255,7 @@ export class QuillToolbarComponent implements OnInit{
       if(!this.changeIndicator && !this.loadingContent){
         //recording the number of the button in order of buttons for that type so that if the text
         //is channge we can assign the correct button
-        this.pages[0].tags.get(buttonClass)[id].metaData.buttonIndex = count
+        this.pages[0].tags[buttonClass as keyof Tags][id].metaData.buttonIndex = count
         this.log.debug(`Button id is updated in page to ${count}`)
 
         //increment the button so we can find the new one on the next call
@@ -283,7 +285,7 @@ export class QuillToolbarComponent implements OnInit{
 
     tagViewAndUpdate(event: any, id: number, type: string){
       this.log.info(`starting the tag update view`)
-      let tagData = this.pages[0].tags.get(type)[id]
+      let tagData = this.pages[0].tags[type as keyof Tags][id]
       this.log.debug(tagData)
       this.displayDataSidebar(tagData, type);
 

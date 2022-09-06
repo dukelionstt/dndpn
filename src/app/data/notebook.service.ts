@@ -73,12 +73,12 @@ export class NotebookService {
       id: obj.id,
       date: obj.date,
       name: obj.name,
-      tags: new Map(Object.entries(obj.tags)),
+      tags: obj.tags,
       type: '',
       page: obj.page
     }
 
-    this.log.debug(`checking the tags situation: ${page.tags.get('person')[0].id}`)
+    // this.log.debug(`checking the tags situation: ${page.tags.get('person')[0].id}`)
     this.log.info(`build page :: Started`)
     return page;
   }

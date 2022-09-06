@@ -57,6 +57,8 @@ export class TagsService {
 
   convertDatatoTagListEntry(objectType: string, id: number, dataObject: any){
 
+    let tag: any;
+
       switch(objectType){
           case PERSON:
               let person: Person = {
@@ -71,7 +73,8 @@ export class TagsService {
                       buttonIndex: dataObject.buttonIndex
                   }
               }
-              return person
+              tag = person
+          break;
           case PLACE:
               let place: Place = {
                   id: id,
@@ -87,7 +90,8 @@ export class TagsService {
                       buttonIndex: dataObject.buttonIndex
                   }
               }
-              return place
+              tag = place
+          break;
           case ITEM:
               let item: Item = {
                   id: id,
@@ -102,7 +106,8 @@ export class TagsService {
                       buttonIndex: dataObject.buttonIndex
                   }
               }
-              return item
+              tag = item
+          break;
           case MISC:
               let misc: Misc = {
                   id: id,
@@ -116,9 +121,12 @@ export class TagsService {
                       buttonIndex: dataObject.buttonIndex
                   }
               }
-              return misc
+              tag = misc
+          break;
           default:
               break
       }
+
+      return tag;
   }
 }

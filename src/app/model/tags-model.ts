@@ -4,8 +4,8 @@ import { Person } from "./person-model";
 import { Place } from "./place-model";
 
 export interface Tags{
-  person?: Person[],
-  place?: Place[],
-  item?: Item[],
-  misc?: Misc[]
+  person: Person[],
+  place: Place[],
+  item: Item[],
+  misc: Misc[]
 }

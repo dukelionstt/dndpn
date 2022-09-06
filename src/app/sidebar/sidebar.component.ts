@@ -4,12 +4,9 @@ import { ItemTypesService } from "../data/item.types.service";
 
 import { TagsDropdownService } from "../data/tags-dropdown.service";
 import { TagsService } from "../data/tags.service";
-import { Item } from "../model/item-model";
-import { Misc } from "../model/misc-model";
 import { Page } from "../model/page-model";
-import { Person } from "../model/person-model";
-import { Place } from "../model/place-model";
 import { TagEntry } from "../model/tag-entry-model";
+import { Tags } from "../model/tags-model";
 
 @Component({
     selector: 'sidebar',
@@ -74,20 +71,21 @@ export class SidebarComponent implements OnInit{
         let tagList: any;
         let id = 0;
         if(this.updateIndicator){
-            tagList = this.tagService.getListFromTags(this.updateType, this.pages[0].tags);
+            // tagList = this.tagService.getListFromTags(this.updateType, this.pages[0].tags);
+            tagList = this.pages[0].tags[this.updateType as keyof Tags]
             id = this.tagEntry.id
 
             if(tagList[id].name != this.tagEntry.name){
                 this.changeIndicator = true;
             }
             tagList[id] = this.tagService.convertDatatoTagListEntry(this.updateType, id, this.tagEntry);
-            this.pages[0].tags = this.tagService.convertListToTags(this.updateType, tagList, this.pages[0].tags );
+            this.pages[0].tags[this.updateType as keyof Tags] = tagList
 
         } else {
-            tagList = this.tagService.getListFromTags(this.sideBarTitle, this.pages[0].tags);
+            tagList = this.pages[0].tags[this.sideBarTitle as keyof Tags]
             id = tagList.length
             tagList.push(this.tagService.convertDatatoTagListEntry(this.sideBarTitle, id, this.tagEntry));
-            this.pages[0].tags = this.tagService.convertListToTags(this.sideBarTitle, tagList, this.pages[0].tags );
+            this.pages[0].tags[this.sideBarTitle as keyof Tags] = tagList;
         }
 
         this.newTagSave.emit([id, this.changeIndicator]);
