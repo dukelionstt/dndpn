@@ -9,11 +9,26 @@ import { LoggerService } from './logger.service';
 import { NOTEBOOK } from './mock-data/notebook-mock';
 import { HttpUrlEncodingCodec } from '@angular/common/http';
 import { PageService } from './data/page.service';
+import { PlaceBlot } from './quill/place.blot';
+import { ItemBlot } from './quill/item.blot';
+import { MiscBlot } from './quill/misc.blot';
 
 PersonBlot["blotName"] = 'person';
 PersonBlot["tagName"] = 'button';
 
+PlaceBlot["blotName"] = 'place';
+PlaceBlot["tagName"] = 'button';
+
+ItemBlot["blotName"] = 'item';
+ItemBlot["tagName"] = 'button';
+
+MiscBlot["blotName"] = 'misc';
+MiscBlot["tagName"] = 'button';
+
 Quill.register(PersonBlot);
+Quill.register(PlaceBlot);
+Quill.register(ItemBlot);
+Quill.register(MiscBlot);
 
 
 @Component({

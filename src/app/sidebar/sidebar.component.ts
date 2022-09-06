@@ -59,10 +59,6 @@ export class SidebarComponent implements OnInit{
         // })
     }
 
-    save(){
-        // todo
-    }
-
     spaceBar(){
         //todo
     }
@@ -83,7 +79,12 @@ export class SidebarComponent implements OnInit{
 
         } else {
             tagList = this.pages[0].tags[this.sideBarTitle as keyof Tags]
-            id = tagList.length
+            if(!tagList){
+                tagList = []
+            } else {
+                id = tagList.length
+            }
+            
             tagList.push(this.tagService.convertDatatoTagListEntry(this.sideBarTitle, id, this.tagEntry));
             this.pages[0].tags[this.sideBarTitle as keyof Tags] = tagList;
         }
