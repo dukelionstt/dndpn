@@ -1,13 +1,21 @@
 var express = require('express');
 var app = express();
 var fs = require("fs");
+var cors = require("cors")
 const bodyParser = require("body-parser");
 const router = express.Router();
 
 const apiUrl = "/api/file/"
 
+var corsOptions = {
+  origin:'http://localhost:4200',
+  optionsSuccessStatus: 200
+}
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+
+app.use(cors(corsOptions))
 
 app.get('/test', function (req, res) {
    res.send('Hello World smeg heads');
@@ -17,6 +25,8 @@ app.post(apiUrl + 'get', function(req, res){
   const fileName = req.body.fileName
   fs.readFile(fileName, 'utf8', function (err, data) {
     console.log( data );
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
     res.send( data );
  });
 

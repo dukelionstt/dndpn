@@ -3,12 +3,10 @@ import { ITEM, MISC, PERSON, PLACE } from "../constants";
 import { ItemTypesService } from "../data/item.types.service";
 
 import { TagsDropdownService } from "../data/tags-dropdown.service";
-import { Item } from "../model/item-model";
-import { Misc } from "../model/misc-model";
+import { TagsService } from "../data/tags.service";
 import { Page } from "../model/page-model";
-import { Person } from "../model/person-model";
-import { Place } from "../model/place-model";
 import { TagEntry } from "../model/tag-entry-model";
+import { Tags } from "../model/tags-model";
 
 @Component({
     selector: 'sidebar',
@@ -47,7 +45,8 @@ export class SidebarComponent implements OnInit{
 
     // dateString:string = this.date.getDay().toLocaleString() +"/"+ this.date.getMonth.toString() +"/"+ this.date.getFullYear.toString();
     constructor(private tagsDropdown: TagsDropdownService,
-                private intemTypeDropdown: ItemTypesService){}
+                private intemTypeDropdown: ItemTypesService,
+                private tagService: TagsService){}
 
     ngOnInit(): void {
         this.listOfTags = this.tagsDropdown.getListOfTags(this.sideBarTitle);
@@ -69,95 +68,29 @@ export class SidebarComponent implements OnInit{
     }
 
     tagSave(){
-        let tags: any;
+        let tagList: any;
         let id = 0;
         if(this.updateIndicator){
-            tags = this.pages[0].tags.get(this.updateType);
+            // tagList = this.tagService.getListFromTags(this.updateType, this.pages[0].tags);
+            tagList = this.pages[0].tags[this.updateType as keyof Tags]
             id = this.tagEntry.id
 
-            if(tags[id].name != this.tagEntry.name){
+            if(tagList[id].name != this.tagEntry.name){
                 this.changeIndicator = true;
             }
-            tags[id] = this.convertEntry(this.updateType, id);
-            this.pages[0].tags.set(this.sideBarTitle, tags);
+            tagList[id] = this.tagService.convertDatatoTagListEntry(this.updateType, id, this.tagEntry);
+            this.pages[0].tags[this.updateType as keyof Tags] = tagList
 
         } else {
-            tags = this.pages[0].tags.get(this.sideBarTitle);
-            id = tags.length
-            tags.push(this.convertEntry(this.sideBarTitle, id));
-            this.pages[0].tags.set(this.sideBarTitle, tags);
+            tagList = this.pages[0].tags[this.sideBarTitle as keyof Tags]
+            id = tagList.length
+            tagList.push(this.tagService.convertDatatoTagListEntry(this.sideBarTitle, id, this.tagEntry));
+            this.pages[0].tags[this.sideBarTitle as keyof Tags] = tagList;
         }
-
-
 
         this.newTagSave.emit([id, this.changeIndicator]);
     }
 
-    convertEntry(objectType: string, id: number): any{
 
-        switch(objectType){
-            case PERSON:
-                let person: Person = {
-                    id: id,
-                    name: this.tagEntry.name!,
-                    date: this.tagEntry.date,
-                    misc: this.tagEntry.misc,
-                    notes: this.tagEntry.notes!,
-                    metaData: {
-                        range: this.tagEntry.range,
-                        length: this.tagEntry.name.length,
-                        buttonIndex: this.tagEntry.buttonIndex
-                    }
-                }
-                return person
-            case PLACE:
-                let place: Place = {
-                    id: id,
-                    name: this.tagEntry.name!,
-                    location: this.tagEntry.location!,
-                    area: this.tagEntry.area!,
-                    date: this.tagEntry.date,
-                    misc: this.tagEntry.misc,
-                    notes: this.tagEntry.notes!,
-                    metaData: {
-                        range: this.tagEntry.range,
-                        length: this.tagEntry.name.length,
-                        buttonIndex: this.tagEntry.buttonIndex
-                    }
-                }
-                return place
-            case ITEM:
-                let item: Item = {
-                    id: id,
-                    name: this.tagEntry.name!,
-                    type: this.tagEntry.itemtype,
-                    date: this.tagEntry.date,
-                    misc: this.tagEntry.misc,
-                    notes: this.tagEntry.notes!,
-                    metaData: {
-                        range: this.tagEntry.range,
-                        length: this.tagEntry.name.length,
-                        buttonIndex: this.tagEntry.buttonIndex
-                    }
-                }
-                return item
-            case MISC:
-                let misc: Misc = {
-                    id: id,
-                    name: this.tagEntry.name!,
-                    date: this.tagEntry.date,
-                    misc: this.tagEntry.misc,
-                    notes: this.tagEntry.notes!,
-                    metaData: {
-                        range: this.tagEntry.range,
-                        length: this.tagEntry.name.length,
-                        buttonIndex: this.tagEntry.buttonIndex
-                    }
-                }
-                return misc
-            default:
-                break
-        }
-    }
 }
 

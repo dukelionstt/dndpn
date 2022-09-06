@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 import { PersonBlot } from './quill/person.blot';
 import Quill, { Delta }  from "quill";
 
@@ -6,6 +6,9 @@ import { NotebookService } from './data/notebook.service';
 import { NoteBook } from './model/notebook-model';
 import { Page } from './model/page-model';
 import { LoggerService } from './logger.service';
+import { NOTEBOOK } from './mock-data/notebook-mock';
+import { HttpUrlEncodingCodec } from '@angular/common/http';
+import { PageService } from './data/page.service';
 
 PersonBlot["blotName"] = 'person';
 PersonBlot["tagName"] = 'button';
@@ -24,8 +27,9 @@ export class AppComponent implements OnInit {
   document!: any;
   noteBook!: NoteBook;
   pages!: Page[];
+  htmlEncoder = new HttpUrlEncodingCodec()
 
-  constructor(private noteBookservice: NotebookService, private log: LoggerService){}
+  constructor(private noteBookservice: NotebookService, private log: LoggerService, private pageService: PageService){}
 
   ngOnInit(): void {
     this.log.info(`setting up notebook`)
@@ -35,18 +39,23 @@ export class AppComponent implements OnInit {
       this.pages = this.noteBook.pages
       this.log.info(`notebook setup finish`)
     });
-    
+
+    // this.noteBook = NOTEBOOK
+    // this.pages = this.noteBook.pages
+
   }
 
   setNewQuillEditor(editor: any){
     this.quill = editor;
   }
 
-  save(){
+  savePage(id: number){
     // this.document = this.quill.getContents();
-    this.document = this.quill.root.innerHTML;
+    let page = this.quill.root.innerHTML;
+    this.pages[id].page = this.htmlEncoder.encodeValue(page)
+    this.noteBook.pages = this.pages
     try{
-      this.noteBookservice.saveNoteBook(this.noteBook)
+      this.pageService.savePage(this.pages[id], this.noteBook.pagesLocation[id])
       this.log.info("notebook saved")
     } catch(error){
       this.log.error(`notebook not saved`)

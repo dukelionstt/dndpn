@@ -16,13 +16,13 @@ export class NotebookService {
   constructor(private log: LoggerService, private http: HttpClient, private file: FileService) {
   }
 
-  getNoteBook(){
+ getNoteBook(){
     this.log.info(`Get notbook service called`)
-    return this.file.getFile("E:/backup/dndpn/src/app/mock-data/notebook-mock.json")
+    return this.file.getFile("E:\\backup\\dndpn\\src\\app\\mock-data\\notebook-mock.json")
   }
 
   saveNoteBook(notebook: NoteBook){
-    this.log.info(`saving notebook file service started`)
+    this.log.info(`saving notebook file service :: started`)
     let success = false;
     this.file.saveFile("E:\\backup\\dndpn\\src\\app\\mock-data\\notebook-mock.json", JSON.stringify(notebook))
     .subscribe(data => {
@@ -34,7 +34,7 @@ export class NotebookService {
   }
 
   buildNoteBook(obj: any){
-    this.log.debug(`building notebook started`)
+    this.log.debug(`building notebook :: started`)
     this.log.debug(obj)
 
     let notebook: NoteBook = { 
@@ -47,11 +47,12 @@ export class NotebookService {
     }
     this.log.debug(`Current state of notebook:`)
     this.log.debug(notebook)
-    this.log.debug(`building notebook finished`)
+    this.log.debug(`building notebook :: finished`)
     return notebook;
   }
 
   private getPages(locations: any){
+    this.log.info(`get pages :: Started`)
     let pages: Page[] = [];
     this.log.debug(`building pages`)
     for(let file of locations){
@@ -62,20 +63,23 @@ export class NotebookService {
       })
     }
     this.log.debug(pages)
+    this.log.info(`get pages :: Finished`)
     return pages;
   }
 
   private buildPage(obj: any){
+    this.log.info(`build page :: Started`)
     let page : Page ={
       id: obj.id,
       date: obj.date,
       name: obj.name,
-      tags: new Map(Object.entries(obj.tags)),
+      tags: obj.tags,
       type: '',
       page: obj.page
     }
 
-    this.log.debug(`checking the tags situation: ${page.tags.get('person')[0].id}`)
+    // this.log.debug(`checking the tags situation: ${page.tags.get('person')[0].id}`)
+    this.log.info(`build page :: Started`)
     return page;
   }
 }

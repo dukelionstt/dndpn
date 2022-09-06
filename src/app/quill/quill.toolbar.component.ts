@@ -1,8 +1,12 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2 } from "@angular/core";
+import { HttpUrlEncodingCodec } from "@angular/common/http";
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, OnChanges, SimpleChange } from "@angular/core";
 import { ITEM, MISC, PERSON, PLACE } from "../constants";
 import { LoggerService } from "../logger.service";
 import { Page } from "../model/page-model";
 import { TagEntry } from "../model/tag-entry-model";
+import { Tag } from "../model/tag-model";
+import { Tags } from "../model/tags-model";
+import { HiglightEditorTagsService } from "../widgets/higlight.editor.tags.service";
 
 
 @Component({
@@ -20,8 +24,13 @@ export class QuillToolbarComponent implements OnInit{
     @Input()
     quill!: any;
 
+    @Input()
+    sending!: boolean;
+
+    @Input()
+    highlightConfig!: {send: boolean, map: Map<boolean, Map<string,number[]>>}
+
     @Output() newQuillEditor = new EventEmitter<any>();
-    // @Output() pagesChange = new EventEmitter<any>();
 
     range : any;
     text : string = '';
@@ -47,8 +56,11 @@ export class QuillToolbarComponent implements OnInit{
     icons = new Map();
     buttonEvents = new Map();
 
+    htmlDecoder = new HttpUrlEncodingCodec();
 
-    constructor( private renderer:Renderer2, private elementRef: ElementRef, private log: LoggerService){}
+
+    constructor( private renderer:Renderer2, private elementRef: ElementRef, private log: LoggerService,
+                  private highlightTagService: HiglightEditorTagsService){}
 
     ngOnInit(): void {
         this.log.info(`initilising variables for puill tool bar:: Started`)
@@ -68,6 +80,8 @@ export class QuillToolbarComponent implements OnInit{
         this.updateIndicator = false;
         this.changeIndicator = false;
         this.loadingContent = false;
+
+        this.highlightTagService.highLightTag.subscribe(tags => this.highlightTag(tags.ids, tags.type, tags.active))
 
         this.log.info(`initilising variables for puill tool bar:: finished`)
     }
@@ -92,11 +106,11 @@ export class QuillToolbarComponent implements OnInit{
     private loadPageContent(){
       this.log.info(`setting text content :: Started`);
       // this.quill.setContents(this.pages[0].page)
-      this.quill.root.innerHTML = this.pages[0].page;
+      this.quill.root.innerHTML = this.htmlDecoder.decodeValue(this.pages[0].page);
       this.log.info(`setting text content :: Finished`);
 
       this.log.info(`Applying event handlers to taged words :: Started`);
-      for(let [key, value] of this.pages[0].tags){
+      for(let [key, value] of Object.entries(this.pages[0].tags)){
         this.log.info(`Working through ${key} set:: Started`);
         this.updateButtons(value, key)
         this.log.info(`Working through ${key} set:: Finished`);
@@ -114,7 +128,7 @@ export class QuillToolbarComponent implements OnInit{
         this.log.info(`buttonevent tracker updated for ${tagtype} to ${tagSet.length}`)
     }
 
-    //id resolved next step is to stop duplicate entries is the user clicks on the tag and no change has occured to the
+    
     //values passed in by the opening button.
     onNewTagSave(event: any[]){
       this.log.info(`newTagSave process :: Started`)
@@ -127,15 +141,15 @@ export class QuillToolbarComponent implements OnInit{
         this.log.debug(`update indicator present`)
         if(this.changeIndicator){
           this.log.debug(`Change indicator present`)
-
-          let range = this.pages[0].tags.get(this.updateType)[id].metaData.range
-          let length = this.pages[0].tags.get(this.updateType)[id].name.length
+          
+          let range = this.pages[0].tags[this.updateType as keyof Tags][id].metaData.range
+          let length = this.pages[0].tags[this.updateType as keyof Tags][id].name.length
 
           this.log.debug(`Setting the following: range = ${range} and length = ${length}`)
 
           this.quill.removeFormat(range, length);
           this.log.debug(`previous word removed`)
-          this.updateTextInPage(range, this.updateType, this.forValue(this.pages[0].tags.get(this.updateType)[id].name, this.updateType, id))
+          this.updateTextInPage(range, this.updateType, this.forValue(this.pages[0].tags[this.updateType as keyof Tags][id].name, this.updateType, id))
 
           this.attachClickEvent(this.sideBarTitle, id)
           this.changeIndicator = false
@@ -153,7 +167,7 @@ export class QuillToolbarComponent implements OnInit{
           this.textPresent = false;
       } else {
         this.log.debug(`text present false`)
-          this.updateTextInPage(this.range.index, this.sideBarTitle, this.forValue(this.pages[0].tags.get(this.sideBarTitle)[id].name, this.sideBarTitle, id));
+          this.updateTextInPage(this.range.index, this.sideBarTitle, this.forValue(this.pages[0].tags[this.sideBarTitle as keyof Tags][id].name, this.sideBarTitle, id));
 
           this.textPresent = false;
       }
@@ -162,6 +176,7 @@ export class QuillToolbarComponent implements OnInit{
       }
 
       this.close();
+      this.log.info(`newTagSave process :: Finished`)
     }
 
     private forValue(text: string, icontype: string, id: number){
@@ -175,24 +190,24 @@ export class QuillToolbarComponent implements OnInit{
 
       switch(type){
         case PERSON:
-          tooltip = '<div class="tooltip"><p>Notes:' + this.pages[0].tags.get(type)[id].notes + '</p></div>'
+          tooltip = '<div class="tooltip"><p>Notes:' + this.pages[0].tags.person[id].notes + '</p></div>'
         break;
         case PLACE:
           tooltip = '<div class="tooltip">' +
-                    '<p>Location:' + this.pages[0].tags.get(type)[id].location + '</p>' +
-                    '<p>Area:' + this.pages[0].tags.get(type)[id].area + '</p>' +
-                    '<p>Notes:' + this.pages[0].tags.get(type)[id].notes + '</p>' +
+                    '<p>Location:' + this.pages[0].tags.place[id].location + '</p>' +
+                    '<p>Area:' + this.pages[0].tags.place[id].area + '</p>' +
+                    '<p>Notes:' + this.pages[0].tags.place[id].notes + '</p>' +
                   '</div>'
         break;
         case ITEM:
           tooltip = '<div class="tooltip">' +
-                '<p>Type:' + this.pages[0].tags.get(type)[id].type + '</p>' +
-                '<p>Notes:' + this.pages[0].tags.get(type)[id].notes + '</p>' +
+                '<p>Type:' + this.pages[0].tags.item[id].type + '</p>' +
+                '<p>Notes:' + this.pages[0].tags.item[id].notes + '</p>' +
               '</div>'
         break;
         case MISC:
           tooltip = '<div class="tooltip">' +
-                '<p>Notes:' + this.pages[0].tags.get(type)[id].notes + '</p>' +
+                '<p>Notes:' + this.pages[0].tags.misc[id].notes + '</p>' +
               '</div>'
         break;
         default:
@@ -203,12 +218,12 @@ export class QuillToolbarComponent implements OnInit{
     }
 
     private updateTextInPage(index: number, type: string, text: string){
-      this.log.info(`updating the page :: Starting`)
+      this.log.info(`updating text in page :: Starting`)
       this.log.debug(`padded in, index = ${index}, type = ${type} and text = ${text}`)
 
-      this.quill.insertEmbed(index, type,text, type);
+      this.quill.insertEmbed(index, type,text);
       this.quill.setSelection(index + text.length , index + text.length);
-      this.log.info(`updating the page :: Finnished`)
+      this.log.info(`updating text in page :: Finnished`)
     }
 
     private attachClickEvent(buttonClass: string, id: number){
@@ -226,8 +241,8 @@ export class QuillToolbarComponent implements OnInit{
       let button: any;
       if(this.changeIndicator || this.loadingContent){
         this.log.debug(`Running a change : ${this.changeIndicator} or loading : ${this.loadingContent}`)
-        this.log.debug(`Updating button that matches index number: ${this.pages[0].tags.get(buttonClass)[id].metaData.buttonIndex}`)
-        button = this.elementRef.nativeElement.querySelectorAll(queryString)[this.pages[0].tags.get(buttonClass)[id].metaData.buttonIndex];
+        this.log.debug(`Updating button that matches index number: ${this.pages[0].tags[buttonClass as keyof Tags][id].metaData.buttonIndex}`)
+        button = this.elementRef.nativeElement.querySelectorAll(queryString)[this.pages[0].tags[buttonClass as keyof Tags][id].metaData.buttonIndex];
       } else {
         this.log.debug(`Running a new button`)
         button = this.elementRef.nativeElement.querySelectorAll(queryString)[count];
@@ -240,7 +255,7 @@ export class QuillToolbarComponent implements OnInit{
       if(!this.changeIndicator && !this.loadingContent){
         //recording the number of the button in order of buttons for that type so that if the text
         //is channge we can assign the correct button
-        this.pages[0].tags.get(buttonClass)[id].metaData.buttonIndex = count
+        this.pages[0].tags[buttonClass as keyof Tags][id].metaData.buttonIndex = count
         this.log.debug(`Button id is updated in page to ${count}`)
 
         //increment the button so we can find the new one on the next call
@@ -270,7 +285,7 @@ export class QuillToolbarComponent implements OnInit{
 
     tagViewAndUpdate(event: any, id: number, type: string){
       this.log.info(`starting the tag update view`)
-      let tagData = this.pages[0].tags.get(type)[id]
+      let tagData = this.pages[0].tags[type as keyof Tags][id]
       this.log.debug(tagData)
       this.displayDataSidebar(tagData, type);
 
@@ -370,6 +385,56 @@ export class QuillToolbarComponent implements OnInit{
       this.tagEntry.range = this.range.index
 
       this.open();
+    }
+
+    // ngOnChanges(changes: {[propKey: string]: SimpleChange}){
+    //   for(let propName in changes){
+    //     // this.log.debug(`changed detected ${propName}`)
+    //     if(propName == "sending"){
+    //       this.log.debug(`change in ${propName} detected`)
+    //       if(this.sending){
+    //         this.log.debug(`Recieved new message, highlighting tags`)
+    //         this.log.debug(`highlighting complete`)
+    //         this.highlightMessageRecieved.emit(true)
+    //       } else {
+    //         this.log.debug(`Message acknowledgement ignoring`)
+    //       }
+    //       // let change = changes[propName]
+    //       // if(change.isFirstChange()){
+    //       //   this.log.debug(`First time highlightedMap is set with `)
+    //       // } else {
+    //       //   this.log.debug(`acting on change, iterating map`)
+    //       //     this.highlightConfig.map.forEach((tags: Map<string, number[]>, active:boolean) => {
+    //       //       this.log.debug(`Working through active: ${active} buttons first`)
+    //       //       tags.forEach((ids: number[], type: string) => {
+    //       //         this.highlightTag(ids, type, active)
+    //       //       })
+    //       //     })
+    //       // }
+    //     }
+    //   }
+    // }
+
+    highlightTag(ids: number[], type: string, active: boolean){
+      this.log.debug(`iterating array`)
+      for(let id of ids){
+        this.log.debug(`first button wit id ${id} and type ${type} and this will be an active=${active} highlight`)
+        this.applyHighlight(id, type, active)
+      }
+
+    }
+
+    private applyHighlight(id: number, type: string, active: boolean){
+      let button = this.elementRef.nativeElement.querySelectorAll("."+type)[id]
+      this.log.debug(`button found ${button}`)
+      if(active){
+        this.log.debug(`hughlighting`)
+        this.renderer.addClass(button, type+"Highlight")
+      } else {
+        this.log.debug(`reverting`)
+        this.renderer.removeClass(button, type+"Highlight")
+        this.renderer.addClass(button, type)
+      }
     }
 
 }
