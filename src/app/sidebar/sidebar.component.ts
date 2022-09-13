@@ -59,9 +59,43 @@ export class SidebarComponent implements OnInit{
         // })
     }
 
+    // updateTags(element: string){
+        
+    //     switch(element){
+    //         case 'name':
+    //             this.updateList(this.tagEntry.name)
+    //         break;
+    //         case 'area':
+    //             this.updateList(this.tagEntry.name)
+    //         break;
+    //         case 'location':
+    //             this.updateList(this.tagEntry.name)
+    //         break;
+    //         case 'item':
+    //             if(this.tagEntry.itemtype.length > 1){
+    //                 this.tagEntry.itemtype.forEach(item => {
+    //                     this.updateList(item)
+    //                 })
+    //             } else {
+    //                 this.updateList(this.tagEntry.itemtype[0])
+    //             }
+    //         break;
+    //     }
+
+    // }
+
+    // private updateList(value: string){
+    //     if(this.listOfTags.includes(value)){}
+    // }
+
     spaceBar(){
         //todo
     }
+    // listOfTags(){
+    //     return {
+
+    //     }
+    // }
 
     tagSave(){
         let tagList: any;
