@@ -64,7 +64,7 @@ export class QuillToolbarComponent implements OnInit{
 
     ngOnInit(): void {
         this.log.info(`initilising variables for puill tool bar:: Started`)
-        this.icons.set(PERSON, '<img src="https://img.icons8.com/ios-glyphs/15/008080/human-head.png"/>')
+        this.icons.set(PERSON, '<img src="https://img.icons8.com/ios-glyphs/15/2b00d5/human-head.png"/>')
         this.icons.set(PLACE, '<img src="https://img.icons8.com/ios-glyphs/15/FE9A76/castle.png"/>')
         this.icons.set(ITEM, '<img src="https://img.icons8.com/ios-glyphs/15/016936/armored-breastplate.png"/>')
         this.icons.set(MISC, '<img src="https://img.icons8.com/ios-glyphs/15/B413EC/magical-scroll.png"/>')
@@ -190,24 +190,24 @@ export class QuillToolbarComponent implements OnInit{
 
       switch(type){
         case PERSON:
-          tooltip = '<div class="tooltip"><p>Notes:' + this.pages[0].tags.person[id].notes + '</p></div>'
+          tooltip = '<div class="tooltip"><table class="tooltipTable"><tr><td><strong>Notes:</strong></td><td>' + this.pages[0].tags.person[id].notes + '</td><table></div>'
         break;
         case PLACE:
           tooltip = '<div class="tooltip">' +
-                    '<p>Location:' + this.pages[0].tags.place[id].location + '</p>' +
-                    '<p>Area:' + this.pages[0].tags.place[id].area + '</p>' +
-                    '<p>Notes:' + this.pages[0].tags.place[id].notes + '</p>' +
+                    '<table class="tooltipTable"><tr><td><strong>Location:</strong></td><td>' + this.pages[0].tags.place[id].location + '</td></tr>' +
+                    '<tr><td><strong>Area:</strong></td><td>' + this.pages[0].tags.place[id].area + '</td></tr>' +
+                    '<tr><td><strong>Notes:</strong></td><td>' + this.pages[0].tags.place[id].notes + '</td></tr></table>' +
                   '</div>'
         break;
         case ITEM:
           tooltip = '<div class="tooltip">' +
-                '<p>Type:' + this.pages[0].tags.item[id].type + '</p>' +
-                '<p>Notes:' + this.pages[0].tags.item[id].notes + '</p>' +
+                '<table class="tooltipTable"><tr><td><strong>Type:</strong></td><td>' + this.pages[0].tags.item[id].type + '</td>' +
+                '<tr><td><strong>Notes:</strong></td><td>' + this.pages[0].tags.item[id].notes + '</td></tr></table>' +
               '</div>'
         break;
         case MISC:
           tooltip = '<div class="tooltip">' +
-                '<p>Notes:' + this.pages[0].tags.misc[id].notes + '</p>' +
+                '<table class="tooltipTable"><tr><td><strong>Notes:</strong></td><td>' + this.pages[0].tags.misc[id].notes + '</td></tr></table>' +
               '</div>'
         break;
         default:
@@ -274,8 +274,14 @@ export class QuillToolbarComponent implements OnInit{
     }
 
     close(){
+      this.log.info(` close :: starting` )
         this.visible = false;
+        this.changeIndicator = false;
+        this.updateIndicator = false;
         this.tagEntry = this.setupOrClearTagEntry();
+      this.log.debug(`change indicator = ${this.changeIndicator}`)
+      this.log.debug(`update indicator = ${this.updateIndicator}`)
+      this.log.info(` close :: finishing` )
     }
 
     toolTipIdAndTypeSet(event: any, id: number, type: string){
