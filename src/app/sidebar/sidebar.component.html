@@ -7,7 +7,7 @@
         </div>
         <!-- Name -->
         <div nz-col nzSpan="14">
-          <input nz-input type="text" name="NameTxtBx" id="NameTxtBx" [(ngModel)]="tagEntry.name" > <!-- (ngModelChange)="updateTags('Name')" -->
+          <input nz-input type="text" name="NameTxtBx" id="NameTxtBx" [(ngModel)]="tagEntry.name"> <!-- (ngModelChange)="updateTags('Name')" -->
         </div>
          <!-- Location for Item -->
          <div nz-col nz-flex="6" *ngIf="this.sideBarTitle == 'place'">
@@ -31,7 +31,6 @@
           <nz-select #itemTypeDropDown
               nzMode="tags"
               nzPlaceHolder="Tags"
-              [nzOptions]="listOfItemTypes"
               [(ngModel)]="tagEntry.itemtype"
               [ngModelOptions]="{standalone: true}"
               style="width: 100%;">
