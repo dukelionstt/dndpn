@@ -74,12 +74,12 @@ export class NotebookService {
       date: obj.date,
       name: obj.name,
       tags: obj.tags,
-      type: '',
+      type: obj.type,
       page: obj.page
     }
 
     // this.log.debug(`checking the tags situation: ${page.tags.get('person')[0].id}`)
-    this.log.info(`build page :: Started`)
+    this.log.info(`build page :: finished`)
     return page;
   }
 }

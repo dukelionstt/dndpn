@@ -7,21 +7,23 @@
         </div>
         <!-- Name -->
         <div nz-col nzSpan="14">
-          <input nz-input type="text" name="NameTxtBx" id="NameTxtBx" [(ngModel)]="tagEntry.name"> <!-- (ngModelChange)="updateTags('Name')" -->
+          <input nz-input type="text" name="NameTxtBx" id="NameTxtBx" [(ngModel)]="tagEntry.name" (ngModelChange)="updateTags('name')">
         </div>
          <!-- Location for Item -->
          <div nz-col nz-flex="6" *ngIf="this.sideBarTitle == 'place'">
           <span nz-typography><strong>Location</strong></span>
       </div>
       <div nz-col nz-flex="auto" *ngIf="this.sideBarTitle == 'place'">
-          <input nz-input type="text" name="locationTxtBx" id="locationTxtBx" [(ngModel)]="tagEntry.location">
+          <input nz-input type="text" name="locationTxtBx" id="locationTxtBx" [(ngModel)]="tagEntry.location"
+          (ngModelChange)="updateTags('location')">
       </div>
       <!-- Area for Item -->
       <div nz-col nz-flex="6" *ngIf="this.sideBarTitle == 'place'">
           <span nz-typography><strong>Area</strong></span>
       </div>
       <div nz-col nz-flex="auto" *ngIf="this.sideBarTitle == 'place'">
-          <input nz-input type="text" name="areaTxtBx" id="areaTxtBx" [(ngModel)]="tagEntry.area">
+          <input nz-input type="text" name="areaTxtBx" id="areaTxtBx" [(ngModel)]="tagEntry.area"
+          (ngModelChange)="updateTags('area')">
       </div>
       <!-- Item types dropdown  -->
       <div nz-col nz-flex="6" *ngIf="this.sideBarTitle == 'item'">
@@ -31,10 +33,12 @@
           <nz-select #itemTypeDropDown
               nzMode="tags"
               nzPlaceHolder="Tags"
+              [nzOptions]="listOfItemTypes"
               [(ngModel)]="tagEntry.itemtype"
               [ngModelOptions]="{standalone: true}"
-              style="width: 100%;">
-              <nz-option *ngFor="let tag of listOfTags"
+              style="width: 100%;"
+              (ngModelChange)="updateTags('item')">
+              <nz-option *ngFor="let tag of listOfItemTypes"
                   [nzLabel]="tag.label"
                   [nzValue]="tag.value"></nz-option>
           </nz-select>

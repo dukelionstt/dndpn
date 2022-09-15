@@ -59,34 +59,86 @@ export class SidebarComponent implements OnInit{
         // })
     }
 
-    // updateTags(element: string){
-        
-    //     switch(element){
-    //         case 'name':
-    //             this.updateList(this.tagEntry.name)
-    //         break;
-    //         case 'area':
-    //             this.updateList(this.tagEntry.name)
-    //         break;
-    //         case 'location':
-    //             this.updateList(this.tagEntry.name)
-    //         break;
-    //         case 'item':
-    //             if(this.tagEntry.itemtype.length > 1){
-    //                 this.tagEntry.itemtype.forEach(item => {
-    //                     this.updateList(item)
-    //                 })
-    //             } else {
-    //                 this.updateList(this.tagEntry.itemtype[0])
-    //             }
-    //         break;
-    //     }
+    updateTags(element: string){
 
-    // }
+        let tempList: any[] = [];
+        let replaceList: number[] = [];
+        let updateList: any[] = [];
+        let elementUpper = element.charAt(0).toUpperCase() + element.slice(1);
 
-    // private updateList(value: string){
-    //     if(this.listOfTags.includes(value)){}
-    // }
+        this.tagEntry.misc.forEach(tag => { tempList.push(tag) })
+
+        if(element != 'item'){
+            if(this.tagEntry[element as keyof TagEntry] != this.tagEntry['previous'+elementUpper as keyof TagEntry]){
+                
+                let index = tempList.indexOf(this.tagEntry['previous'+elementUpper as keyof TagEntry].toString())
+                if(index != -1){
+                    tempList[index] = this.tagEntry[element as keyof TagEntry].toString();
+                } else {
+                    tempList.push(this.tagEntry[element as keyof TagEntry].toString());
+                }                    
+                Object.defineProperty(this.tagEntry, 'previous'+elementUpper, {
+                    value: this.tagEntry[element as keyof TagEntry].toString()
+                });
+            } 
+        } else {
+            if(this.updateIndicator && this.tagEntry.previousItemtype.length > 0){
+
+                this.tagEntry.itemtype.forEach(item => {
+                    if(!this.tagEntry.previousItemtype.includes(item)){
+                        tempList.push(item)
+                    }
+                })
+
+                this.tagEntry.previousItemtype.forEach(previousItem => {
+                    if(!this.tagEntry.itemtype.includes(previousItem)){
+                        tempList.splice(tempList.indexOf(previousItem),tempList.indexOf(previousItem)+1)
+                    }
+                })
+            //     this.tagEntry.previousItemtype.forEach(item => {
+            //         if(!this.tagEntry.itemtype.includes(item)){
+                        
+            //             replaceList.push(tempList.indexOf(item))
+            //         }
+            //     })
+
+            //     if(replaceList.length > 0){
+            //         let i =0;
+            //         replaceList.forEach(index => {
+            //             tempList[index] = this.tagEntry.itemtype[i++]
+            //         })
+            //     }
+
+            //     if(updateList.length > 0){
+            //         updateList.forEach(item => {
+            //             tempList.push(item)
+            //         })
+            //     }
+            // } else {
+            //     this.tagEntry.itemtype.forEach(item => {
+            //         tempList.push(item)
+            //     })
+            // }
+
+                this.tagEntry.previousItemtype = this.tagEntry.itemtype
+            }
+        }
+
+        // switch(element){
+        //     case 'area' || 'location':
+        //         tempList.push(this.tagEntry.area);
+        //         tempList.push(this.tagEntry.location);
+        //     break;
+        //     case 'item':
+        //         tempList.concat(this.tagEntry.itemtype);
+        //     break;
+        // }
+
+        // tempList.concat(this.tagEntry.misc)
+
+        this.tagEntry.misc = tempList   
+
+    }
 
     spaceBar(){
         //todo
