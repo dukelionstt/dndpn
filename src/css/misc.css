@@ -1,0 +1,205 @@
+.misc {
+  border: none;
+  /* color: #952B60; */
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg id='squiggle-link' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:ev='http://www.w3.org/2001/xml-events' viewBox='0 0 20 4'%3E%3Cstyle type='text/css'%3E.squiggle{animation:shift .75s linear infinite;}@keyframes shift {from {transform:translateX(0);}to {transform:translateX(-20px);}}%3C/style%3E%3Cpath fill='none' stroke='%23952B60' stroke-width='1' class='squiggle' d='M0,3.5 c 5,0,5,-3,10,-3 s 5,3,10,3 c 5,0,5,-3,10,-3 s 5,3,10,3'/%3E%3C/svg%3E");
+  background-color: transparent;
+  background-position: 0 100%;
+  background-size: auto 6px;
+  background-repeat: repeat-x;
+  text-decoration: none;
+  border: none;
+  position: relative;
+  transition: all 0.3s ease-in-out;
+}
+
+/* ---misc tag button non active --------------*/
+
+.miscTagButton {
+  border: none;
+  outline: none;
+  /* color: #fff; */
+  background: #fff;
+  cursor: pointer;
+  position: relative;
+  z-index: 0;
+  border-radius: 10px;
+  margin: 2.5px;
+
+}
+
+.miscTagButton:before {
+  content: '';
+  /* background: linear-gradient(45deg, #fafa6e,#d5f071,#b2e576,#91d87b,#73cb81,#56bd85,#3bae88,#229f88,#099085,#008080, #02797e, #09727a); */
+  /* background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000); */
+  background: #952B60;
+  position: absolute;
+  top: -2px;
+  left:-2px;
+  background-size: 400%;
+  z-index: -1;
+  filter: blur(5px);
+  width: calc(100% + 4px);
+  height: calc(100% + 4px);
+
+  opacity: 0;
+  transition: opacity .3s ease-in-out;
+  border-radius: 10px;
+  opacity: 1;
+}
+
+.miscTagButton:after {
+    z-index: -1;
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    left: 0;
+    top: 0;
+    border-radius: 10px;
+}
+
+/* ------------------------------- */
+
+
+
+/* ---misc tag button active --------------*/
+
+.miscTagButtonActive {
+  border: none;
+  outline: none;
+  color: #fff;
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+  z-index: 0;
+  border-radius: 10px;
+
+}
+
+.miscTagButtonActive:before {
+  content: '';
+  background: linear-gradient(45deg, #fe4fa6, #f04b9d,  #e34694,  #d5428b,  #c83e82,  #bb397a,  #ae3571,  #a13169,  #942d60,  #882958,  #7c2550,  #702148,  #641d40);
+  /* background: linear-gradient(45deg, #fafa6e,#d5f071,#b2e576,#91d87b,#73cb81,#56bd85,#3bae88,#229f88,#099085,#008080, #02797e, #09727a); */
+  /* background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000); */
+  position: absolute;
+  top: -2px;
+  left:-2px;
+  background-size: 400%;
+  z-index: -1;
+  filter: blur(5px);
+  width: calc(100% + 4px);
+  height: calc(100% + 4px);
+  animation: glowing 20s linear infinite;
+  opacity: 0;
+  transition: opacity .3s ease-in-out;
+  border-radius: 10px;
+  opacity: 1;
+}
+
+.miscTagButtonActive:after {
+    z-index: -1;
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    left: 0;
+    top: 0;
+    border-radius: 10px;
+}
+
+@keyframes glowing {
+    0% { background-position: 0 0; }
+    50% { background-position: 400% 0; }
+    100% { background-position: 0 0; }
+}
+
+/* ------------------------------- */
+
+
+/* ------------- misc highlight--------------- */
+/* Kocsten CSS Button Hover Glow Effect */
+.miscHighlight {
+  border: none;
+  outline: none;
+  /* color: #fff; */
+  background: #fff;
+  cursor: pointer;
+  position: relative;
+  z-index: 0;
+  border-radius: 10px;
+
+}
+
+.miscHighlight:before {
+  content: '';
+  background: linear-gradient(45deg, #fe4fa6, #f04b9d,  #e34694,  #d5428b,  #c83e82,  #bb397a,  #ae3571,  #a13169,  #942d60,  #882958,  #7c2550,  #702148,  #641d40);
+  /* background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000); */
+  position: absolute;
+  top: -2px;
+  left:-2px;
+  background-size: 400%;
+  z-index: -1;
+  filter: blur(5px);
+  width: calc(100% + 4px);
+  height: calc(100% + 4px);
+  animation: glowing 20s linear infinite;
+  opacity: 0;
+  transition: opacity .3s ease-in-out;
+  border-radius: 10px;
+  opacity: 1;
+}
+
+.miscHighlight:after {
+    z-index: -1;
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    left: 0;
+    top: 0;
+    border-radius: 10px;
+}
+
+@keyframes glowing {
+    0% { background-position: 0 0; }
+    50% { background-position: 400% 0; }
+    100% { background-position: 0 0; }
+}
+/* ------------------------------ */
+
+
+.misc:hover .tooltip{
+
+  background: #864b65;
+  visibility: visible;
+  transform: translateY(-10px);
+  opacity: 1;
+  transition: .3s linear;
+  animation: odsoky 1s ease-in-out infinite  alternate;
+
+}
+
+.miscHighlight:hover .tooltip{
+
+background: #864b65;
+visibility: visible;
+transform: translateY(-10px);
+opacity: 1;
+transition: .3s linear;
+animation: odsoky 1s ease-in-out infinite  alternate;
+
+}
+@keyframes odsoky {
+    0%{
+    transform: translateY(6px);
+    }
+
+    100%{
+    transform: translateY(1px);
+    }
+
+}
+/* ------------------------------------------------------------ */
