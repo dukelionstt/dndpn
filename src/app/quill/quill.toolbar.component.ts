@@ -446,11 +446,14 @@ export class QuillToolbarComponent implements OnInit{
       this.log.debug(`button found ${button}`)
       if(active){
         this.log.debug(`hughlighting`)
-        this.renderer.addClass(button, type+"Highlight")
+        this.renderer.removeClass(button, "reference")
+        this.renderer.addClass(button, "highlight")
+        this.renderer.addClass(button, "personGlow")
       } else {
         this.log.debug(`reverting`)
-        this.renderer.removeClass(button, type+"Highlight")
-        this.renderer.addClass(button, type)
+        this.renderer.removeClass(button, "highlight")
+        this.renderer.removeClass(button, "personGlow")
+        this.renderer.addClass(button, "reference")
       }
     }
 

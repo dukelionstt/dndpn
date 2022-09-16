@@ -1,24 +1,14 @@
-.person .reference{
+.person {
 
   background-image: url("data:image/svg+xml;charset=utf8,%3Csvg id='squiggle-link' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:ev='http://www.w3.org/2001/xml-events' viewBox='0 0 20 4'%3E%3Cstyle type='text/css'%3E.squiggle{animation:shift .75s linear infinite; background-color: transparent;}@keyframes shift {from {transform:translateX(0);}to {transform:translateX(-20px);}}%3C/style%3E%3Cpath fill='none' stroke='%233D91E0' stroke-width='1' class='squiggle' d='M0,3.5 c 5,0,5,-3,10,-3 s 5,3,10,3 c 5,0,5,-3,10,-3 s 5,3,10,3'/%3E%3C/svg%3E");
-  /* background-color: transparent;
-  background-position: 0 100%;
-  background-size: auto 6px;
-  background-repeat: repeat-x;
-  text-decoration: none;
-  border: none;
-  position: relative; */
-    /* color: #008080; or #3D91E0 */
-  /* color:#3D91E0; */
-  /* transition: all 0.3s ease-in-out; */
+  
 }
 
 /* ---Person tag button non active --------------*/
 
-.personTagButton {
+/* .personTag .widget {
   border: none;
   outline: none;
-  /* color: #fff; */
   background: var(--tagButonColor);
   cursor: pointer;
   position: relative;
@@ -26,14 +16,12 @@
   border-radius: 10px;
   margin: 2.5px;
 
-}
+} */
 
-.personTagButton:before {
-  content: '';
-  /* background: linear-gradient(45deg, #fafa6e,#d5f071,#b2e576,#91d87b,#73cb81,#56bd85,#3bae88,#229f88,#099085,#008080, #02797e, #09727a); */
-  /* background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000); */
+.personTag:before {
+  /* content: ''; */
   background: #3D91E0;
-  position: absolute;
+  /* position: absolute;
   top: -2px;
   left:-2px;
   background-size: 400%;
@@ -45,10 +33,10 @@
   opacity: 0;
   transition: opacity .3s ease-in-out;
   border-radius: 10px;
-  opacity: 1;
+  opacity: 1; */
 }
 
-.personTagButton:after {
+/* .personTag .widget:after {
     z-index: -1;
     content: '';
     position: absolute;
@@ -58,54 +46,54 @@
     left: 0;
     top: 0;
     border-radius: 10px;
-}
+} */
 
 /* ------------------------------- */
 
 /* ---Person tag button active --------------*/
 
-.personTagButtonActive {
-  border: none;
-  outline: none;
+.personTagActive {
+  /* border: none; */
+  /* outline: none; */
   color: #fff;
   background: transparent;
-  cursor: pointer;
-  position: relative;
-  z-index: 0;
-  border-radius: 10px;
+  /* cursor: pointer; */
+  /* position: relative; */
+  /* z-index: 0; */
+  /* border-radius: 10px; */
 
 }
 
-.personTagButtonActive:before {
-  content: '';
+.personTagActive:before {
+  /* content: ''; */
   background: linear-gradient(45deg, #41beff,#20b5ff,#00adff,#00a4ff,#009aff,#0091ff,#0087fe,#007dfc,#0072f9,#0066f4,#005aef,#2a4de8,#413de0);
   /* background: linear-gradient(45deg, #fafa6e,#d5f071,#b2e576,#91d87b,#73cb81,#56bd85,#3bae88,#229f88,#099085,#008080, #02797e, #09727a); */
   /* background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000); */
-  position: absolute;
-  top: -2px;
-  left:-2px;
-  background-size: 400%;
-  z-index: -1;
-  filter: blur(5px);
-  width: calc(100% + 4px);
-  height: calc(100% + 4px);
+  /* position: absolute; */
+  /* top: -2px; */
+  /* left:-2px; */
+  /* background-size: 400%; */
+  /* z-index: -1; */
+  /* filter: blur(5px); */
+  /* width: calc(100% + 4px); */
+  /* height: calc(100% + 4px); */
   animation: glowing 20s linear infinite;
-  opacity: 0;
-  transition: opacity .3s ease-in-out;
-  border-radius: 10px;
-  opacity: 1;
+  /* opacity: 0; */
+  /* transition: opacity .3s ease-in-out; */
+  /* border-radius: 10px; */
+  /* opacity: 1; */
 }
 
-.personTagButtonActive:after {
-    z-index: -1;
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 100%;
+.personTagActive:after {
+    /* z-index: -1; */
+    /* content: ''; */
+    /* position: absolute; */
+    /* width: 100%; */
+    /* height: 100%; */
     background: transparent;
-    left: 0;
-    top: 0;
-    border-radius: 10px;
+    /* left: 0; */
+    /* top: 0; */
+    /* border-radius: 10px; */
 }
 
 @keyframes glowing {
@@ -118,7 +106,7 @@
 
 /* ------------- Person highlight--------------- */
 /* Kocsten CSS Button Hover Glow Effect */
-.personHighlight {
+/* .personGlow {
   border: none;
   outline: none;
   background: var(--tagButonColor);
@@ -127,27 +115,27 @@
   z-index: 0;
   border-radius: 10px;
 
-}
+} */
 
-.personHighlight:before {
-  content: '';
+.personGlow:before {
+  /* content: ''; */
   background: linear-gradient(45deg, #41beff,#20b5ff,#00adff,#00a4ff,#009aff,#0091ff,#0087fe,#007dfc,#0072f9,#0066f4,#005aef,#2a4de8,#413de0);
-  position: absolute;
+  /* position: absolute;
   top: -2px;
   left:-2px;
   background-size: 400%;
   z-index: -1;
   filter: blur(5px);
   width: calc(100% + 4px);
-  height: calc(100% + 4px);
+  height: calc(100% + 4px); */
   animation: glowing 20s linear infinite;
-  opacity: 0;
+  /* opacity: 0;
   transition: opacity .3s ease-in-out;
   border-radius: 10px;
-  opacity: 1;
+  opacity: 1; */
 }
 
-.personHighlight:after {
+/* .personGlow:after {
     z-index: -1;
     content: '';
     position: absolute;
@@ -157,7 +145,7 @@
     left: 0;
     top: 0;
     border-radius: 10px;
-}
+} */
 
 @keyframes glowing {
     0% { background-position: 0 0; }

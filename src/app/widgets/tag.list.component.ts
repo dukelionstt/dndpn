@@ -8,8 +8,8 @@ import { Widget } from "../model/widget-model";
 import { QuillToolbarComponent } from "../quill/quill.toolbar.component";
 import { HiglightEditorTagsService } from "./higlight.editor.tags.service";
 
-const POST_FIX_ACTIVE = "TagButtonActive"
-const POST_FIX = "TagButton"
+const POST_FIX_ACTIVE = "TagActive"
+const POST_FIX = "Tag"
 
 
 @Component({
