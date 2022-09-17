@@ -90,12 +90,16 @@ export class QuillToolbarComponent implements OnInit{
       return {
         id: 0,
         name: '',
+        previousName: '',
         date: '',
         misc: [],
         notes: '',
         location: '',
+        previousLocation: '',
         area: '',
+        previousArea: '',
         itemtype: [],
+        previousItemtype: [],
         range: 0,
         buttonIndex: 0,
         lenght: 0
@@ -309,6 +313,7 @@ export class QuillToolbarComponent implements OnInit{
         case PERSON:
             this.tagEntry.id = tagData.id
             this.tagEntry.name = tagData.name
+            this.tagEntry.previousName = tagData.name
             this.tagEntry.date = tagData.date
             this.tagEntry.misc = tagData.misc
             this.tagEntry.notes = tagData.notes
@@ -318,8 +323,11 @@ export class QuillToolbarComponent implements OnInit{
         case PLACE:
             this.tagEntry.id = tagData.id
             this.tagEntry.name = tagData.name
+            this.tagEntry.previousName = tagData.name
             this.tagEntry.location = tagData.location
+            this.tagEntry.previousLocation = tagData.location
             this.tagEntry.area = tagData.area
+            this.tagEntry.previousArea = tagData.area
             this.tagEntry.date = tagData.date
             this.tagEntry.misc = tagData.misc
             this.tagEntry.notes = tagData.notes
@@ -329,7 +337,9 @@ export class QuillToolbarComponent implements OnInit{
         case ITEM:
             this.tagEntry.id = tagData.id
             this.tagEntry.name = tagData.name
-            this.tagEntry.itemtype = tagData.itemtype
+            this.tagEntry.previousName = tagData.name
+            this.tagEntry.itemtype = tagData.type
+            this.tagEntry.previousItemtype = tagData.type
             this.tagEntry.date = tagData.date
             this.tagEntry.misc = tagData.misc
             this.tagEntry.notes = tagData.notes
@@ -339,6 +349,7 @@ export class QuillToolbarComponent implements OnInit{
         case MISC:
             this.tagEntry.id = tagData.id
             this.tagEntry.name = tagData.name
+            this.tagEntry.previousName = tagData.name
             this.tagEntry.date = tagData.date
             this.tagEntry.misc = tagData.misc
             this.tagEntry.notes = tagData.notes
