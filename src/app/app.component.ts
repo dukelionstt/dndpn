@@ -44,7 +44,9 @@ export class AppComponent implements OnInit {
   pages!: Page[];
   htmlEncoder = new HttpUrlEncodingCodec()
 
-  constructor(private noteBookservice: NotebookService, private log: LoggerService, private pageService: PageService){}
+  constructor(private noteBookservice: NotebookService, 
+              private log: LoggerService, 
+              private pageService: PageService){}
 
   ngOnInit(): void {
     this.log.info(`setting up notebook`)

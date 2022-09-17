@@ -29,7 +29,7 @@ export class NotebookService {
       this.log.debug(data)
       if(!data.saved){
         throw data.message
-      } 
+      }
     });
   }
 
@@ -37,7 +37,7 @@ export class NotebookService {
     this.log.debug(`building notebook :: started`)
     this.log.debug(obj)
 
-    let notebook: NoteBook = { 
+    let notebook: NoteBook = {
       id: obj.id,
       date: obj.date,
       name: obj.name,

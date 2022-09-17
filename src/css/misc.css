@@ -1,0 +1,63 @@
+.misc {
+  /* color: #952B60; */
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg id='squiggle-link' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:ev='http://www.w3.org/2001/xml-events' viewBox='0 0 20 4'%3E%3Cstyle type='text/css'%3E.squiggle{animation:shift .75s linear infinite;}@keyframes shift {from {transform:translateX(0);}to {transform:translateX(-20px);}}%3C/style%3E%3Cpath fill='none' stroke='%23952B60' stroke-width='1' class='squiggle' d='M0,3.5 c 5,0,5,-3,10,-3 s 5,3,10,3 c 5,0,5,-3,10,-3 s 5,3,10,3'/%3E%3C/svg%3E");
+ 
+}
+
+/* ---misc tag button non active --------------*/
+
+
+.miscTag:before {
+  background: #952B60;
+}
+/* ------------------------------- */
+
+
+
+/* ---misc tag  active --------------*/
+
+.miscTagActive {
+  color: #fff;
+  background: transparent;
+
+}
+
+.miscTagActive:before {
+  background: linear-gradient(45deg, #fe4fa6, #f04b9d,  #e34694,  #d5428b,  #c83e82,  #bb397a,  #ae3571,  #a13169,  #942d60,  #882958,  #7c2550,  #702148,  #641d40);
+}
+
+.miscTagActive:after {
+    background: transparent;
+}
+
+/* ------------------------------- */
+
+
+/* ------------- misc highlight--------------- */
+/* Kocsten CSS  Hover Glow Effect */
+.highlight.miscGlow {
+  background: transparent;
+
+}
+
+.miscGlow:before {
+  background: linear-gradient(45deg, #fe4fa6, #f04b9d,  #e34694,  #d5428b,  #c83e82,  #bb397a,  #ae3571,  #a13169,  #942d60,  #882958,  #7c2550,  #702148,  #641d40);
+}
+
+.highlight.miscGlow:after {
+    background: transparent;
+}
+/* ------------------------------ */
+
+
+.misc:hover .tooltip{
+
+  background: #864b65;
+  visibility: visible;
+  transform: translateY(-10px);
+  opacity: 1;
+  transition: .3s linear;
+  animation: odsoky 1s ease-in-out infinite  alternate;
+
+}
+/* ------------------------------------------------------------ */

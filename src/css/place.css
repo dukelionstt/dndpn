@@ -1,0 +1,60 @@
+.place {
+  /* color: #F1B620; */
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg id='squiggle-link' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:ev='http://www.w3.org/2001/xml-events' viewBox='0 0 20 4'%3E%3Cstyle type='text/css'%3E.squiggle{animation:shift .75s linear infinite;}@keyframes shift {from {transform:translateX(0);}to {transform:translateX(-20px);}}%3C/style%3E%3Cpath fill='none' stroke='%23F1B620' stroke-width='1' class='squiggle' d='M0,3.5 c 5,0,5,-3,10,-3 s 5,3,10,3 c 5,0,5,-3,10,-3 s 5,3,10,3'/%3E%3C/svg%3E");
+  
+}
+
+/* ---place tag  non active --------------*/
+
+
+.placeTag:before {
+  background: #F1B620;;
+}
+
+/* ------------------------------- */
+
+/* ---place tag  active --------------*/
+
+.placeTagActive {
+  color: #fff;
+  background: transparent;
+
+}
+
+.placeTagActive:before {
+  background: linear-gradient(45deg, #fff15b,#f3e254,#e7d44d,#dbc647,#cfb840,#c3ab3a,#b79d34,#aa902e,#9e8328,#917722,#856b1d,#785f17,#6c5312);
+
+}
+
+.placeTagActive:after {
+    background: transparent;
+}
+
+/* ------------------------------- */
+
+/* ------------- place highlight--------------- */
+/* Kocsten CSS  Hover Glow Effect */
+.highlight.placeGlow {
+  background: transparent;
+
+}
+
+.placeGlow:before {
+  background: linear-gradient(45deg, #fff15b,#f3e254,#e7d44d,#dbc647,#cfb840,#c3ab3a,#b79d34,#aa902e,#9e8328,#917722,#856b1d,#785f17,#6c5312);
+}
+
+.highlight.placeGlow:after {
+    background: transparent;
+}
+/* ------------------------------ */
+
+.place:hover .tooltip{
+
+  background: #bb964b;
+  visibility: visible;
+  transform: translateY(-10px);
+  opacity: 1;
+  transition: .3s linear;
+  animation: odsoky 1s ease-in-out infinite  alternate;
+
+}

@@ -6,6 +6,7 @@ import { Page } from "../model/page-model";
 import { TagEntry } from "../model/tag-entry-model";
 import { Tag } from "../model/tag-model";
 import { Tags } from "../model/tags-model";
+import { IconService } from "../service/icon.service";
 import { HiglightEditorTagsService } from "../widgets/higlight.editor.tags.service";
 
 
@@ -53,7 +54,7 @@ export class QuillToolbarComponent implements OnInit{
 
     visible = false;
 
-    icons = new Map();
+    icons = new IconService();
     buttonEvents = new Map();
 
     htmlDecoder = new HttpUrlEncodingCodec();
@@ -64,10 +65,10 @@ export class QuillToolbarComponent implements OnInit{
 
     ngOnInit(): void {
         this.log.info(`initilising variables for puill tool bar:: Started`)
-        this.icons.set(PERSON, '<img src="https://img.icons8.com/ios-glyphs/15/2b00d5/human-head.png"/>')
-        this.icons.set(PLACE, '<img src="https://img.icons8.com/ios-glyphs/15/FE9A76/castle.png"/>')
-        this.icons.set(ITEM, '<img src="https://img.icons8.com/ios-glyphs/15/016936/armored-breastplate.png"/>')
-        this.icons.set(MISC, '<img src="https://img.icons8.com/ios-glyphs/15/B413EC/magical-scroll.png"/>')
+        // this.icons.set(PERSON, '<img src="https://img.icons8.com/ios-glyphs/15/2b00d5/human-head.png"/>')
+        // this.icons.set(PLACE, '<img src="https://img.icons8.com/ios-glyphs/15/FE9A76/castle.png"/>')
+        // this.icons.set(ITEM, '<img src="https://img.icons8.com/ios-glyphs/15/016936/armored-breastplate.png"/>')
+        // this.icons.set(MISC, '<img src="https://img.icons8.com/ios-glyphs/15/B413EC/magical-scroll.png"/>')
 
         this.buttonEvents.set(PERSON, 0);
         this.buttonEvents.set(PLACE, 0);
@@ -184,8 +185,8 @@ export class QuillToolbarComponent implements OnInit{
     }
 
     private forValue(text: string, icontype: string, id: number){
-      this.log.debug(`setting ${this.icons.get(icontype) + text}`)
-      return  this.icons.get(icontype) + text + this.setTooltip(icontype, id);
+      this.log.debug(`setting ${this.icons.getIcon(icontype) + text}`)
+      return  this.icons.getIcon(icontype) + text + this.setTooltip(icontype, id);
     }
 
     private setTooltip(type: string, id: number){
@@ -446,11 +447,14 @@ export class QuillToolbarComponent implements OnInit{
       this.log.debug(`button found ${button}`)
       if(active){
         this.log.debug(`hughlighting`)
-        this.renderer.addClass(button, type+"Highlight")
+        this.renderer.removeClass(button, "reference")
+        this.renderer.addClass(button, "highlight")
+        this.renderer.addClass(button, type+"Glow")
       } else {
         this.log.debug(`reverting`)
-        this.renderer.removeClass(button, type+"Highlight")
-        this.renderer.addClass(button, type)
+        this.renderer.removeClass(button, "highlight")
+        this.renderer.removeClass(button, type+"Glow")
+        this.renderer.addClass(button, "reference")
       }
     }
 
