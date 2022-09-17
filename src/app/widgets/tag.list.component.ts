@@ -6,6 +6,7 @@ import { LoggerService } from "../logger.service";
 import { Page } from "../model/page-model";
 import { Widget } from "../model/widget-model";
 import { QuillToolbarComponent } from "../quill/quill.toolbar.component";
+import { IconService } from "../service/icon.service";
 import { HiglightEditorTagsService } from "./higlight.editor.tags.service";
 
 const POST_FIX_ACTIVE = "TagActive"
@@ -43,7 +44,7 @@ export class TagListComponent implements OnInit{
   previousID!: number;
   previousType!: string;
   previousState!: boolean;
-  icons = new Map();
+  icons = new IconService();
   tags = new Map();
 
   constructor(private widgetsList: WidgetsListService,
@@ -55,10 +56,10 @@ export class TagListComponent implements OnInit{
   ngOnInit(): void {
       this.loading = true
 
-      this.icons.set(PERSON, 'https://img.icons8.com/ios-glyphs/15/3D91E0/human-head.png')
-      this.icons.set(PLACE, 'https://img.icons8.com/ios-glyphs/15/F1B620/castle.png')
-      this.icons.set(ITEM, 'https://img.icons8.com/ios-glyphs/15/016936/armored-breastplate.png')
-      this.icons.set(MISC, 'https://img.icons8.com/ios-glyphs/15/952B60/magical-scroll.png')
+      // this.icons.set(PERSON, 'https://img.icons8.com/ios-glyphs/15/3D91E0/human-head.png')
+      // this.icons.set(PLACE, 'https://img.icons8.com/ios-glyphs/15/F1B620/castle.png')
+      // this.icons.set(ITEM, 'https://img.icons8.com/ios-glyphs/15/016936/armored-breastplate.png')
+      // this.icons.set(MISC, 'https://img.icons8.com/ios-glyphs/15/952B60/magical-scroll.png')
 
       // this.widgets = this.widgetsList.getWidgetsList();
       this.loading = false;
@@ -157,7 +158,7 @@ export class TagListComponent implements OnInit{
     return classList
   }
 
-  getImgSrc(imgtype: string){
-    return this.icons.get(imgtype);
-  }
+  // getImgSrc(imgtype: string){
+  //   return this.icons.get(imgtype);
+  // }
 }

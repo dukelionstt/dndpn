@@ -1,25 +1,13 @@
     <div nz-col *ngFor="let tag of this.pages[0].tags | keyvalue">
       <nz-card [nzBorderless]="false"
                 nzTitle="{{tag.key}}"
-                [nzActions]="[actionSetting, actionEdit, actionEllipsis]"
-                [nzLoading]="loading"
-                #tagCard>
-          <!-- <button nz-button nzShape="round" -->
-          <button class="widget {{tag.key}}Tag"
+                [nzLoading]="loading">
+              <button class="widget {{tag.key}}Tag"
                     *ngFor="let widget of tag.value"
                     (click)="goToTagInPage($event, widget.metaData.buttonIndex, tag.key)"
                     id="{{tag.key}}{{widget.metaData.buttonIndex}}"
                     #tagButton>
-            <img [src]="getImgSrc(tag.key)"/>{{widget.name}}
+            <img [src]="icons.getSrc(tag.key)"/>{{widget.name}}
           </button>
       </nz-card>
-      <ng-template #actionSetting>
-          <i nz-icon nzType="setting"></i>
-        </ng-template>
-        <ng-template #actionEdit>
-          <i nz-icon nzType="edit"></i>
-        </ng-template>
-        <ng-template #actionEllipsis>
-          <i nz-icon nzType="ellipsis"></i>
-        </ng-template>
   </div>

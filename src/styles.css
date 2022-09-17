@@ -7,6 +7,14 @@
 
 :root {
     --tagButonColor: black;
+    --header: #828282
+}
+
+.ql-container{
+  height: 500px;
+}
+.ql-toolbar {
+  background-color: var(--header);
 }
 
 /* Geoff Graham Squiggle effect on code penn used on all reference*/
@@ -42,6 +50,7 @@
   top: -2px;
   left:-2px;
   background-size: 400%;
+  animation: glowing 20s linear infinite;
   z-index: -1;
   filter: blur(5px);
   width: calc(100% + 4px);
@@ -52,6 +61,14 @@
   border-radius: 10px;
   opacity: 1;
 }
+
+@keyframes glowing {
+  0% { background-position: 0 0; }
+  50% { background-position: 400% 0; }
+  100% { background-position: 0 0; }
+}
+
+
 
 
 .widget:after, .highlight::after {
@@ -65,17 +82,17 @@
   top: 0;
   border-radius: 10px;
 }
+/* maybe add a ReferenceHighlighted class to cover the tranparent background*/
 
-#editor {
-    height: 375px;
-  }
+ 
 
-#personWidget{
-    max-height: 125px;
+.ant-card-body{
+    height: 150px;
     overflow-y: auto;
 }
-html, body {
-  height: 100%;
+
+.ant-card-head {
+  background-color: var(--header);
 }
 
 
@@ -103,11 +120,6 @@ html, body {
 
     box-shadow: 0 0 3px rgba(56, 54, 54, 0.86);
 }
-
-
-
-
-
 
 
 /*bottom*/
