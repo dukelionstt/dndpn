@@ -7,5 +7,5 @@ name: "teseting Notebook",
 date: new Date().getDate().toString(),
 type: 'DND',
 pages: [PAGE],
-pagesLocation: ["E:\\backup\\dndpn\\src\\app\\mock-data\\page-mock.json"]
+saveLocation: "E:\\backup\\dndpn\\src\\app\\mock-data\\page-mock.json"
 }

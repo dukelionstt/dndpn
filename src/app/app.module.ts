@@ -26,6 +26,10 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzTypographyModule } from 'ng-zorro-antd/typography';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { MenuComponent } from './menu/menu.component';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzBadgeModule } from 'ng-zorro-antd/badge';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 
 
 registerLocaleData(en);
@@ -36,7 +40,8 @@ registerLocaleData(en);
     AppComponent,
     QuillToolbarComponent,
     TagListComponent,
-    SidebarComponent ]
+    SidebarComponent,
+    MenuComponent ]
     ,
   imports: [
     BrowserModule,
@@ -54,7 +59,10 @@ registerLocaleData(en);
     NzSelectModule,
     NzTypographyModule,
     NzCardModule,
-    NzToolTipModule
+    NzToolTipModule, 
+    NzDropDownModule,
+    NzBadgeModule,
+    NzIconModule 
 
   ],
   providers: [{ provide: NZ_I18N, useValue: en_US }],

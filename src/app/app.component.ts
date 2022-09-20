@@ -1,4 +1,4 @@
-import { Component, OnInit} from '@angular/core';
+import { Component, OnInit, HostListener} from '@angular/core';
 import { PersonBlot } from './quill/person.blot';
 import Quill, { Delta }  from "quill";
 
@@ -31,6 +31,7 @@ Quill.register(ItemBlot);
 Quill.register(MiscBlot);
 
 
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -43,22 +44,22 @@ export class AppComponent implements OnInit {
   noteBook!: NoteBook;
   pages!: Page[];
   htmlEncoder = new HttpUrlEncodingCodec()
-
+  
   constructor(private noteBookservice: NotebookService, 
               private log: LoggerService, 
               private pageService: PageService){}
 
   ngOnInit(): void {
     this.log.info(`setting up notebook`)
-    this.noteBookservice.getNoteBook().subscribe((data: any) => {
-      this.log.info(`notebook setup start`)
-      this.noteBook = this.noteBookservice.buildNoteBook(data)
-      this.pages = this.noteBook.pages
-      this.log.info(`notebook setup finish`)
-    });
+    // this.noteBookservice.getNoteBook().subscribe((data: any) => {
+    //   this.log.info(`notebook setup start`)
+    //   this.noteBook = this.noteBookservice.buildNoteBook(data)
+    //   this.pages = this.noteBook.pages
+    //   this.log.info(`notebook setup finish`)
+    // });
 
-    // this.noteBook = NOTEBOOK
-    // this.pages = this.noteBook.pages
+    this.noteBook = NOTEBOOK
+    this.pages = this.noteBook.pages
 
   }
 
@@ -72,7 +73,7 @@ export class AppComponent implements OnInit {
     this.pages[id].page = this.htmlEncoder.encodeValue(page)
     this.noteBook.pages = this.pages
     try{
-      this.pageService.savePage(this.pages[id], this.noteBook.pagesLocation[id])
+      this.pageService.savePage(this.pages[id], this.noteBook.saveLocation+ "\\pages\\" +this.pages[id].name+".json")
       this.log.info("notebook saved")
     } catch(error){
       this.log.error(`notebook not saved`)

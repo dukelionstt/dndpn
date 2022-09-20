@@ -1,4 +1,4 @@
-<quill-editor (onEditorCreated)="created($event)">
+<quill-editor (onEditorCreated)="created($event)" (onFocus)="trackFocus('quill')">
     <div quill-editor-toolbar>
 
         <span class="ql-formats">

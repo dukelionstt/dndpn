@@ -1,0 +1,156 @@
+<div nz-menu nzMode="horizontal">
+    <nz-button-group>
+        <button 
+                nz-button 
+                nzType="text"
+                nz-dropdown
+                [nzDropdownMenu]="fileMenu"
+                nzTrigger="click">File</button>
+        <button 
+                nz-button 
+                nzType="text"
+                nz-dropdown
+                [nzDropdownMenu]="editMenu"
+                nzTrigger="click">Edit</button>
+        <button 
+                nz-button 
+                nzType="text"
+                nz-dropdown
+                [nzDropdownMenu]="viewMenu"
+                nzTrigger="click">View</button>
+        <button 
+                nz-button 
+                nzType="text"
+                nz-dropdown
+                [nzDropdownMenu]="helpMenu"
+                nzTrigger="click">Help</button>
+    </nz-button-group>
+    <!-- File menu options -->
+    <nz-dropdown-menu #fileMenu="nzDropdownMenu">
+        <ul nz-menu>
+            <li nz-menu-item
+                (click)="newNotebook()">New Notebook</li>
+            <li nz-menu-item
+                (click)="newPage()">New Page</li>
+            <li nz-menu-divider></li>
+            <li nz-menu-item
+                (click)="openRecent()">Open Recent</li>
+            <li nz-menu-item
+                (click)="openNotebook()">Open Notebook</li>
+            <li nz-menu-item
+                (click)="openPage()">Open Page</li>
+            <li nz-menu-divider></li>
+            <li nz-menu-item
+                (click)="saveNotebook()">Save Notebook</li>
+            <li nz-menu-item
+                (click)="savePage()">Save Page</li>
+            <li nz-menu-item
+                (click)="saveAll()">Save All..</li>
+            <li nz-menu-divider></li>
+            <li nz-menu-item
+                (click)="autoSave()">Auto Save</li>
+            <li nz-menu-divider></li>
+            <li nz-menu-item
+                (click)="settings()">Settings</li>
+            <li nz-menu-divider></li>
+            <li nz-menu-item
+                (click)="closeNotebook()">Close Notebook</li>
+            <li nz-menu-item
+                (click)="closePage()">Close Page</li>
+            <li nz-menu-item
+                (click)="closeWindow()">Close Window</li>
+        </ul>
+    </nz-dropdown-menu>
+    <!-- edit menu optionns -->
+    <nz-dropdown-menu #editMenu="nzDropdownMenu">
+        <ul nz-menu>
+            <nz-ribbon nzText="Ctrl+z">
+                <li nz-menu-item
+                    (click)="undo()">Undo</li>
+            </nz-ribbon>
+            <nz-ribbon nzText="Ctrl+shift+z">
+                <li nz-menu-item
+                    (click)="redo()">Redo</li>
+            </nz-ribbon>
+            <li nz-menu-divider></li>
+            <nz-ribbon nzText="Ctrl+c">
+                <li nz-menu-item
+                    (click)="copy()">Copy</li>
+            </nz-ribbon>
+            <nz-ribbon nzText="Ctrl+x">
+                <li nz-menu-item
+                    (click)="cut()">Cut</li>
+            </nz-ribbon>
+            <nz-ribbon nzText="Ctrl+v">
+                <li nz-menu-item
+                    (click)="paste()">Paste</li>
+            </nz-ribbon>
+            <li nz-menu-divider></li>
+            <nz-ribbon nzText="Ctrl+f">
+                <li nz-menu-item
+                    (click)="find()">Find</li>
+            </nz-ribbon>
+            <nz-ribbon nzText="Ctrl+r">
+                    <li nz-menu-item
+                    (click)="replace()">Replace</li>
+            </nz-ribbon>
+            <li nz-menu-divider></li>
+            <nz-ribbon nzText="Ctrl+shift+z">
+                <li nz-menu-item
+                    (click)="findInPages()">Find in Pages</li>
+            </nz-ribbon>
+        </ul>
+    </nz-dropdown-menu>
+    <!-- view menu options -->
+    <nz-dropdown-menu #viewMenu="nzDropdownMenu">
+        <ul nz-menu>
+            <li nz-menu-item
+                (click)="notebookOverview()">Notebook Overview</li>
+            <li nz-menu-item
+                (click)="pageOverview()">Page Overview</li>
+            <li nz-menu-divider></li>
+            <li nz-menu-item
+                (click)="widgetOverview()">Widget Overview</li>
+            <li nz-menu-item
+                (click)="widgetsAvailable()">Widgets Available</li>
+            <li nz-menu-divider></li>
+            <li nz-menu-item
+                (click)="statisticsOverView()">Statistics OverView</li>
+            <li nz-menu-item
+                (click)="wordCount()">Word Count<span nz-icon nzType="check" nzTheme="outline"></span></li>
+            <li nz-menu-item
+                (click)="referenceCount()">Reference Count<span nz-icon nzType="check" nzTheme="outline"></span></li>
+            <li nz-menu-divider></li>
+            <li nz-menu-item
+                (click)="tagCount()">Tag Count<span nz-icon nzType="check" nzTheme="outline"></span></li>
+        </ul>
+    </nz-dropdown-menu>
+    <!-- help menu option -->
+    <nz-dropdown-menu #helpMenu="nzDropdownMenu">
+        <ul nz-menu>
+            <li nz-menu-item
+                (click)="basicNoteTaking()">Basic Note Taking</li>
+            <li nz-menu-item
+                (click)="shortCutKeys()">Short Cut Keys</li>
+            <li nz-menu-divider></li>
+            <li nz-menu-item
+                (click)="references()">References</li>
+            <li nz-menu-item
+                (click)="tags()">Tags</li>
+            <li nz-menu-item
+                (click)="widgets()">Widgets</li>
+            <li nz-menu-item
+                (click)="linkingTogether()">Linking Together</li>
+            <li nz-menu-divider></li>
+            <li nz-menu-item
+                (click)="reportBug()">Report Bug <span nz-icon nzType="bug" nzTheme="outline"></span></li>
+            <li nz-menu-item
+                (click)="featureRequest()">Feature Request</li>
+            <li nz-menu-item
+                (click)="contributing()">Contributing</li>
+            <li nz-menu-divider></li>
+            <li nz-menu-item
+                (click)="about()">About</li>
+        </ul>
+    </nz-dropdown-menu>
+</div>

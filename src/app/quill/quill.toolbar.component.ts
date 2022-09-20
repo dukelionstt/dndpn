@@ -2,6 +2,7 @@ import { HttpUrlEncodingCodec } from "@angular/common/http";
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, OnChanges, SimpleChange } from "@angular/core";
 import { ITEM, MISC, PERSON, PLACE } from "../constants";
 import { LoggerService } from "../logger.service";
+import { MenuService } from "../menu/menu.service";
 import { Page } from "../model/page-model";
 import { TagEntry } from "../model/tag-entry-model";
 import { Tag } from "../model/tag-model";
@@ -61,7 +62,8 @@ export class QuillToolbarComponent implements OnInit{
 
 
     constructor( private renderer:Renderer2, private elementRef: ElementRef, private log: LoggerService,
-                  private highlightTagService: HiglightEditorTagsService){}
+                  private highlightTagService: HiglightEditorTagsService,
+                  private menuService: MenuService){}
 
     ngOnInit(): void {
         this.log.info(`initilising variables for puill tool bar:: Started`)
@@ -133,6 +135,10 @@ export class QuillToolbarComponent implements OnInit{
         this.log.info(`buttonevent tracker updated for ${tagtype} to ${tagSet.length}`)
     }
 
+    trackFocus(event: any){
+      this.log.info("focus change event recieved.")
+      this.menuService.sendFocusEvent(event);
+    }
     
     //values passed in by the opening button.
     onNewTagSave(event: any[]){
