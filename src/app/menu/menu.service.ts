@@ -7,6 +7,7 @@ import { LoggerService } from '../logger.service';
 export class MenuService {
 
   @Output() passFocus: EventEmitter<any> = new EventEmitter();
+  @Output() getPasteQuill: EventEmitter<any> = new EventEmitter();
 
   constructor(private log: LoggerService) { }
 
@@ -16,5 +17,9 @@ export class MenuService {
     this.log.debug(element.editor)
     this.passFocus.emit(element);
     
+  }
+
+  pasteQuill(clipboard: ClipboardItems){
+    this.getPasteQuill.emit(clipboard)
   }
 }

@@ -107,6 +107,8 @@ export class MenuComponent implements OnInit {
     let temp = window.getSelection()?.toString()
     if(temp){
       this.copiedText = temp
+      let clipboardItem = new Blob([temp]);
+      navigator.clipboard.write([new ClipboardItem({clipboardItem})])
     }
   }
 
@@ -114,9 +116,11 @@ export class MenuComponent implements OnInit {
 
   }
 
-  paste(){
-    this.focusElement.focus = true;
-    window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'v', 'ctrlKey': true}))
+  async paste(){
+    if(this.focusElement == 'quill'){
+       this.menuService.pasteQuill(await navigator.clipboard.read())
+    }
+    
   }
 
   find(){

@@ -1,5 +1,6 @@
 import { HttpUrlEncodingCodec } from "@angular/common/http";
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, OnChanges, SimpleChange } from "@angular/core";
+import { it } from "node:test";
 import { ITEM, MISC, PERSON, PLACE } from "../constants";
 import { LoggerService } from "../logger.service";
 import { MenuService } from "../menu/menu.service";
@@ -47,6 +48,7 @@ export class QuillToolbarComponent implements OnInit{
     updateType!: string;
     toolType!: string;
     toolId!: number;
+    lastCursorPosition!: number;
 
     personTag: string = PERSON
     placeTag: string = PLACE
@@ -67,10 +69,6 @@ export class QuillToolbarComponent implements OnInit{
 
     ngOnInit(): void {
         this.log.info(`initilising variables for puill tool bar:: Started`)
-        // this.icons.set(PERSON, '<img src="https://img.icons8.com/ios-glyphs/15/2b00d5/human-head.png"/>')
-        // this.icons.set(PLACE, '<img src="https://img.icons8.com/ios-glyphs/15/FE9A76/castle.png"/>')
-        // this.icons.set(ITEM, '<img src="https://img.icons8.com/ios-glyphs/15/016936/armored-breastplate.png"/>')
-        // this.icons.set(MISC, '<img src="https://img.icons8.com/ios-glyphs/15/B413EC/magical-scroll.png"/>')
 
         this.buttonEvents.set(PERSON, 0);
         this.buttonEvents.set(PLACE, 0);
@@ -85,6 +83,7 @@ export class QuillToolbarComponent implements OnInit{
         this.loadingContent = false;
 
         this.highlightTagService.highLightTag.subscribe(tags => this.highlightTag(tags.ids, tags.type, tags.active))
+        this.menuService.getPasteQuill.subscribe(clipbaord => this.pasteClipboard(clipbaord))
 
         this.log.info(`initilising variables for puill tool bar:: finished`)
     }
@@ -135,9 +134,22 @@ export class QuillToolbarComponent implements OnInit{
         this.log.info(`buttonevent tracker updated for ${tagtype} to ${tagSet.length}`)
     }
 
-    trackFocus(event: any){
-      this.log.info("focus change event recieved.")
-      this.menuService.sendFocusEvent(event);
+    trackFocus(element: string){
+      this.log.info("focus change event recieved.");
+      this.menuService.sendFocusEvent(element);
+    }
+
+    trackCursor(){
+      if(this.quill.hasFocus()){
+        this.lastCursorPosition = this.quill.getSelection();
+      }
+    }
+
+    private pasteClipboard(clipboard: ClipboardItems){
+      for(let item of clipboard){
+        let contents = item.getType('blob')
+        
+      }
     }
     
     //values passed in by the opening button.
