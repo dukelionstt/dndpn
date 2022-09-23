@@ -6,6 +6,7 @@ export interface Page{
   type: string,
   date: string,
   tags: Tags,
-  page: any
+  page: any,
+  tagReference?: number[]
 
 }

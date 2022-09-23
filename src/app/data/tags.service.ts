@@ -5,13 +5,22 @@ import { Place } from '../model/place-model';
 import { Item } from "../model/item-model";
 import { Misc } from "../model/misc-model";
 import { Tags } from "../model/tags-model";
+import { TAG_LIST } from "../mock-data/tag-mock";
+import { HttpClient } from '@angular/common/http';
+import { FileService } from './file.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TagsService {
 
-  constructor() { }
+  constructor(private http: HttpClient,
+              private file: FileService) { }
+
+  getTags(){
+    // return this.file.getFile("E:\\backup\\dndpn\\src\\app\\mock-data\\tag-mock.json")
+    return TAG_LIST;
+  }
 
   getListFromTags(listType: string, tags: Tags){
 

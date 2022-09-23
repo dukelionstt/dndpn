@@ -26,6 +26,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzTypographyModule } from 'ng-zorro-antd/typography';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { TagsComponent } from './tags/tags.component';
 
 
 registerLocaleData(en);
@@ -36,7 +37,8 @@ registerLocaleData(en);
     AppComponent,
     QuillToolbarComponent,
     TagListComponent,
-    SidebarComponent ]
+    SidebarComponent,
+    TagsComponent ]
     ,
   imports: [
     BrowserModule,
