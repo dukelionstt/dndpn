@@ -1,1 +1,13 @@
-<p>tags works!</p>
+<nz-tabset [nzTabPosition]="left"
+            nzType="card">
+  <nz-tab *ngFor="let tags of pageTagList | keyValue"
+            [nzTitle]="{{tags.key}}">
+            <button class="widget tag"
+            *ngFor="let tag of tags.value"
+            id="{{tag.id}}"
+            nzTooltipTitle="{{tag.type}}"
+            nzTooltipPosition="left">
+    <img [src]="icons.getSrc('tag')"/>{{tag.name}}
+  </button>
+  </nz-tab>
+</nz-tabset>

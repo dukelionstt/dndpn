@@ -4,6 +4,7 @@
 @import 'css/place.css';
 @import 'css/item.css';
 @import 'css/misc.css';
+@import 'css/tag.css';
 
 :root {
     --tagButonColor: black;
@@ -20,7 +21,7 @@
 /* Geoff Graham Squiggle effect on code penn used on all reference*/
 
 .reference {
-  
+
   background-color: transparent;
   background-position: 0 100%;
   background-size: auto 6px;
@@ -84,7 +85,7 @@
 }
 /* maybe add a ReferenceHighlighted class to cover the tranparent background*/
 
- 
+
 
 .ant-card-body{
     height: 150px;

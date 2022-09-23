@@ -8,6 +8,7 @@ import { QuillToolbarComponent } from './quill/quill.toolbar.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { TagListComponent } from './widgets/tag.list.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { TagsComponent } from './tags/tags.component';
 
 import { NZ_I18N } from 'ng-zorro-antd/i18n';
 import { en_US } from 'ng-zorro-antd/i18n';
@@ -26,7 +27,8 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzTypographyModule } from 'ng-zorro-antd/typography';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
-import { TagsComponent } from './tags/tags.component';
+
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
 
 
 registerLocaleData(en);
@@ -56,7 +58,8 @@ registerLocaleData(en);
     NzSelectModule,
     NzTypographyModule,
     NzCardModule,
-    NzToolTipModule
+    NzToolTipModule,
+    NzTabsModule
 
   ],
   providers: [{ provide: NZ_I18N, useValue: en_US }],

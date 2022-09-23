@@ -23,7 +23,7 @@ export class TagsComponent implements OnInit {
   ngOnInit(): void {
 
     this.tags = this.tagService.getTags();
-    this.pageTagList = buildPageTagList();
+    this.pageTagList = this.buildPageTagList();
   }
 
   private buildPageTagList(){
@@ -44,6 +44,8 @@ export class TagsComponent implements OnInit {
       }
       temp.set(page.name, tempList)
     }
+
+    return temp
   }
 
   private getTagById(id: number){
@@ -52,6 +54,7 @@ export class TagsComponent implements OnInit {
         return tag;
       }
     }
+    return null;
   }
 
 
