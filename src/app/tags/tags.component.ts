@@ -5,7 +5,7 @@ import { Tag } from '../model/tag-model';
 import { TagListComponent } from '../widgets/tag.list.component';
 
 @Component({
-  selector: 'app-tags',
+  selector: 'tags',
   templateUrl: './tags.component.html',
   styleUrls: ['./tags.component.css']
 })

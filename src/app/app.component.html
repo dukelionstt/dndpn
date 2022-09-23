@@ -8,19 +8,22 @@
     <nz-content>
       <!-- [pages] is passing main data object for this page
             (newQuillEditor) is to get the editor object -->
-      
+
         <div nz-row nzJustify="center">
           <div nzSpan="20" nz-col>
             <toolbar [pages]="pages"
                 (newQuillEditor)="setNewQuillEditor($event)"></toolbar>
           </div>
         </div>
-      
+
       <div nz-row>
         <div nz-col>
           <button nz-button (click)="savePage(0)">Save</button>
         </div>
       </div>
     </nz-content>
+    <nz-footer>
+      <tags [pages]="pages"></tags>
+    </nz-footer>
   </nz-layout>
 </nz-layout>
