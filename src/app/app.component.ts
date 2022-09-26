@@ -50,15 +50,15 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.log.info(`setting up notebook`)
-    this.noteBookservice.getNoteBook().subscribe((data: any) => {
-      this.log.info(`notebook setup start`)
-      this.noteBook = this.noteBookservice.buildNoteBook(data)
-      this.pages = this.noteBook.pages
-      this.log.info(`notebook setup finish`)
-    });
+    // this.noteBookservice.getNoteBook().subscribe((data: any) => {
+    //   this.log.info(`notebook setup start`)
+    //   this.noteBook = this.noteBookservice.buildNoteBook(data)
+    //   this.pages = this.noteBook.pages
+    //   this.log.info(`notebook setup finish`)
+    // });
 
-    // this.noteBook = NOTEBOOK
-    // this.pages = this.noteBook.pages
+    this.noteBook = NOTEBOOK
+    this.pages = this.noteBook.pages
 
   }
 

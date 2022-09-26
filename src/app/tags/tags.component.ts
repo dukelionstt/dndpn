@@ -9,67 +9,62 @@ import { TagListComponent } from '../widgets/tag.list.component';
 @Component({
   selector: 'tags',
   templateUrl: './tags.component.html',
-  styleUrls: ['./tags.component.css']
+  styleUrls: ['./tags.component.css'],
 })
 export class TagsComponent implements OnInit {
-
   tags!: Tag[];
-  pageTagList!: Map<string, Tag[]>
+  pageTagList!: Map<string, Tag[]>;
+  icons = new IconService();
 
   @Input()
   pages!: Page[];
 
-
-  constructor(private tagService: TagsService,
-              private icons: IconService,
-              private log: LoggerService) { }
+  constructor(private tagService: TagsService, private log: LoggerService) {}
 
   ngOnInit(): void {
-
     this.tags = this.tagService.getTags();
     this.pageTagList = this.buildPageTagList();
   }
 
-  private buildPageTagList(){
-    this.log.info(`building tags dictionary :: Starting`)
+  private buildPageTagList() {
+    this.log.info(`building tags dictionary :: Starting`);
     let temp = new Map<string, Tag[]>();
 
-    temp.set("Notebook", this.tags);
+    temp.set('Notebook', this.tags);
 
-    for(let page of this.pages){
-      this.log.debug(page)
+    for (let page of this.pages) {
+      this.log.debug(page);
       let tempList: Tag[] = [];
-      if(page.tagReference){//remove once all page refences are fixed
-        this.log.debug(`using the following ids for to search tags`)
-        this.log.debug(page.tagReference)
-        for(let id of page.tagReference){
-          this.log.debug(`searching with id ${id}`)
-          let tempTag = this.getTagById(id)
-          this.log.debug(`Following entry created`)
-          this.log.debug(tempTag)
-          if(tempTag){
-            tempList.push(tempTag)
+      if (page.tagReference) {
+        //remove once all page refences are fixed
+        this.log.debug(`using the following ids for to search tags`);
+        this.log.debug(page.tagReference);
+        for (let id of page.tagReference) {
+          this.log.debug(`searching with id ${id}`);
+          let tempTag = this.getTagById(id);
+          this.log.debug(`Following entry created`);
+          this.log.debug(tempTag);
+          if (tempTag) {
+            tempList.push(tempTag);
           }
-
         }
       }
-      temp.set(page.name, tempList)
+      temp.set(page.name, tempList);
     }
-    this.log.debug(`following object will be retured`)
-    this.log.debug(temp)
-    this.log.info(`building tags dictionary :: finishing`)
-    return temp
+    this.log.debug(`following object will be retured`);
+    this.log.debug(temp);
+    this.log.info(`building tags dictionary :: finishing`);
+    return temp;
   }
 
-  private getTagById(id: number){
-    for(let tag of this.tags){
-      if(tag.id == id){
+  private getTagById(id: number) {
+    for (let tag of this.tags) {
+      if (tag.id == id) {
         return tag;
       }
     }
     return null;
   }
-
-
-
+  
+  selectTag
 }

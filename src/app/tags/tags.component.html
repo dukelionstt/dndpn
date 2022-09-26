@@ -1,14 +1,16 @@
-<!-- <nz-tabset nzTabPosition="left"
+<div class="card-container">
+<nz-tabset nzTabPosition="left"
             nzType="card">
   <nz-tab *ngFor="let tags of pageTagList | keyvalue"
-            [nzTitle]="{{tags.key}}">
+            [nzTitle]="tags.key">
     <button class="widget tag"
             *ngFor="let tag of tags.value"
             id="{{tag.id}}"
             nzTooltipTitle="{{tag.type}}"
-            nzTooltipPosition="left">
+            nzTooltipPosition="left"
+            nz-tooltip>
         <img [src]="icons.getSrc('tag')"/>{{tag.name}}
     </button>
   </nz-tab>
-</nz-tabset> -->
-<p>tags will be here</p>
+</nz-tabset>
+</div>
