@@ -1,9 +1,4 @@
 import { Page } from "../model/page-model";
-import { PERSONS } from "../mock-data/person-mock";
-import { PLACES } from "./place-mock";
-import { ITEMS } from "./item-mock";
-import { MISCS } from "./misc-mock";
-import { ITEM, MISC, PERSON, PLACE } from "../constants";
 import { TAGS } from "./TAGS";
 
 export const PAGE: Page = {

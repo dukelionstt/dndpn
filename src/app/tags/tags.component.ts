@@ -3,6 +3,7 @@ import { TagsService } from '../data/tags.service';
 import { LoggerService } from '../logger.service';
 import { Page } from '../model/page-model';
 import { Tag } from '../model/tag-model';
+import { Tags } from '../model/tags-model';
 import { IconService } from '../service/icon.service';
 import { TagListComponent } from '../widgets/tag.list.component';
 
@@ -65,6 +66,35 @@ export class TagsComponent implements OnInit {
     }
     return null;
   }
-  
-  selectTag
+
+  selectTags(name: string, type: string, id?: number) {
+    this.log.info(`following passed in name:${name} & type:${type}`);
+    let list: number[] = [];
+
+    switch (type) {
+      case 'reference':
+        this.log.debug('Reference selected, building list');
+        list = this.collectReferenceIds(name, id);
+        this.log.debug('list built');
+    }
+
+    this.log.debug(list);
+  }
+
+  private collectReferenceIds(name: string, id?: number) {
+    let tempList: number[] = [];
+    if (id) {
+      for (let tag of this.pages[id].tags[name as keyof Tags]) {
+        tempList.push(tag.metaData.buttonIndex);
+      }
+    } else {
+      for (let page of this.pages) {
+        for (let tag of page.tags[name as keyof Tags]) {
+          tempList.push(tag.metaData.buttonIndex);
+        }
+      }
+    }
+
+    return tempList;
+  }
 }

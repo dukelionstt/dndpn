@@ -8,8 +8,9 @@
             id="{{tag.id}}"
             nzTooltipTitle="{{tag.type}}"
             nzTooltipPosition="left"
+            (click)="selectTags(tag.name,tag.type)"
             nz-tooltip>
-        <img [src]="icons.getSrc('tag')"/>{{tag.name}}
+          <img [src]="icons.getSrc('tag')"/>{{tag.name}}
     </button>
   </nz-tab>
 </nz-tabset>
