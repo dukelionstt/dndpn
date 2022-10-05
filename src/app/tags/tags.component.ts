@@ -2,9 +2,12 @@ import { Component, Input, OnInit } from '@angular/core';
 import { TagsService } from '../data/tags.service';
 import { LoggerService } from '../logger.service';
 import { Page } from '../model/page-model';
+import { TagLocation } from '../model/tag-locations';
+import { TagMap } from '../model/tag-map-model';
 import { Tag } from '../model/tag-model';
 import { Tags } from '../model/tags-model';
 import { IconService } from '../service/icon.service';
+import { HiglightEditorTagsService } from '../widgets/higlight.editor.tags.service';
 import { TagListComponent } from '../widgets/tag.list.component';
 
 @Component({
@@ -14,17 +17,27 @@ import { TagListComponent } from '../widgets/tag.list.component';
 })
 export class TagsComponent implements OnInit {
   tags!: Tag[];
+  tagMap!: TagMap[];
+  tagMapHashed!: Map<number, TagLocation[]>;
   pageTagList!: Map<string, Tag[]>;
   icons = new IconService();
 
   @Input()
   pages!: Page[];
 
-  constructor(private tagService: TagsService, private log: LoggerService) {}
+  constructor(
+    private tagService: TagsService,
+    private log: LoggerService,
+    private highlightService: HiglightEditorTagsService
+  ) {}
 
   ngOnInit(): void {
     this.tags = this.tagService.getTags();
     this.pageTagList = this.buildPageTagList();
+    this.tagMap = this.tagService.getTagMap();
+    this.tagMapHashed = new Map(
+      this.tagMap.map((tags) => [tags.id, tags.locations])
+    );
   }
 
   private buildPageTagList() {
@@ -67,18 +80,44 @@ export class TagsComponent implements OnInit {
     return null;
   }
 
-  selectTags(name: string, type: string, id?: number) {
-    this.log.info(`following passed in name:${name} & type:${type}`);
-    let list: number[] = [];
+  selectTags(id: number) {
+    this.log.info(`following passed in id ${id}`);
+    let list: Map<string, number[]> = new Map<string, number[]>();
 
-    switch (type) {
-      case 'reference':
-        this.log.debug('Reference selected, building list');
-        list = this.collectReferenceIds(name, id);
-        this.log.debug('list built');
-    }
+    list = this.collectIds(id);
 
     this.log.debug(list);
+    // this.highlightService.
+  }
+
+  private collectIds(id: number) {
+    let tempMap: Map<string, number[]> = new Map<string, number[]>();
+    let key: string = '';
+    let tempList: number[] = [];
+
+    let tagLocations = this.tagMapHashed.get(id);
+
+    if (tagLocations) {
+      tagLocations.forEach((local) => {
+        if (key == '') {
+          key = local.type;
+          tempList.push(local.index);
+        } else {
+          if (key != local.type) {
+            tempMap.set(key, tempList);
+            tempList = [];
+            key = local.type;
+            tempList.push(local.index);
+          } else {
+            tempList.push(local.index);
+          }
+        }
+      });
+
+      tempMap.set(key, tempList);
+    }
+
+    return tempMap;
   }
 
   private collectReferenceIds(name: string, id?: number) {
