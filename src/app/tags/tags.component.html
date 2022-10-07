@@ -3,7 +3,7 @@
             nzType="card">
   <nz-tab *ngFor="let tags of pageTagList | keyvalue"
             [nzTitle]="tags.key">
-    <button class="widget tag"
+    <button class="globalTag widget"
             *ngFor="let tag of tags.value"
             id="{{tag.id}}"
             nzTooltipTitle="{{tag.type}}"

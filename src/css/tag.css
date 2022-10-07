@@ -1,44 +1,82 @@
 /* colour #F8D512 */
 
-.tag:before {
-  background: #F8D512;
+.globalTag:before {
+  background: #f8d512;
 }
 
 /* ------------------------------- */
 
-/* ---Person tag button active --------------*/
+/* ---Person globalTag button active --------------*/
 
-.tagActive {
+.globalTagActive img:first-child {
+  animation: rotation 2.5s infinite linear;
+}
+
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(359deg);
+  }
+}
+
+.globalTagActive {
   color: #fff;
   background: transparent;
-
 }
 
-.tagActive:before {
-  background: linear-gradient(45deg, #fafa6e, #faf668,  #f9f261,  #f9ee5a,  #f9ea54,  #f9e74d,  #f9e346,  #f8df3f,  #f8db38,  #f8d630,  #f8d228,  #f8ce1e,  #f8ca12);
-
+.globalTagActive:before {
+  background: linear-gradient(
+    45deg,
+    #fafa6e,
+    #faf668,
+    #f9f261,
+    #f9ee5a,
+    #f9ea54,
+    #f9e74d,
+    #f9e346,
+    #f8df3f,
+    #f8db38,
+    #f8d630,
+    #f8d228,
+    #f8ce1e,
+    #f8ca12
+  );
 }
 
-.tagActive:after {
-    background: transparent;
+.globalTagActive:after {
+  background: transparent;
 }
-
-
 
 /* ------------------------------- */
 
 /* ------------- Person highlight--------------- */
 /* Kocsten CSS Button Hover Glow Effect */
-.highlight.tagGlow {
+.highlight.globalTagGlow {
   background: transparent;
-
 }
 
-.tagGlow:before {
-  background: linear-gradient(45deg, #fafa6e, #faf668,  #f9f261,  #f9ee5a,  #f9ea54,  #f9e74d,  #f9e346,  #f8df3f,  #f8db38,  #f8d630,  #f8d228,  #f8ce1e,  #f8ca12);
+.globalTagGlow:before {
+  background: linear-gradient(
+    45deg,
+    #fafa6e,
+    #faf668,
+    #f9f261,
+    #f9ee5a,
+    #f9ea54,
+    #f9e74d,
+    #f9e346,
+    #f8df3f,
+    #f8db38,
+    #f8d630,
+    #f8d228,
+    #f8ce1e,
+    #f8ca12
+  );
 }
 
-.highlight.tagGlow:after {
-    background: transparent;
+.highlight.globalTagGlow:after {
+  background: transparent;
 }
 /* ------------------------------ */

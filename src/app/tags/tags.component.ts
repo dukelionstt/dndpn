@@ -1,3 +1,10 @@
+import {
+  animate,
+  state,
+  style,
+  transition,
+  trigger,
+} from '@angular/animations';
 import { Component, Input, OnInit } from '@angular/core';
 import { TagsService } from '../data/tags.service';
 import { LoggerService } from '../logger.service';
@@ -10,18 +17,24 @@ import { IconService } from '../service/icon.service';
 import { HiglightEditorTagsService } from '../widgets/higlight.editor.tags.service';
 import { TagListComponent } from '../widgets/tag.list.component';
 
+const DEFAULT = 'default';
+const ROTATE = 'rotated';
+
 @Component({
   selector: 'tags',
   templateUrl: './tags.component.html',
   styleUrls: ['./tags.component.css'],
+  animations: [
+    trigger('rotatedState', [
+      state('default', style({ transform: 'rotate(0)' })),
+      state('rotated', style({ transform: 'rotate(-360deg)' })),
+      transition('rotated => default', animate('1500ms ease-out')),
+      transition('default => rotated', animate('400ms ease-in')),
+    ]),
+  ],
 })
 export class TagsComponent implements OnInit {
-  // isNewButton!: boolean;
-  // previousIndex!: number;
-  // previousButton!: any;
-  // previousID!: number;
-  // previousType!: string;
-  // previousState!: boolean;
+  animationState!: string;
 
   tags!: Tag[];
   tagMap!: TagMap[];
@@ -45,6 +58,7 @@ export class TagsComponent implements OnInit {
     this.tagMapHashed = new Map(
       this.tagMap.map((tags) => [tags.id, tags.locations])
     );
+    this.animationState = DEFAULT;
   }
 
   private buildPageTagList() {
@@ -95,7 +109,12 @@ export class TagsComponent implements OnInit {
 
     this.log.debug(list);
 
-    this.highlightService.highlightProcess(event, list, 'tag', id);
+    this.highlightService.highlightProcess(event, list, 'global', id);
+    if (this.highlightService.active) {
+      this.animationState = ROTATE;
+    } else {
+      this.animationState = DEFAULT;
+    }
   }
 
   private collectIds(id: number) {
@@ -128,24 +147,20 @@ export class TagsComponent implements OnInit {
     return tempMap;
   }
 
-  private state(id: number) {
-    return false;
-  }
+  // private collectReferenceIds(name: string, id?: number) {
+  //   let tempList: number[] = [];
+  //   if (id) {
+  //     for (let tag of this.pages[id].tags[name as keyof Tags]) {
+  //       tempList.push(tag.metaData.buttonIndex);
+  //     }
+  //   } else {
+  //     for (let page of this.pages) {
+  //       for (let tag of page.tags[name as keyof Tags]) {
+  //         tempList.push(tag.metaData.buttonIndex);
+  //       }
+  //     }
+  //   }
 
-  private collectReferenceIds(name: string, id?: number) {
-    let tempList: number[] = [];
-    if (id) {
-      for (let tag of this.pages[id].tags[name as keyof Tags]) {
-        tempList.push(tag.metaData.buttonIndex);
-      }
-    } else {
-      for (let page of this.pages) {
-        for (let tag of page.tags[name as keyof Tags]) {
-          tempList.push(tag.metaData.buttonIndex);
-        }
-      }
-    }
-
-    return tempList;
-  }
+  //   return tempList;
+  // }
 }

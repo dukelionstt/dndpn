@@ -55,8 +55,8 @@
   animation: glowing 20s linear infinite;
   z-index: -1;
   filter: blur(5px);
-  width: calc(100% + 4px);
-  height: calc(100% + 4px);
+  width: calc(100% + 6px);
+  height: calc(100% + 6px);
 
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
@@ -86,7 +86,7 @@
   background: var(--tagButonColor);
   left: 0;
   top: 0;
-  border-radius: 10px;
+  border-radius: 15px;
 }
 /* maybe add a ReferenceHighlighted class to cover the tranparent background*/
 
