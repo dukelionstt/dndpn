@@ -8,7 +8,7 @@
             id="{{tag.id}}"
             nzTooltipTitle="{{tag.type}}"
             nzTooltipPosition="left"
-            (click)="selectTags(tag.id)"
+            (click)="selectTags($event, tag.id)"
             nz-tooltip>
           <img [src]="icons.getSrc('tag')"/>{{tag.name}}
     </button>

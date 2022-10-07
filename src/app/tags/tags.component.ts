@@ -16,6 +16,13 @@ import { TagListComponent } from '../widgets/tag.list.component';
   styleUrls: ['./tags.component.css'],
 })
 export class TagsComponent implements OnInit {
+  // isNewButton!: boolean;
+  // previousIndex!: number;
+  // previousButton!: any;
+  // previousID!: number;
+  // previousType!: string;
+  // previousState!: boolean;
+
   tags!: Tag[];
   tagMap!: TagMap[];
   tagMapHashed!: Map<number, TagLocation[]>;
@@ -80,14 +87,15 @@ export class TagsComponent implements OnInit {
     return null;
   }
 
-  selectTags(id: number) {
+  selectTags(event: any, id: number) {
     this.log.info(`following passed in id ${id}`);
     let list: Map<string, number[]> = new Map<string, number[]>();
 
     list = this.collectIds(id);
 
     this.log.debug(list);
-    // this.highlightService.
+
+    this.highlightService.highlightProcess(event, list, 'tag', id);
   }
 
   private collectIds(id: number) {
@@ -118,6 +126,10 @@ export class TagsComponent implements OnInit {
     }
 
     return tempMap;
+  }
+
+  private state(id: number) {
+    return false;
   }
 
   private collectReferenceIds(name: string, id?: number) {
