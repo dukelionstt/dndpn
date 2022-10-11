@@ -1,6 +1,6 @@
-import { Component, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { PersonBlot } from './quill/person.blot';
-import Quill, { Delta }  from "quill";
+import Quill, { Delta } from 'quill';
 
 import { NotebookService } from './data/notebook.service';
 import { NoteBook } from './model/notebook-model';
@@ -13,43 +13,45 @@ import { PlaceBlot } from './quill/place.blot';
 import { ItemBlot } from './quill/item.blot';
 import { MiscBlot } from './quill/misc.blot';
 
-PersonBlot["blotName"] = 'person';
-PersonBlot["tagName"] = 'button';
+PersonBlot['blotName'] = 'person';
+PersonBlot['tagName'] = 'button';
 
-PlaceBlot["blotName"] = 'place';
-PlaceBlot["tagName"] = 'button';
+PlaceBlot['blotName'] = 'place';
+PlaceBlot['tagName'] = 'button';
 
-ItemBlot["blotName"] = 'item';
-ItemBlot["tagName"] = 'button';
+ItemBlot['blotName'] = 'item';
+ItemBlot['tagName'] = 'button';
 
-MiscBlot["blotName"] = 'misc';
-MiscBlot["tagName"] = 'button';
+MiscBlot['blotName'] = 'misc';
+MiscBlot['tagName'] = 'button';
 
 Quill.register(PersonBlot);
 Quill.register(PlaceBlot);
 Quill.register(ItemBlot);
 Quill.register(MiscBlot);
 
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
 })
 export class AppComponent implements OnInit {
   title = 'dndpn';
-  quill : any;
+  quill: any;
   document!: any;
+  pageHtml!: any;
   noteBook!: NoteBook;
   pages!: Page[];
-  htmlEncoder = new HttpUrlEncodingCodec()
+  htmlEncoder = new HttpUrlEncodingCodec();
 
-  constructor(private noteBookservice: NotebookService, 
-              private log: LoggerService, 
-              private pageService: PageService){}
+  constructor(
+    private noteBookservice: NotebookService,
+    private log: LoggerService,
+    private pageService: PageService
+  ) {}
 
   ngOnInit(): void {
-    this.log.info(`setting up notebook`)
+    this.log.info(`setting up notebook`);
     // this.noteBookservice.getNoteBook().subscribe((data: any) => {
     //   this.log.info(`notebook setup start`)
     //   this.noteBook = this.noteBookservice.buildNoteBook(data)
@@ -57,26 +59,28 @@ export class AppComponent implements OnInit {
     //   this.log.info(`notebook setup finish`)
     // });
 
-    this.noteBook = NOTEBOOK
-    this.pages = this.noteBook.pages
-
+    this.noteBook = NOTEBOOK;
+    this.pages = this.noteBook.pages;
   }
 
-  setNewQuillEditor(editor: any){
+  setNewQuillEditor(editor: any) {
     this.quill = editor;
   }
 
-  savePage(id: number){
+  savePage(id: number) {
     // this.document = this.quill.getContents();
+    // this.pageHtml = this.quill.root.innerHTML();
     let page = this.quill.root.innerHTML;
-    this.pages[id].page = this.htmlEncoder.encodeValue(page)
-    this.noteBook.pages = this.pages
-    try{
-      this.pageService.savePage(this.pages[id], this.noteBook.pagesLocation[id])
-      this.log.info("notebook saved")
-    } catch(error){
-      this.log.error(`notebook not saved`)
+    this.pages[id].page = this.htmlEncoder.encodeValue(page);
+    this.noteBook.pages = this.pages;
+    try {
+      this.pageService.savePage(
+        this.pages[id],
+        this.noteBook.pagesLocation[id]
+      );
+      this.log.info('notebook saved');
+    } catch (error) {
+      this.log.error(`notebook not saved`);
     }
   }
-
 }
