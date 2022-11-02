@@ -34,7 +34,8 @@
 }
 
 .widget,
-.highlight {
+.highlight,
+.tabMarker {
   border: none;
   outline: none;
   background: var(--tagButonColor);
@@ -46,7 +47,8 @@
 }
 
 .widget::before,
-.highlight::before {
+.highlight::before,
+.tabMarker::before {
   content: "";
   position: absolute;
   top: -2px;
@@ -77,7 +79,8 @@
 }
 
 .widget:after,
-.highlight::after {
+.highlight::after,
+.tabMarker::after {
   z-index: -1;
   content: "";
   position: absolute;

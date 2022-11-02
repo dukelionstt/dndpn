@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { QuillModule } from 'ngx-quill';
 
-
 import { AppComponent } from './app.component';
 import { QuillToolbarComponent } from './quill/quill.toolbar.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
@@ -15,7 +14,7 @@ import { en_US } from 'ng-zorro-antd/i18n';
 import { registerLocaleData } from '@angular/common';
 import en from '@angular/common/locales/en';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http'
+import { HttpClientModule } from '@angular/common/http';
 
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
@@ -27,12 +26,11 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzTypographyModule } from 'ng-zorro-antd/typography';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
-
+import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
-
+import { TrimPipe } from './pipe/trim.pipe';
 
 registerLocaleData(en);
-
 
 @NgModule({
   declarations: [
@@ -40,8 +38,9 @@ registerLocaleData(en);
     QuillToolbarComponent,
     TagListComponent,
     SidebarComponent,
-    TagsComponent ]
-    ,
+    TagsComponent,
+    TrimPipe,
+  ],
   imports: [
     BrowserModule,
     QuillModule.forRoot(),
@@ -59,10 +58,10 @@ registerLocaleData(en);
     NzTypographyModule,
     NzCardModule,
     NzToolTipModule,
-    NzTabsModule
-
+    NzTabsModule,
+    NzMenuModule,
   ],
   providers: [{ provide: NZ_I18N, useValue: en_US }],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

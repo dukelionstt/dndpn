@@ -5,7 +5,14 @@ import {
   transition,
   trigger,
 } from '@angular/animations';
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  Input,
+  OnInit,
+  Renderer2,
+} from '@angular/core';
 import { TagsService } from '../data/tags.service';
 import { LoggerService } from '../logger.service';
 import { Page } from '../model/page-model';
@@ -33,7 +40,7 @@ const ROTATE = 'rotated';
     ]),
   ],
 })
-export class TagsComponent implements OnInit {
+export class TagsComponent implements OnInit, AfterViewInit {
   animationState!: string;
 
   tags!: Tag[];
@@ -41,6 +48,7 @@ export class TagsComponent implements OnInit {
   tagMapHashed!: Map<number, TagLocation[]>;
   pageTagList!: Map<string, Tag[]>;
   icons = new IconService();
+  previousCard!: ElementRef;
 
   @Input()
   pages!: Page[];
@@ -48,7 +56,9 @@ export class TagsComponent implements OnInit {
   constructor(
     private tagService: TagsService,
     private log: LoggerService,
-    private highlightService: HiglightEditorTagsService
+    private highlightService: HiglightEditorTagsService,
+    private renderer: Renderer2,
+    private elementRef: ElementRef
   ) {}
 
   ngOnInit(): void {
@@ -59,6 +69,13 @@ export class TagsComponent implements OnInit {
       this.tagMap.map((tags) => [tags.id, tags.locations])
     );
     this.animationState = DEFAULT;
+  }
+
+  ngAfterViewInit(): void {
+    this.log.debug('running change ');
+    this.switchCard(
+      this.elementRef.nativeElement.querySelector('#NotebookCard')
+    );
   }
 
   private buildPageTagList() {
@@ -115,6 +132,24 @@ export class TagsComponent implements OnInit {
     } else {
       this.animationState = DEFAULT;
     }
+  }
+
+  selectCard(cardId: string) {
+    let queryString = `#${cardId.replace(/\s/g, '')}`;
+    let card = this.elementRef.nativeElement.querySelector(queryString);
+    this.log.debug(
+      `queryString is set to ${queryString} and the card is set to the following:`
+    );
+    this.log.debug(card);
+    this.switchCard(card);
+  }
+
+  private switchCard(element: ElementRef) {
+    if (this.previousCard) {
+      this.renderer.setAttribute(this.previousCard, 'hidden', 'true');
+    }
+    this.renderer.removeAttribute(element, 'hidden');
+    this.previousCard = element;
   }
 
   private collectIds(id: number) {

@@ -1,0 +1,6 @@
+.tabMarker:before {
+  /* background: #3d91e0;
+  border-radius: 50px;
+  background: #1f1f1f; */
+  box-shadow: 18px 18px 36px #3d91e0  , -18px -18px 36px #3d91e0;
+}
