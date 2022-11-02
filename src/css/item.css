@@ -1,11 +1,9 @@
 .item {
   /* color: #016936 */
   background-image: url("data:image/svg+xml;charset=utf8,%3Csvg id='squiggle-link' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:ev='http://www.w3.org/2001/xml-events' viewBox='0 0 20 4'%3E%3Cstyle type='text/css'%3E.squiggle{animation:shift .75s linear infinite;}@keyframes shift {from {transform:translateX(0);}to {transform:translateX(-20px);}}%3C/style%3E%3Cpath fill='none' stroke='%23016936' stroke-width='1' class='squiggle' d='M0,3.5 c 5,0,5,-3,10,-3 s 5,3,10,3 c 5,0,5,-3,10,-3 s 5,3,10,3'/%3E%3C/svg%3E");
-
 }
 
 /* ---item tag button non active --------------*/
-
 
 .itemTag:before {
   background: #016936;
@@ -20,11 +18,26 @@
 }
 
 .itemTagActive:before {
-  background: linear-gradient(45deg, #00c866,#00bd62,#00b25e,#02a85a,#049d56,#079351,#0a884d,#0d7e49,#0f7444,#116a3f,#12603b,#135636,#144d31);
+  background: linear-gradient(
+    45deg,
+    #00c866,
+    #00bd62,
+    #00b25e,
+    #02a85a,
+    #049d56,
+    #079351,
+    #0a884d,
+    #0d7e49,
+    #0f7444,
+    #116a3f,
+    #12603b,
+    #135636,
+    #144d31
+  );
 }
 
 .itemTagActive:after {
-    background: transparent;
+  background: transparent;
 }
 
 /* ------------------------------- */
@@ -33,25 +46,37 @@
 /* Kocsten CSS Button Hover Glow Effect */
 .highlight.itemGlow {
   background: transparent;
-
 }
 
 .itemGlow:before {
-  background: linear-gradient(45deg, #00c866,#00bd62,#00b25e,#02a85a,#049d56,#079351,#0a884d,#0d7e49,#0f7444,#116a3f,#12603b,#135636,#144d31);
+  background: linear-gradient(
+    45deg,
+    #00c866,
+    #00bd62,
+    #00b25e,
+    #02a85a,
+    #049d56,
+    #079351,
+    #0a884d,
+    #0d7e49,
+    #0f7444,
+    #116a3f,
+    #12603b,
+    #135636,
+    #144d31
+  );
 }
 
 .highlight.itemGlow:after {
-    background: transparent;
+  background: transparent;
 }
 /* ------------------------------ */
 
-.item:hover .tooltip{
-
+.item:hover .tooltip {
   background: #3f6b4c;
   visibility: visible;
-  transform: translateY(-10px);
+  transform: translateY(-2.5px);
   opacity: 1;
-  transition: .3s linear;
-  animation: odsoky 1s ease-in-out infinite  alternate;
-
+  transition: 0.3s linear;
+  animation: odsoky 1s ease-in-out infinite alternate;
 }

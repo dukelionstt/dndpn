@@ -69,8 +69,9 @@ export class AppComponent implements OnInit {
 
   savePage(id: number) {
     // this.document = this.quill.getContents();
-    // this.pageHtml = this.quill.root.innerHTML();
-    let page = this.quill.root.innerHTML;
+    // this.document = this.scrubHTML(this.quill.root.innerHTML);
+
+    let page = this.scrubHTML(this.quill.root.innerHTML);
     this.pages[id].page = this.htmlEncoder.encodeValue(page);
     this.noteBook.pages = this.pages;
     try {
@@ -82,5 +83,61 @@ export class AppComponent implements OnInit {
     } catch (error) {
       this.log.error(`notebook not saved`);
     }
+
+    // this.quill.root.innerHTML = page;
+  }
+
+  private scrubHTML(html: string) {
+    let scannerText = this.document.split('');
+    let recordLetter = false;
+    let next: string = '';
+    let indexs: number[] = [];
+    let section: number[] = [];
+    let i: number = 0;
+    let vetHTMLTag: boolean = false;
+    let result: string = '';
+
+    scannerText.forEach((letter: string) => {
+      if (letter.match('<')) {
+        recordLetter = true;
+        // section.push(i);
+      }
+      if (letter.match('>')) {
+        recordLetter = false;
+        vetHTMLTag = true;
+        next += letter;
+        section.push(i);
+      }
+      if (recordLetter) {
+        next += letter;
+        section.push(i);
+      }
+      if (vetHTMLTag) {
+        // this.log.debug(next);
+        if (next.includes('span')) {
+          // this.log.debug('span found');
+          // this.log.debug(section);
+          indexs = indexs.concat(section);
+        }
+        vetHTMLTag = false;
+        section = [];
+        next = '';
+      }
+      i++;
+    });
+
+    i = 0;
+    this.log.debug(indexs);
+    if (indexs.length > 0) {
+      scannerText.forEach((letter: string) => {
+        if (!indexs.includes(i)) {
+          result += letter;
+        }
+        i++;
+      });
+    }
+
+    this.log.debug(result);
+    return result;
   }
 }
