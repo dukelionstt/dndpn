@@ -1,6 +1,5 @@
 import { HttpUrlEncodingCodec } from "@angular/common/http";
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, OnChanges, SimpleChange } from "@angular/core";
-import { it } from "node:test";
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, OnChanges, SimpleChange, HostListener } from "@angular/core";
 import { ITEM, MISC, PERSON, PLACE } from "../constants";
 import { LoggerService } from "../logger.service";
 import { MenuService } from "../menu/menu.service";
@@ -34,6 +33,12 @@ export class QuillToolbarComponent implements OnInit{
     highlightConfig!: {send: boolean, map: Map<boolean, Map<string,number[]>>}
 
     @Output() newQuillEditor = new EventEmitter<any>();
+
+    // @HostListener('document:command', ['$event'])
+    // handleCommand(event: any){
+    //   this.log.info(`Angular has receieved event`)
+    //   this.log.info(event)
+    // }
 
     range : any;
     text : string = '';
@@ -83,7 +88,7 @@ export class QuillToolbarComponent implements OnInit{
         this.loadingContent = false;
 
         this.highlightTagService.highLightTag.subscribe(tags => this.highlightTag(tags.ids, tags.type, tags.active))
-        this.menuService.getPasteQuill.subscribe(clipbaord => this.pasteClipboard(clipbaord))
+        // this.menuService.getPasteQuill.subscribe(clipbaord => this.pasteClipboard(clipbaord))
 
         this.log.info(`initilising variables for puill tool bar:: finished`)
     }
@@ -134,16 +139,16 @@ export class QuillToolbarComponent implements OnInit{
         this.log.info(`buttonevent tracker updated for ${tagtype} to ${tagSet.length}`)
     }
 
-    trackFocus(element: string){
-      this.log.info("focus change event recieved.");
-      this.menuService.sendFocusEvent(element);
-    }
+    // trackFocus(element: string){
+    //   this.log.info("focus change event recieved.");
+    //   this.menuService.sendFocusEvent(element);
+    // }
 
-    trackCursor(){
-      if(this.quill.hasFocus()){
-        this.lastCursorPosition = this.quill.getSelection();
-      }
-    }
+    // trackCursor(){
+    //   if(this.quill.hasFocus()){
+    //     this.lastCursorPosition = this.quill.getSelection();
+    //   }
+    // }
 
     private pasteClipboard(clipboard: ClipboardItems){
       for(let item of clipboard){
