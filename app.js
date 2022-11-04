@@ -2,6 +2,7 @@ const {app, BrowserWindow,ipcMain, MessageChannelMain, Menu} = require('electron
 const url = require("url");
 const path = require("path");
 const { fs } = require('fs');
+// const { menuTemplate } = require("./middlewhare/dist/menuTemplate")
 
 let mainWindow
 const isMac = process.platform === "darwin"
@@ -10,7 +11,7 @@ const { fork } = require('child_process');
 const ps = fork(`${__dirname}/server.js`)
 
 const menuTemplate = [
-  (
+  ...(
     isMac ? [
       {
         label: 'Dnd Notebook',
@@ -29,39 +30,108 @@ const menuTemplate = [
     ] : []
   ),
   {
-    lable: 'File',
+    label: 'File',
     submenu: [
       {
-        lable: 'New Notebook',
-        click: () => mainWindow.webContents.send('TestChannel', 'newNotebook')
+        label: 'New Notebook',
+        click: () => mainWindow.webContents.send('menuCommand', 'newNotebook')
       },
       {
-        lable: 'New Page',
-        click: () => mainWindow.webContents.send('TestChannel', 'newPage')
+        label: 'New Page',
+        click: () => mainWindow.webContents.send('menuCommand', 'newPage')
       },
-      { type: 'seperator'},
-      isMac ? {role: 'close'} : { role: 'quit' }
-      
+      { type: 'separator'},
+      {
+        label: 'Open Notebook...',
+        click: () => mainWindow.webContents.send('menuCommand', 'openNotebook')
+      },
+      {
+        label: 'Open Page...',
+        click: () => mainWindow.webContents.send('menuCommand', 'openPage')
+      },
+      { type: 'separator'},
+      {
+        label: 'Save Page...',
+        click: () => mainWindow.webContents.send('menuCommand', 'saveNotebook')
+      },
+      {
+        label: 'Save Notebook...',
+        click: () => mainWindow.webContents.send('menuCommand', 'savePage')
+      },
+      { type: 'separator'},
+      {
+        label: 'Export',
+        click: () => mainWindow.webContents.send('menuCommand', 'export')
+      },
+      {
+        label: 'Import',
+        click: () => mainWindow.webContents.send('menuCommand', 'import')
+      },
+      // {
+      //   label: 'Open Recent...',
+      //   click: () => mainWindow.webContents.send('menuCommand', 'openRecent')
+      // },
+      { type: 'separator'},
+      {
+        label: 'Close Current Page',
+        click: () => mainWindow.webContents.send('menuCommand', 'closePage')
+      },
+      {
+        label: 'Close All Pages',
+        click: () => mainWindow.webContents.send('menuCommand', 'closeAllPages')
+      },
+      {
+        label: 'Close Notebook',
+        click: () => mainWindow.webContents.send('menuCommand', 'closeNotebook')
+      },
+      { type: 'separator'},
+      {
+          label: 'Exit',
+          click: () => exitApp()
+      }
     ]
-  }
+  },
+  {
+    label: 'Edit',
+    submenu: [
+      { role: 'undo' },
+      { role: 'redo' },
+      { type: 'separator' },
+      { role: 'cut' },
+      { role: 'copy' },
+      { role: 'paste' },
+      ...(isMac ? [
+        { role: 'pasteAndMatchStyle' },
+        { role: 'delete' },
+        { role: 'selectAll' },
+        { type: 'separator' },
+        {
+          label: 'Speech',
+          submenu: [
+            { role: 'startSpeaking' },
+            { role: 'stopSpeaking' }
+          ]
+        }
+      ] : [
+        { role: 'delete' },
+        { type: 'separator' },
+        { role: 'selectAll' }
+      ])
+    ]
+  },
 ]
 
 function createWindow () {
   mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 2000,
+    height: 1000,
     webPreferences: {
       nodeIntegration: true,
       preload: `${__dirname}/middlewhare/dist/preload.js`
     }
   })
 
-  const menu = Menu.buildFromTemplate([
-    {
-      label: 'test',
-      click: () => mainWindow.webContents.send('TestChannel', 'save')
-    }
-  ])
+  const menu = Menu.buildFromTemplate(menuTemplate);
 
   Menu.setApplicationMenu(menu)
 
@@ -93,6 +163,10 @@ app.on('window-all-closed', function () {
 app.on('activate', function () {
   if (mainWindow === null) createWindow()
 })
+
+function exitApp(){
+  app.quit();
+}
 
 
 // ipcMain.addListener('getFileSendElectron', (event) => {
