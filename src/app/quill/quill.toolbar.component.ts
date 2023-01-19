@@ -2,12 +2,12 @@ import { HttpUrlEncodingCodec } from "@angular/common/http";
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, OnChanges, SimpleChange, HostListener } from "@angular/core";
 import { ITEM, MISC, PERSON, PLACE } from "../constants";
 import { LoggerService } from "../logger.service";
-import { MenuService } from "../menu/menu.service";
 import { Page } from "../model/page-model";
 import { TagEntry } from "../model/tag-entry-model";
 import { Tag } from "../model/tag-model";
 import { Tags } from "../model/tags-model";
 import { IconService } from "../service/icon.service";
+import { MenuService } from "../service/menu.service";
 import { HiglightEditorTagsService } from "../widgets/higlight.editor.tags.service";
 
 

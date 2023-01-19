@@ -155,6 +155,12 @@ const menuTemplate = [
       { type: 'separator' },
       { role: 'togglefullscreen' }
     ]
+  },
+  {
+    label: 'Help',
+    submenu: [
+      
+    ]
   }
 ]
 
