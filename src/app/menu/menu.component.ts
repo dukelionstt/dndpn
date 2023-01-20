@@ -5,210 +5,135 @@ import { PageService } from '../data/page.service';
 import { LoggerService } from '../logger.service';
 import { NoteBook } from '../model/notebook-model';
 import { Page } from '../model/page-model';
-import { MenuService } from './menu.service';
 
 @Component({
   selector: 'menu',
   templateUrl: './menu.component.html',
-  styleUrls: ['./menu.component.css']
+  styleUrls: ['./menu.component.css'],
 })
 export class MenuComponent implements OnInit {
-
   activePage!: number;
   copiedText!: string;
   focusElement!: any;
 
   @Input()
-  quill!: Quill
+  quill!: Quill;
   @Input()
-  pages!: Page[]
+  pages!: Page[];
   @Input()
-  notebook!: NoteBook
+  notebook!: NoteBook;
 
-  
-
-
-  constructor(private notebookService: NotebookService,
-              private pageService: PageService,
-              private log: LoggerService,
-              private menuService: MenuService) { }
+  constructor(
+    private notebookService: NotebookService,
+    private pageService: PageService,
+    private log: LoggerService
+  ) {}
 
   ngOnInit(): void {
-
-    this.pageService.activePage.subscribe(id => this.activePage = id);
-    this.menuService.passFocus.subscribe(element => this.focusElement = element);
-
+    this.pageService.activePage.subscribe((id) => (this.activePage = id));
   }
 
-  newNotebook(){
-    
-  }
-  
-  newPage(){
-    
-  }
-  
-  openRecent(){
-    
-  }
-  
-  openNotebook(){
-    
-  }
-  
-  openPage(){
-    
-  }
-  
-  saveNotebook(){
-    this.notebook.pages = this.pages
-    this.notebookService.saveNoteBook(this.notebook)
-  }
-  
-  savePage(){
-    this.pageService.savePage(this.pages[this.activePage], this.notebook.saveLocation+ "\\pages\\" +this.pages[this.activePage].name+".json")
+  newNotebook() {}
+
+  newPage() {}
+
+  openRecent() {}
+
+  openNotebook() {}
+
+  openPage() {}
+
+  saveNotebook() {
+    this.notebook.pages = this.pages;
+    this.notebookService.saveNoteBook(this.notebook);
   }
 
-  saveAll(){
-    this.savePage()
-    this.savePage()
+  savePage() {
+    this.pageService.savePage(
+      this.pages[this.activePage],
+      this.notebook.saveLocation +
+        '\\pages\\' +
+        this.pages[this.activePage].name +
+        '.json'
+    );
   }
-  
-  autoSave(){
+
+  saveAll() {
+    this.savePage();
+    this.savePage();
+  }
+
+  autoSave() {
     //update
   }
-  
-  settings(){
-    
-  }
-  
-  closeNotebook(){
-    
-  }
-  
-  closePage(){
-    
-  }
-  
-  closeWindow(){
-    
-  }
+
+  settings() {}
+
+  closeNotebook() {}
+
+  closePage() {}
+
+  closeWindow() {}
 
   // edit options
-  undo(){
+  undo() {}
 
-  }
+  redo() {}
 
-  redo(){
-
-  }
-
-  copy(){
-    let temp = window.getSelection()?.toString()
-    if(temp){
-      this.copiedText = temp
+  copy() {
+    let temp = window.getSelection()?.toString();
+    if (temp) {
+      this.copiedText = temp;
       let clipboardItem = new Blob([temp]);
-      navigator.clipboard.write([new ClipboardItem({clipboardItem})])
+      navigator.clipboard.write([new ClipboardItem({ clipboardItem })]);
     }
   }
 
-  cut(){
+  cut() {}
 
-  }
+  async paste() {}
 
-  async paste(){
-    if(this.focusElement == 'quill'){
-       this.menuService.pasteQuill(await navigator.clipboard.read())
-    }
-    
-  }
+  find() {}
 
-  find(){
+  replace() {}
 
-  }
-
-  replace(){
-
-  }
-
-  findInPages(){
-
-  }
+  findInPages() {}
 
   // view buttons
-  notebookOverview(){
+  notebookOverview() {}
 
-  }
+  pageOverview() {}
 
-  pageOverview(){
+  widgetOverview() {}
 
-  }
+  widgetsAvailable() {}
 
-  widgetOverview(){
+  statisticsOverView() {}
 
-  }
+  wordCount() {}
 
-  widgetsAvailable(){
+  referenceCount() {}
 
-  }
-
-  statisticsOverView(){
-
-  }
-
-  wordCount(){
-
-  }
-
-  referenceCount(){
-
-  }
-
-  tagCount(){
-
-  }
+  tagCount() {}
 
   // help buttons
-  basicNoteTaking(){
+  basicNoteTaking() {}
 
-  }
-  
-  shortCutKeys(){
+  shortCutKeys() {}
 
-  }
-  
-  references(){
+  references() {}
 
-  }
-  
-  tags(){
+  tags() {}
 
-  }
-  
-  widgets(){
+  widgets() {}
 
-  }
-  
-  linkingTogether(){
+  linkingTogether() {}
 
-  }
-  
-  reportBug(){
+  reportBug() {}
 
-  }
-  
-  featureRequest(){
+  featureRequest() {}
 
-  }
-  
-  contributing(){
+  contributing() {}
 
-  }
-  
-  about(){
-
-  }
-  
-
-
+  about() {}
 }

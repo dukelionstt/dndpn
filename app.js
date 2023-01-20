@@ -133,6 +133,7 @@ const menuTemplate = [
           {
             label: 'Person Widget',
             click: () => mainWindow.webContents.send('menuCommand', 'personWidget')
+            
           },
           {
             label: 'Place Widget',
@@ -159,10 +160,12 @@ const menuTemplate = [
   {
     label: 'Help',
     submenu: [
-      
+      //toDo
     ]
   }
 ]
+
+const menu = Menu.buildFromTemplate(menuTemplate);
 
 function createWindow () {
   mainWindow = new BrowserWindow({
@@ -174,7 +177,7 @@ function createWindow () {
     }
   })
 
-  const menu = Menu.buildFromTemplate(menuTemplate);
+  // const menu = Menu.buildFromTemplate(menuTemplate);
 
   Menu.setApplicationMenu(menu)
 
