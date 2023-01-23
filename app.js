@@ -119,6 +119,43 @@ const menuTemplate = [
       ])
     ]
   },
+  {
+    label: 'View',
+    submenu: [
+      { role: 'reload' },
+      { type: 'separator' },
+      {
+        label: 'All Widgets',
+        click: () => mainWindow.webContents.send('menuCommand', 'allWidgets')
+      },
+      { label: 'Widgets...',
+        submenu: [
+          {
+            label: 'Person Widget',
+            click: () => mainWindow.webContents.send('menuCommand', 'personWidget')
+          },
+          {
+            label: 'Place Widget',
+            click: () => mainWindow.webContents.send('menuCommand', 'placeWidget')
+          },
+          {
+            label: 'Item Widget',
+            click: () => mainWindow.webContents.send('menuCommand', 'itemWidget')
+          },
+          {
+            label: 'Misc Widget',
+            click: () => mainWindow.webContents.send('menuCommand', 'miscWidget')
+          }
+        ]
+      },
+      {
+        label: 'All Tags',
+        click: () => mainWindow.webContents.send('menuCommand', 'allTags')
+      },
+      { type: 'separator' },
+      { role: 'togglefullscreen' }
+    ]
+  }
 ]
 
 function createWindow () {
