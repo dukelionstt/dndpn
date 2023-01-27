@@ -16,10 +16,11 @@
         <button nz-button
                 nzType="text"
                 (click)="openCloseWidget(tag.key, false, false)">
-                <span nz-icon
-                      [nzType]="'Close'"
-                      [nzTheme]="'fill'"
-                      style="background-color: #828282;"></span> 
+                <span nz-icon 
+                      nzType="close" 
+                      nzTheme="outline" 
+                      style="background-color: #828282;">
+                </span> 
         </button>
       </ng-template>
   </div>

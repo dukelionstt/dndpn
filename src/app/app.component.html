@@ -28,4 +28,28 @@
     </nz-content>
   </nz-layout>
 </nz-layout>
+<nz-modal [(nzVisible)]="isExportModalVisible"
+          nzTitle="Export Options"
+          (nzOnCancel)="exportModalCancel()"
+          (nzOnOk)=export()
+          [nzOkLoading]="isExportModalLoading">
+          <ng-container *nzModalContent>
+            <h3>Export Options</h3>
+            <div *ngFor="let page of this.noteBook.pages">
+              <button 
+                      nz-button
+                      [nzSize]="'large'"
+                      nzShape="round"
+                      (click)="updateIds(page.id.toString())"
+                      style="height:60px"
+                      id="exportButton{{page.id}}">
+                      <span nz-icon nzType="file-word" 
+                            nzTheme="outline" 
+                            style="font-size: 40px;"></span>
+              </button>
+            </div>
+          </ng-container>
+  
+</nz-modal>
+<button nz-button (click)="exportMenu()">modal</button>
 <div id="bridgeDiv" hidden></div>

@@ -121,6 +121,16 @@
   box-shadow: 0 0 3px rgba(56, 54, 54, 0.86);
 }
 
+.btn-select {
+  color: #141414;
+  background: #177ddc;
+}
+
+.btn-select:hover {
+  color: #fff;
+  background: #177ddc;
+}
+
 /*bottom*/
 
 .bottom .tooltip {
