@@ -108,6 +108,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    this.log.info(`app::component::ngAfterViewInit - setting up electron brige`)
     let bridgeDiv = this.elementRef.nativeElement.querySelector('#bridgeDiv');
     this.renderer.listen(bridgeDiv, 'command', (event) => {
       this.log.info(`angular got the event finally`);
@@ -115,6 +116,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.menuService.runCommnad(event.detail.text());
       this.log.info(`menuservice command called`);
     });
+    this.log.info(`app::component::ngAfterViewInit - assigned listener to div`)
   }
 
   exportMenu() {
@@ -129,6 +131,15 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.exportPageButtonFlags.set(id, true);
     }
 
+<<<<<<< HEAD
+=======
+    this.log.debug('app.component::updateIds - finding button element');
+    this.log.debug(`finding button id #exportButton${id}`);
+    let buttonId = `#exportButton${id}`
+    let button = this.elementRef.nativeElement.querySelector(buttonId);
+    console.log(button);
+
+>>>>>>> c446acb1458efa0f831df050d78a3e4bfa1a00cb
     if (this.exportPageButtonFlags.get(id)) {
       this.log.debug(`app.component::updateIds -  adding class`);
       this.toggleClass = 'btn-select';
