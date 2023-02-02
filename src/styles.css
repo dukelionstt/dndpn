@@ -126,6 +126,11 @@
   background: #177ddc;
 }
 
+.btn-select:focus {
+  color: #141414;
+  background: #177ddc;
+}
+
 .btn-select:hover {
   color: #fff;
   background: #177ddc;

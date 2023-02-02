@@ -61,6 +61,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   pageIds!: string[];
   exportContents!: ExportConents[];
   exportPageButtonFlags!: Map<string, boolean>;
+  toggleClass!: string;
+  isSingleDocumentChecked!: Boolean;
 
   constructor(
     private noteBookservice: NotebookService,
@@ -93,10 +95,12 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     this.isExportModalVisible = false;
     this.isExportModalLoading = false;
+    this.isSingleDocumentChecked = false;
     this.isNoteBook = false;
     this.pageIds = [];
     this.exportContents = [];
     this.exportPageButtonFlags = new Map();
+    this.toggleClass = '';
   }
 
   exportModalCancel() {
@@ -125,19 +129,12 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.exportPageButtonFlags.set(id, true);
     }
 
-    this.log.debug('app.component::updateIds - finding button element');
-    this.log.debug(`finding button id #exportButton${id}`);
-    let button = this.elementRef.nativeElement.querySelector(
-      `button[id=exportButton${id}]`
-    );
-    console.log(button);
-
     if (this.exportPageButtonFlags.get(id)) {
       this.log.debug(`app.component::updateIds -  adding class`);
-      this.renderer.addClass(button, 'btn-select');
+      this.toggleClass = 'btn-select';
     } else {
       this.log.debug(`app.component::updateIds -  removing class`);
-      this.renderer.removeClass(button, 'btn-select');
+      this.toggleClass = '';
     }
     if (this.pageIds.includes(id)) {
       let tempIds: string[] = [];
@@ -161,11 +158,32 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   export() {
-    this.isExportModalLoading = true;
-    this.pages[0].page = this.htmlEncoder.encodeValue(
-      this.quill.root.innerHTML
-    );
-    this.noteBook.pages = this.pages;
+    // this.isExportModalLoading = true;
+    // this.pages[0].page = this.htmlEncoder.encodeValue(
+    //   this.quill.root.innerHTML
+    // );
+    // this.noteBook.pages = this.pages;
+    // let document: string = '';
+    // if (this.isSingleDocumentChecked) {
+    //   if (this.isNoteBook) {
+    //     this.noteBook.pages.forEach((page) => {
+    //       document +=
+    //         this.htmlEncoder.decodeValue(page.page) +
+    //         `<div class="page-break" style="page-break-after: always"></div>`;
+    //     });
+    //     // this.exportContents.push({ pageName: this.noteBook.name, content: document });
+    //   } else {
+    //     for (let id in this.pageIds) {
+    //       document +=
+    //         this.htmlEncoder.decodeValue(this.pages[id].page) +
+    //         `<div class="page-break" style="page-break-after: always"></div>`;
+    //     }
+    //     // this.exportContents.push({ pageName: "export", content: document });
+    //   }
+    console.log(this.quill.getContents());
+    this.quill.setSelection(0, this.quill.getLength());
+    console.log(this.quill.getSelection());
+    // }
 
     // if (this.isNoteBook) {
     //   this.noteBook.pages.forEach((page) => {

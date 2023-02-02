@@ -42,12 +42,14 @@
                       nzShape="round"
                       (click)="updateIds(page.id.toString())"
                       style="height:60px"
+                      [class]="toggleClass"
                       id="exportButton{{page.id}}">
                       <span nz-icon nzType="file-word" 
                             nzTheme="outline" 
                             style="font-size: 40px;"></span>
               </button>
             </div>
+            <label nz-checkbox [(ngModel)]="isSingleDocumentChecked">Single Document</label>
           </ng-container>
   
 </nz-modal>
