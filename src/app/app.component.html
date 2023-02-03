@@ -35,6 +35,7 @@
           [nzOkLoading]="isExportModalLoading">
           <ng-container *nzModalContent>
             <h3>Export Options</h3>
+            <label nz-checkbox [(ngModel)]="isNoteBook" (click)="selectNotebook()">Notebook</label>
             <div *ngFor="let page of this.noteBook.pages">
               <button 
                       nz-button
@@ -42,8 +43,8 @@
                       nzShape="round"
                       (click)="updateIds(page.id.toString())"
                       style="height:60px"
-                      [class]="toggleClass"
-                      id="exportButton{{page.id}}">
+                      [class]="selectClass[page.id]"
+                      id="export{{page.id}}Button">
                       <span nz-icon nzType="file-word" 
                             nzTheme="outline" 
                             style="font-size: 40px;"></span>

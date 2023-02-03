@@ -20,7 +20,6 @@ import { PlaceBlot } from './quill/place.blot';
 import { ItemBlot } from './quill/item.blot';
 import { MiscBlot } from './quill/misc.blot';
 import { MenuService } from './service/menu.service';
-import { not } from '@angular/compiler/src/output/output_ast';
 import { ExportImportService } from './data/export.import.service';
 import { ExportConents } from './model/export.contetns-model';
 import { BooleanInput } from 'ng-zorro-antd/core/types';
@@ -59,6 +58,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   isExportModalLoading!: BooleanInput;
   isNoteBook!: boolean;
   pageIds!: string[];
+  selectClass!: string[];
   exportContents!: ExportConents[];
   exportPageButtonFlags!: Map<string, boolean>;
   toggleClass!: string;
@@ -66,16 +66,16 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   constructor(
     private noteBookservice: NotebookService,
-    private log: LoggerService,
     private pageService: PageService,
     private elementRef: ElementRef,
+    private log: LoggerService,
     private renderer: Renderer2,
     private menuService: MenuService,
     private exportService: ExportImportService
   ) {}
 
   ngOnInit(): void {
-    this.log.info(`setting up notebook`);
+    this.log.info(`setting up notebook`, this.ngOnInit.name, AppComponent.name);
     // this.noteBookservice.getNoteBook().subscribe((data: any) => {
     //   this.log.info(`notebook setup start`)
     //   this.noteBook = this.noteBookservice.buildNoteBook(data)
@@ -98,7 +98,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.isSingleDocumentChecked = false;
     this.isNoteBook = false;
     this.pageIds = [];
-    this.exportContents = [];
+    this.selectClass = this.exportContents = [];
     this.exportPageButtonFlags = new Map();
     this.toggleClass = '';
   }
@@ -108,7 +108,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.log.info(`app::component::ngAfterViewInit - setting up electron brige`)
+    this.log.info(
+      `app::component::ngAfterViewInit - setting up electron brige`
+    );
     let bridgeDiv = this.elementRef.nativeElement.querySelector('#bridgeDiv');
     this.renderer.listen(bridgeDiv, 'command', (event) => {
       this.log.info(`angular got the event finally`);
@@ -116,7 +118,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.menuService.runCommnad(event.detail.text());
       this.log.info(`menuservice command called`);
     });
-    this.log.info(`app::component::ngAfterViewInit - assigned listener to div`)
+    this.log.info(`app::component::ngAfterViewInit - assigned listener to div`);
   }
 
   exportMenu() {
@@ -131,21 +133,14 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.exportPageButtonFlags.set(id, true);
     }
 
-<<<<<<< HEAD
-=======
-    this.log.debug('app.component::updateIds - finding button element');
-    this.log.debug(`finding button id #exportButton${id}`);
-    let buttonId = `#exportButton${id}`
-    let button = this.elementRef.nativeElement.querySelector(buttonId);
-    console.log(button);
-
->>>>>>> c446acb1458efa0f831df050d78a3e4bfa1a00cb
     if (this.exportPageButtonFlags.get(id)) {
       this.log.debug(`app.component::updateIds -  adding class`);
-      this.toggleClass = 'btn-select';
+      // this.toggleClass = 'btn-select';
+      this.selectClass[id] = 'btn-select';
     } else {
       this.log.debug(`app.component::updateIds -  removing class`);
-      this.toggleClass = '';
+      // this.toggleClass = '';
+      this.selectClass[id] = '';
     }
     if (this.pageIds.includes(id)) {
       let tempIds: string[] = [];
@@ -168,33 +163,38 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.log.info('page has been saved fool');
   }
 
+  selectNotebook() {
+    this.isNoteBook = !this.isNoteBook;
+  }
+
   export() {
-    // this.isExportModalLoading = true;
-    // this.pages[0].page = this.htmlEncoder.encodeValue(
-    //   this.quill.root.innerHTML
-    // );
-    // this.noteBook.pages = this.pages;
-    // let document: string = '';
-    // if (this.isSingleDocumentChecked) {
-    //   if (this.isNoteBook) {
-    //     this.noteBook.pages.forEach((page) => {
-    //       document +=
-    //         this.htmlEncoder.decodeValue(page.page) +
-    //         `<div class="page-break" style="page-break-after: always"></div>`;
-    //     });
-    //     // this.exportContents.push({ pageName: this.noteBook.name, content: document });
-    //   } else {
-    //     for (let id in this.pageIds) {
-    //       document +=
-    //         this.htmlEncoder.decodeValue(this.pages[id].page) +
-    //         `<div class="page-break" style="page-break-after: always"></div>`;
-    //     }
-    //     // this.exportContents.push({ pageName: "export", content: document });
-    //   }
-    console.log(this.quill.getContents());
-    this.quill.setSelection(0, this.quill.getLength());
-    console.log(this.quill.getSelection());
-    // }
+    this.isExportModalLoading = true;
+    this.pages[0].page = this.htmlEncoder.encodeValue(
+      this.quill.root.innerHTML
+    );
+    this.noteBook.pages = this.pages;
+    let document: string = '';
+    if (this.isSingleDocumentChecked) {
+      if (this.isNoteBook) {
+        this.noteBook.pages.forEach((page) => {
+          document +=
+            this.htmlEncoder.decodeValue(page.page) +
+            `<hr style="border: 1px solid;" id="exportPageBreak">`;
+        });
+        // this.exportContents.push({ pageName: this.noteBook.name, content: document });
+      } else {
+        for (let id in this.pageIds) {
+          document +=
+            this.htmlEncoder.decodeValue(this.pages[id].page) +
+            `<hr style="border: 1px solid;">`;
+        }
+        // this.exportContents.push({ pageName: "export", content: document });
+      }
+    }
+    this.log.debug(`export will be :`);
+    this.log.debug(document);
+    this.isExportModalLoading = false;
+    this.isExportModalVisible = false;
 
     // if (this.isNoteBook) {
     //   this.noteBook.pages.forEach((page) => {
