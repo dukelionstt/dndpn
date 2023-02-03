@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { QuillModule } from 'ngx-quill';
 
-
 import { AppComponent } from './app.component';
 import { QuillToolbarComponent } from './quill/quill.toolbar.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
@@ -14,7 +13,7 @@ import { en_US } from 'ng-zorro-antd/i18n';
 import { registerLocaleData } from '@angular/common';
 import en from '@angular/common/locales/en';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http'
+import { HttpClientModule } from '@angular/common/http';
 
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
@@ -26,18 +25,23 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzTypographyModule } from 'ng-zorro-antd/typography';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
-
+import { MenuComponent } from './menu/menu.component';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzBadgeModule } from 'ng-zorro-antd/badge';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 
 registerLocaleData(en);
-
 
 @NgModule({
   declarations: [
     AppComponent,
     QuillToolbarComponent,
     TagListComponent,
-    SidebarComponent ]
-    ,
+    SidebarComponent,
+    MenuComponent,
+  ],
   imports: [
     BrowserModule,
     QuillModule.forRoot(),
@@ -54,10 +58,14 @@ registerLocaleData(en);
     NzSelectModule,
     NzTypographyModule,
     NzCardModule,
-    NzToolTipModule
-
+    NzToolTipModule,
+    NzDropDownModule,
+    NzBadgeModule,
+    NzIconModule,
+    NzModalModule,
+    NzCheckboxModule,
   ],
   providers: [{ provide: NZ_I18N, useValue: en_US }],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

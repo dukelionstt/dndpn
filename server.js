@@ -5,7 +5,7 @@ var cors = require("cors")
 const bodyParser = require("body-parser");
 const router = express.Router();
 
-const apiUrl = "/api/file/"
+const apiUrl = "/api/"
 
 var corsOptions = {
   origin:'http://localhost:4200',
@@ -21,7 +21,7 @@ app.get('/test', function (req, res) {
    res.send('Hello World smeg heads');
 })
 
-app.post(apiUrl + 'get', function(req, res){
+app.post(apiUrl + 'file/get', function(req, res){
   const fileName = req.body.fileName
   fs.readFile(fileName, 'utf8', function (err, data) {
     console.log( data );
@@ -32,9 +32,28 @@ app.post(apiUrl + 'get', function(req, res){
 
 })
 
-app.post(apiUrl + 'save', function(req, res){
+app.post(apiUrl + 'file/save', function(req, res){
   const fileContent = req.body.fileContent
   let fileName = req.body.fileName
+
+  console.log(req)
+  console.log(fileContent)
+  console.log(fileName)
+
+  fs.writeFile(fileName, fileContent, err => {
+    if(err){
+      res.send(SON.parse('{ "saved": false, "message" : "could not save file "' + fileName + ', "error" : "' + err + '"}'))
+    }    
+
+  })
+
+  res.send(JSON.parse('{"saved":true}'));
+
+})
+
+app.post(apiUrl + 'export', function(req, res){
+  const fileContent = req.body.content
+  let fileName = req.body.pageName
 
   console.log(req)
   console.log(fileContent)

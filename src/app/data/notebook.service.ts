@@ -42,8 +42,8 @@ export class NotebookService {
       date: obj.date,
       name: obj.name,
       type: obj.type,
-      pages: this.getPages(obj.pagesLocation),
-      pagesLocation: obj.pagesLocation
+      pages: this.getPages(obj.saveLocation),
+      saveLocation: obj.saveLocation
     }
     this.log.debug(`Current state of notebook:`)
     this.log.debug(notebook)

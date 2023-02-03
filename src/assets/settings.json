@@ -1,8 +1,11 @@
 {
-    "main": {
-        "nopebookDefault" : true,
-        "nopebookDefaultLocation" : "E:/backup/dndpn/src/app/mock-data/notebook-mock.json",
-        "autosave" : false
-    }
-
+  "main": {
+    "nopebookDefault": true,
+    "nopebookDefaultLocation": "E:/backup/dndpn/src/app/mock-data/notebook-mock.json",
+    "autosave": false,
+    "personWidget": true,
+    "placeWidget": true,
+    "itemWidget": true,
+    "miscWidget": true
+  }
 }

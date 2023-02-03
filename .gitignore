@@ -5,6 +5,7 @@
 /tmp
 /out-tsc
 /bazel-out
+/middlewhare/dist
 
 # Node
 /node_modules
@@ -28,6 +29,9 @@ yarn-error.log
 !.vscode/extensions.json
 .history/*
 
+#codeSandBox
+.codesandbox/*
+
 # Miscellaneous
 /.angular/cache
 .sass-cache/
@@ -40,3 +44,6 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+#logs
+/logs

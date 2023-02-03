@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Output, EventEmitter } from '@angular/core';
 import { LoggerService } from '../logger.service';
 import { Page } from '../model/page-model';
 import { FileService } from './file.service';
@@ -7,6 +7,8 @@ import { FileService } from './file.service';
   providedIn: 'root'
 })
 export class PageService {
+
+  @Output() activePage: EventEmitter<any> = new EventEmitter();
 
   constructor(private file: FileService, private log: LoggerService) { }
 
@@ -19,4 +21,9 @@ export class PageService {
       }
     });
   }
+
+  sendActivePage(id: number){
+    this.activePage.emit(id);
+  }
+
 }
