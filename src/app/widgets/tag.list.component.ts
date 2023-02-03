@@ -78,13 +78,13 @@ export class TagListComponent implements OnInit, AfterViewInit {
     // this.icons.set(ITEM, 'https://img.icons8.com/ios-glyphs/15/016936/armored-breastplate.png')
     // this.icons.set(MISC, 'https://img.icons8.com/ios-glyphs/15/952B60/magical-scroll.png')
 
-    this.widgetStates = WIDGET_STATES;
     this.active = false;
     this.isNewButton = false;
     this.log.info(`tag.list.compent::ngOnInit:: finished`);
   }
 
   ngAfterViewInit(): void {
+    this.widgetStates = WIDGET_STATES;
     this.log.info(`tag.list.compent::ngAfterViewInit::Starting`);
     // this.widgets = this.widgetsList.getWidgetsList();
     this.log.debug(`tag.list.compent::ngAfterViewInit:: setting widget states`);
@@ -92,20 +92,31 @@ export class TagListComponent implements OnInit, AfterViewInit {
     this.log.debug(
       `tag.list.compent::ngAfterViewInit:: adding menu service listeners`
     );
+
     this.menuService.personWidgetEvent.subscribe(
-      this.openCloseWidget(PERSON, false, !this.widgetStates.get(PERSON))
+      this.openCloseWidget(PERSON)
     );
     this.log.debug(`tag.list.compent::ngAfterViewInit:: person widget added`);
     this.menuService.placeWidgetEvent.subscribe(
-      this.openCloseWidget(PLACE, false, !this.widgetStates.get(PLACE))
+      this.openCloseWidget(PLACE)
     );
     this.log.debug(`tag.list.compent::ngAfterViewInit:: place widget added`);
     this.menuService.itemWidgetEvent.subscribe(
-      this.openCloseWidget(ITEM, false, !this.widgetStates.get(ITEM))
+      this.openCloseWidget(ITEM)
     );
     this.log.debug(`tag.list.compent::ngAfterViewInit:: item widget added`);
     this.menuService.miscWidgetEvent.subscribe(
-      this.openCloseWidget(MISC, false, !this.widgetStates.get(MISC))
+      this.openCloseWidget(MISC)
+    );
+
+    this.menuService.allTagsEvent.subscribe( () => {
+      this.openCloseWidget(PERSON)
+      this.openCloseWidget(PLACE)
+      this.openCloseWidget(ITEM)
+      this.openCloseWidget(MISC)
+    }
+     
+      
     );
     this.log.debug(`tag.list.compent::ngAfterViewInit:: misc widget added`);
     this.log.debug(
@@ -138,7 +149,7 @@ export class TagListComponent implements OnInit, AfterViewInit {
     }
   }
 
-  openCloseWidget(widgetName: string, animation: boolean, open: boolean) {
+  openCloseWidget(widgetName: string, animation?: boolean, open?: boolean) {
     this.log.info(`tag.list.compent::openCloseWidget::Starting`);
     let widgetElementId = `#${widgetName}Widget`;
     this.log.debug(
@@ -149,11 +160,15 @@ export class TagListComponent implements OnInit, AfterViewInit {
     this.log.debug(
       `tag.list.compent::openCloseWidget - widget found, adding class`
     );
-    if (animation) {
-      this.renderer.removeClass(widget, open ? 'open' : 'close');
-      this.renderer.addClass(widget, open ? 'opened' : 'closed');
+
+    let flag = open != undefined ? open : this.widgetStates.get(widgetName);
+    let animationFlag = animation != undefined? animation : !this.widgetStates.get(widgetName); 
+
+    if (animationFlag) {
+      this.renderer.removeClass(widget, flag ? 'open' : 'close');
+      this.renderer.addClass(widget, flag ? 'opened' : 'closed');
     } else {
-      this.renderer.addClass(widget, open ? 'open' : 'close');
+      this.renderer.addClass(widget, flag ? 'open' : 'close');
     }
     this.widgetStates.set(widgetName, !this.widgetStates.get(widgetName));
     this.log.debug(this.widgetStates);
