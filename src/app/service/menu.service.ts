@@ -72,6 +72,7 @@ export class MenuService {
         this.allWidgets();
         break;
       case 'personWidget':
+        this.log.debug(`running ${command} found`, this.runCommnad.name, MenuService.name)
         this.personWidget();
         break;
       case 'placeWidget':
@@ -164,7 +165,9 @@ export class MenuService {
   }
   
   private placeWidget(){
-    this.placeWidgetEvent.emit();    
+    this.log.info(`starting`, this.placeWidget.name, MenuService.name)
+    this.placeWidgetEvent.emit(true);
+    this.log.info(`Finishing`, this.placeWidget.name, MenuService.name)    
   }
   
   private itemWidget(){

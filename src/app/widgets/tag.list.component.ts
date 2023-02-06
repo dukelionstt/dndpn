@@ -97,8 +97,10 @@ export class TagListComponent implements OnInit, AfterViewInit {
       this.openCloseWidget(PERSON)
     );
     this.log.debug(`tag.list.compent::ngAfterViewInit:: person widget added`);
-    this.menuService.placeWidgetEvent.subscribe(
+    this.menuService.placeWidgetEvent.subscribe( (flag) => {
       this.openCloseWidget(PLACE)
+    }
+      
     );
     this.log.debug(`tag.list.compent::ngAfterViewInit:: place widget added`);
     this.menuService.itemWidgetEvent.subscribe(
@@ -150,29 +152,34 @@ export class TagListComponent implements OnInit, AfterViewInit {
   }
 
   openCloseWidget(widgetName: string, animation?: boolean, open?: boolean) {
-    this.log.info(`tag.list.compent::openCloseWidget::Starting`);
+    this.log.info(`Starting`,  this.openCloseWidget.name, TagListComponent.name);
     let widgetElementId = `#${widgetName}Widget`;
     this.log.debug(
-      `tag.list.compent::openCloseWidget - getting widget element id ${widgetElementId}`
+      `getting widget element id ${widgetElementId}`, this.openCloseWidget.name, TagListComponent.name
     );
     let widget = this.elementRef.nativeElement.querySelector(widgetElementId);
-    this.log.debug(widget);
+    this.log.debug(widget,  this.openCloseWidget.name, TagListComponent.name);
     this.log.debug(
-      `tag.list.compent::openCloseWidget - widget found, adding class`
+      `widget found, adding class`,  this.openCloseWidget.name, TagListComponent.name
     );
 
-    let flag = open != undefined ? open : this.widgetStates.get(widgetName);
-    let animationFlag = animation != undefined? animation : !this.widgetStates.get(widgetName); 
+    let flag = open != undefined ? open : !this.widgetStates.get(widgetName);
+    let animationFlag = animation != undefined? animation : false; 
+
+    this.log.debug(`flag is set to ${flag}`, this.openCloseWidget.name, TagListComponent.name)
+    this.log.debug(`animationFlag is set to ${animationFlag}`, this.openCloseWidget.name, TagListComponent.name)
 
     if (animationFlag) {
       this.renderer.removeClass(widget, flag ? 'open' : 'close');
       this.renderer.addClass(widget, flag ? 'opened' : 'closed');
+      // this.widgetStates.set(widgetName, !this.widgetStates.get(widgetName));
+      this.widgetStates.set(widgetName, flag);
     } else {
       this.renderer.addClass(widget, flag ? 'open' : 'close');
     }
-    this.widgetStates.set(widgetName, !this.widgetStates.get(widgetName));
+    
     this.log.debug(this.widgetStates);
-    this.log.info(`tag.list.compent::openCloseWidget::Finishing`);
+    this.log.info(`Finishing`,  this.openCloseWidget.name, TagListComponent.name);
   }
 
   goToTagInPage(event: any, index: number, type: string) {
