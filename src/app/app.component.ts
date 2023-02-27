@@ -53,6 +53,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   noteBook!: NoteBook;
   pages!: Page[];
   htmlEncoder = new HttpUrlEncodingCodec();
+  pageNameList!: Map<string, string>;
 
   isExportModalVisible!: BooleanInput;
   isExportModalLoading!: BooleanInput;
@@ -101,6 +102,17 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.selectClass = this.exportContents = [];
     this.exportPageButtonFlags = new Map();
     this.toggleClass = '';
+
+    this.pageNameList = this.pageNameListExtraction(this.pages);
+  }
+
+  private pageNameListExtraction(pages: Page[]){
+    let temp = new Map<string, string>();
+    pages.forEach(page => {
+      temp.set(page.id.toString(), page.name)
+    })
+
+    return temp;
   }
 
   exportModalCancel() {
@@ -119,6 +131,14 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.log.info(`menuservice command called`);
     });
     this.log.info(`app::component::ngAfterViewInit - assigned listener to div`);
+  }
+
+  openNewPage(){
+    this.log.debug(`tab opening new page -test-`, this.openNewPage.name, AppComponent.name)
+  }
+
+  closePage({index}:{index: number}){
+    this.log.debug(`tab ${index} closed -test-`, this.closePage.name, AppComponent.name)
   }
 
   exportMenu() {

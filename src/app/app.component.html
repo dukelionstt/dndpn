@@ -2,7 +2,8 @@
   <nz-header>
     <menu [quill]="quill"
           [pages]="pages"
-          [notebook]="noteBook"></menu>
+          [notebook]="noteBook"
+          [hidden]="'true'"></menu>
   </nz-header>
   <nz-layout>
     <nz-sider>
@@ -12,13 +13,20 @@
     <nz-content>
       <!-- [pages] is passing main data object for this page
             (newQuillEditor) is to get the editor object -->
-      
-        <div nz-row nzJustify="center">
-          <div nzSpan="20" nz-col>
-            <toolbar [pages]="pages"
-                (newQuillEditor)="setNewQuillEditor($event)"></toolbar>
+      <nz-tabset nzType="editable-card"
+                (nzAdd)="openNewPage()"
+                (nzClose)="closePage($event)">
+        <nz-tab *ngFor="let pageName of pageNameList | keyvalue" 
+                [nzTitle]="pageName.value"
+                >
+          <div nz-row nzJustify="center">
+            <div nzSpan="20" nz-col>
+              <tool bar [pages]="pages"
+                  (newQuillEditor)="setNewQuillEditor($event)"></toolbar>
+            </div>
           </div>
-        </div>
+        </nz-tab>
+      </nz-tabset>
       
       <div nz-row>
         <div nz-col>
