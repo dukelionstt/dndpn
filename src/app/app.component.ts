@@ -54,9 +54,12 @@ export class AppComponent implements OnInit, AfterViewInit {
   pages!: Page[];
   htmlEncoder = new HttpUrlEncodingCodec();
   pageNameList!: Map<string, string>;
+  newPageEntry!: Page;
 
   isExportModalVisible!: BooleanInput;
   isExportModalLoading!: BooleanInput;
+  isNewPageModalVisible!: BooleanInput;
+  isNewPageModalLoading!: BooleanInput;
   isNoteBook!: boolean;
   pageIds!: string[];
   selectClass!: string[];
@@ -96,6 +99,8 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     this.isExportModalVisible = false;
     this.isExportModalLoading = false;
+    this.isNewPageModalVisible = false;
+    this.isNewPageModalLoading = false;
     this.isSingleDocumentChecked = false;
     this.isNoteBook = false;
     this.pageIds = [];
@@ -135,10 +140,20 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   openNewPage(){
     this.log.debug(`tab opening new page -test-`, this.openNewPage.name, AppComponent.name)
+    this.isNewPageModalVisible = true;
+  }
+  
+  createNewPage(){
+    console.debug(this.newPageEntry)
+    this.isNewPageModalVisible = false;
   }
 
   closePage({index}:{index: number}){
     this.log.debug(`tab ${index} closed -test-`, this.closePage.name, AppComponent.name)
+  }
+  
+  newPageModelCancel(){
+    this.isNewPageModalVisible = false;
   }
 
   exportMenu() {
