@@ -86,7 +86,7 @@
                 <span nz-typography><strong>Date</strong></span>
               </div> 
               <div nz-col nzSpan="8">
-                <input nz-input type="text" name="newPageDate" id="newPageDate" [(ngModel)]="newPageEntry.date" disabled="true" placeHolder="{Date.now.toString()}">
+                <input nz-input type="text" name="newPageDate" id="newPageDate" [(ngModel)]="newPageEntry.date" disabled="true" placeholder="{{dateToday}}">
               </div>
             </div>
           </ng-container>

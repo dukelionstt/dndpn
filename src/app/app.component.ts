@@ -23,6 +23,13 @@ import { MenuService } from './service/menu.service';
 import { ExportImportService } from './data/export.import.service';
 import { ExportConents } from './model/export.contetns-model';
 import { BooleanInput } from 'ng-zorro-antd/core/types';
+import { Item } from './model/item-model';
+import { Misc } from './model/misc-model';
+import { Person } from './model/person-model';
+import { Place } from './model/place-model';
+import { Tags } from './model/tags-model';
+import { ITEM, MISC, PERSON, PLACE } from './constants';
+import { NewPageEntry } from './model/new-page-entry-model';
 
 PersonBlot['blotName'] = 'person';
 PersonBlot['tagName'] = 'button';
@@ -54,14 +61,15 @@ export class AppComponent implements OnInit, AfterViewInit {
   pages!: Page[];
   htmlEncoder = new HttpUrlEncodingCodec();
   pageNameList!: Map<string, string>;
-  newPageEntry!: Page;
+  newPageEntry!: NewPageEntry;
 
   isExportModalVisible!: BooleanInput;
   isExportModalLoading!: BooleanInput;
   isNewPageModalVisible!: BooleanInput;
   isNewPageModalLoading!: BooleanInput;
   isNoteBook!: boolean;
-  pageIds!: string[];
+  dateToday!: string;
+  pageIds!: number[];
   selectClass!: string[];
   exportContents!: ExportConents[];
   exportPageButtonFlags!: Map<string, boolean>;
@@ -103,21 +111,111 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.isNewPageModalLoading = false;
     this.isSingleDocumentChecked = false;
     this.isNoteBook = false;
-    this.pageIds = [];
+    this.pageIds = this.noteBook.pages.map((page) => page.id);
     this.selectClass = this.exportContents = [];
     this.exportPageButtonFlags = new Map();
     this.toggleClass = '';
+    this.dateToday = new Date().toLocaleDateString();
 
     this.pageNameList = this.pageNameListExtraction(this.pages);
+    this.newPageEntry = this.setupNewPageEntry();
   }
 
-  private pageNameListExtraction(pages: Page[]){
+  private pageNameListExtraction(pages: Page[]) {
     let temp = new Map<string, string>();
-    pages.forEach(page => {
-      temp.set(page.id.toString(), page.name)
-    })
+    pages.forEach((page) => {
+      temp.set(page.id.toString(), page.name);
+    });
 
     return temp;
+  }
+
+  private setupNewPageEntry() {
+    return {
+      date: this.dateToday,
+      type: '',
+      name: '',
+    };
+  }
+
+  private setupNewpageTags() {
+    return {
+      person: [],
+      place: [],
+      item: [],
+      misc: [],
+    };
+  }
+
+  // private setupNewpageTags() {
+  //   return {
+  //     person: this.setupNewPageTagDetail(PERSON),
+  //     place: this.setupNewPageTagDetail(PLACE),
+  //     item: this.setupNewPageTagDetail(ITEM),
+  //     misc: this.setupNewPageTagDetail(MISC),
+  //   };
+  // }
+
+  private setupNewPageTagDetail(type: string) {
+    switch (type) {
+      case PERSON:
+        return [
+          {
+            id: 0,
+            name: '',
+            date: '',
+            notes: '',
+            misc: [],
+            metaData: this.setupNewPageTagDetailsMetaData(),
+          },
+        ];
+      case PLACE:
+        return [
+          {
+            id: 0,
+            name: '',
+            location: '',
+            area: '',
+            date: '',
+            notes: '',
+            misc: [],
+            metaData: this.setupNewPageTagDetailsMetaData(),
+          },
+        ];
+      case ITEM:
+        return [
+          {
+            id: 0,
+            name: '',
+            type: [],
+            date: '',
+            notes: '',
+            misc: [],
+            metaData: this.setupNewPageTagDetailsMetaData(),
+          },
+        ];
+      case MISC:
+        return [
+          {
+            id: 0,
+            name: '',
+            date: '',
+            notes: '',
+            misc: [],
+            metaData: this.setupNewPageTagDetailsMetaData(),
+          },
+        ];
+      default:
+        return {};
+    }
+  }
+
+  private setupNewPageTagDetailsMetaData() {
+    return {
+      range: 0,
+      length: 0,
+      buttonIndex: 0,
+    };
   }
 
   exportModalCancel() {
@@ -138,21 +236,42 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.log.info(`app::component::ngAfterViewInit - assigned listener to div`);
   }
 
-  openNewPage(){
-    this.log.debug(`tab opening new page -test-`, this.openNewPage.name, AppComponent.name)
+  openNewPage() {
+    this.log.debug(
+      `tab opening new page -test-`,
+      this.openNewPage.name,
+      AppComponent.name
+    );
     this.isNewPageModalVisible = true;
   }
-  
-  createNewPage(){
-    console.debug(this.newPageEntry)
+
+  createNewPage() {
+    console.debug(this.newPageEntry);
+    let newId = this.pageIds[this.pageIds.length - 1] + 1
+    this.noteBook.pages.push({
+      id: newId,
+      date: this.newPageEntry.date,
+      name: this.newPageEntry.name,
+      type: this.newPageEntry.type,
+      page: '',
+      tags: this.setupNewpageTags(),
+    });
+    console.debug(this.noteBook);
+    
+    this.pageNameList.set(newId.toString(), this.newPageEntry.name);
+
     this.isNewPageModalVisible = false;
   }
 
-  closePage({index}:{index: number}){
-    this.log.debug(`tab ${index} closed -test-`, this.closePage.name, AppComponent.name)
+  closePage({ index }: { index: number }) {
+    this.log.debug(
+      `tab ${index} closed -test-`,
+      this.closePage.name,
+      AppComponent.name
+    );
   }
-  
-  newPageModelCancel(){
+
+  newPageModelCancel() {
     this.isNewPageModalVisible = false;
   }
 
@@ -178,7 +297,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.selectClass[id] = '';
     }
     if (this.pageIds.includes(id)) {
-      let tempIds: string[] = [];
+      let tempIds: number[] = [];
       this.pageIds.forEach((pageId) => {
         if (id != pageId) {
           tempIds.push(id);
