@@ -269,6 +269,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.closePage.name,
       AppComponent.name
     );
+
+    this.pageNameList.delete((index+1).toString())
   }
 
   newPageModelCancel() {

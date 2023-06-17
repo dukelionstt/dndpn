@@ -30,6 +30,9 @@ export class QuillToolbarComponent implements OnInit {
   pages!: Page[];
 
   @Input()
+  passingPageId!: string;
+
+  @Input()
   tagEntry!: TagEntry;
 
   @Input()
@@ -62,6 +65,7 @@ export class QuillToolbarComponent implements OnInit {
   updateType!: string;
   toolType!: string;
   toolId!: number;
+  pageId!: number;
   lastCursorPosition!: number;
 
   personTag: string = PERSON;
@@ -103,6 +107,9 @@ export class QuillToolbarComponent implements OnInit {
     this.changeIndicator = false;
     this.loadingContent = false;
 
+    this.pageId = parseInt(this.passingPageId);
+    console.debug(this.pageId);
+
     this.highlightTagService.highLightTag.subscribe((tags) =>
       this.highlightTag(tags.ids, tags.type, tags.active)
     );
@@ -135,12 +142,12 @@ export class QuillToolbarComponent implements OnInit {
     this.log.info(`setting text content :: Started`);
     // this.quill.setContents(this.pages[0].page)
     this.quill.root.innerHTML = this.htmlDecoder.decodeValue(
-      this.pages[0].page
+      this.pages[this.pageId-1].page
     );
     this.log.info(`setting text content :: Finished`);
 
     this.log.info(`Applying event handlers to taged words :: Started`);
-    for (let [key, value] of Object.entries(this.pages[0].tags)) {
+    for (let [key, value] of Object.entries(this.pages[this.pageId-1].tags)) {
       this.log.info(`Working through ${key} set:: Started`);
       this.updateButtons(value, key);
       this.log.info(`Working through ${key} set:: Finished`);
@@ -192,9 +199,9 @@ export class QuillToolbarComponent implements OnInit {
         this.log.debug(`Change indicator present`);
 
         let range =
-          this.pages[0].tags[this.updateType as keyof Tags][id].metaData.range;
+          this.pages[this.pageId-1].tags[this.updateType as keyof Tags][id].metaData.range;
         let length =
-          this.pages[0].tags[this.updateType as keyof Tags][id].name.length;
+          this.pages[this.pageId-1].tags[this.updateType as keyof Tags][id].name.length;
 
         this.log.debug(
           `Setting the following: range = ${range} and length = ${length}`
@@ -206,7 +213,7 @@ export class QuillToolbarComponent implements OnInit {
           range,
           this.updateType,
           this.forValue(
-            this.pages[0].tags[this.updateType as keyof Tags][id].name,
+            this.pages[this.pageId-1].tags[this.updateType as keyof Tags][id].name,
             this.updateType,
             id
           )
@@ -235,7 +242,7 @@ export class QuillToolbarComponent implements OnInit {
           this.range.index,
           this.sideBarTitle,
           this.forValue(
-            this.pages[0].tags[this.sideBarTitle as keyof Tags][id].name,
+            this.pages[this.pageId-1].tags[this.sideBarTitle as keyof Tags][id].name,
             this.sideBarTitle,
             id
           )
@@ -263,20 +270,20 @@ export class QuillToolbarComponent implements OnInit {
       case PERSON:
         tooltip =
           '<div class="tooltip"><table class="tooltipTable"><tr><td><strong>Notes:</strong></td><td>' +
-          this.pages[0].tags.person[id].notes +
+          this.pages[this.pageId-1].tags.person[id].notes +
           '</td><table></div>';
         break;
       case PLACE:
         tooltip =
           '<div class="tooltip">' +
           '<table class="tooltipTable"><tr><td><strong>Location:</strong></td><td>' +
-          this.pages[0].tags.place[id].location +
+          this.pages[this.pageId-1].tags.place[id].location +
           '</td></tr>' +
           '<tr><td><strong>Area:</strong></td><td>' +
-          this.pages[0].tags.place[id].area +
+          this.pages[this.pageId-1].tags.place[id].area +
           '</td></tr>' +
           '<tr><td><strong>Notes:</strong></td><td>' +
-          this.pages[0].tags.place[id].notes +
+          this.pages[this.pageId-1].tags.place[id].notes +
           '</td></tr></table>' +
           '</div>';
         break;
@@ -284,10 +291,10 @@ export class QuillToolbarComponent implements OnInit {
         tooltip =
           '<div class="tooltip">' +
           '<table class="tooltipTable"><tr><td><strong>Type:</strong></td><td>' +
-          this.pages[0].tags.item[id].type +
+          this.pages[this.pageId-1].tags.item[id].type +
           '</td>' +
           '<tr><td><strong>Notes:</strong></td><td>' +
-          this.pages[0].tags.item[id].notes +
+          this.pages[this.pageId-1].tags.item[id].notes +
           '</td></tr></table>' +
           '</div>';
         break;
@@ -295,7 +302,7 @@ export class QuillToolbarComponent implements OnInit {
         tooltip =
           '<div class="tooltip">' +
           '<table class="tooltipTable"><tr><td><strong>Notes:</strong></td><td>' +
-          this.pages[0].tags.misc[id].notes +
+          this.pages[this.pageId-1].tags.misc[id].notes +
           '</td></tr></table>' +
           '</div>';
         break;
@@ -338,12 +345,12 @@ export class QuillToolbarComponent implements OnInit {
       );
       this.log.debug(
         `Updating button that matches index number: ${
-          this.pages[0].tags[buttonClass as keyof Tags][id].metaData.buttonIndex
+          this.pages[this.pageId-1].tags[buttonClass as keyof Tags][id].metaData.buttonIndex
         }`
       );
       button =
         this.elementRef.nativeElement.querySelectorAll(queryString)[
-          this.pages[0].tags[buttonClass as keyof Tags][id].metaData.buttonIndex
+          this.pages[this.pageId-1].tags[buttonClass as keyof Tags][id].metaData.buttonIndex
         ];
     } else {
       this.log.debug(`Running a new button`);
@@ -362,7 +369,7 @@ export class QuillToolbarComponent implements OnInit {
     if (!this.changeIndicator && !this.loadingContent) {
       //recording the number of the button in order of buttons for that type so that if the text
       //is channge we can assign the correct button
-      this.pages[0].tags[buttonClass as keyof Tags][id].metaData.buttonIndex =
+      this.pages[this.pageId-1].tags[buttonClass as keyof Tags][id].metaData.buttonIndex =
         count;
       this.log.debug(`Button id is updated in page to ${count}`);
 

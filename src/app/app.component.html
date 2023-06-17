@@ -18,10 +18,12 @@
                 (nzClose)="closePage($event)">
         <nz-tab *ngFor="let pageName of pageNameList | keyvalue" 
                 [nzTitle]="pageName.value"
+                nzClosable
                 >
           <div nz-row nzJustify="center">
             <div nzSpan="20" nz-col>
               <toolbar [pages]="pages"
+                       [passingPageId]="pageName.key"
                   (newQuillEditor)="setNewQuillEditor($event)"></toolbar>
             </div>
           </div>
