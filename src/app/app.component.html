@@ -14,7 +14,7 @@
       <!-- [pages] is passing main data object for this page
             (newQuillEditor) is to get the editor object -->
       <nz-tabset nzType="editable-card"
-                (nzAdd)="openNewPage()"
+                (nzAdd)="openPageMenu()"
                 (nzClose)="closePage($event)">
         <nz-tab *ngFor="let pageName of pageNameList | keyvalue" 
                 [nzTitle]="pageName.value"
@@ -38,6 +38,7 @@
     </nz-content>
   </nz-layout>
 </nz-layout>
+<!-- Model that deals with exporting content -->
 <nz-modal [(nzVisible)]="isExportModalVisible"
           nzTitle="Export Options"
           (nzOnCancel)="exportModalCancel()"
@@ -64,11 +65,13 @@
           </ng-container>
   
 </nz-modal>
-<nz-modal [(nzVisible)]="isNewPageModalVisible"
-          nzTitle="Create New Page"
-          (nzOnCancel)="newPageModelCancel()"
-          (nzOnOk)=createNewPage()
-          [nzOkLoading]="isNewPageModalLoading">
+<!-- --------------------------------- -->
+<!-- Modal that deals with pages new or old -->
+<nz-modal [(nzVisible)]="isPageMenuModalVisible"
+          nzTitle="Page Menu"
+          (nzOnCancel)="pageMenuModalCancel()"
+          (nzOnOk)=pageMenu()
+          [nzOkLoading]="isPageMenuModalLoading">
           <ng-container *nzModalContent>
             <h3>Create New Page</h3>
             <div nz row>
@@ -94,5 +97,6 @@
           </ng-container>
   
 </nz-modal>
+<!-- --------------------------------- -->
 <button nz-button (click)="exportMenu()">modal</button>
 <div id="bridgeDiv" hidden></div>

@@ -65,8 +65,8 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   isExportModalVisible!: BooleanInput;
   isExportModalLoading!: BooleanInput;
-  isNewPageModalVisible!: BooleanInput;
-  isNewPageModalLoading!: BooleanInput;
+  isPageMenuModalVisible!: BooleanInput;
+  isPageMenuModalLoading!: BooleanInput;
   isNoteBook!: boolean;
   dateToday!: string;
   pageIds!: number[];
@@ -75,6 +75,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   exportPageButtonFlags!: Map<string, boolean>;
   toggleClass!: string;
   isSingleDocumentChecked!: Boolean;
+  pageMenuChoice!: string;
 
   constructor(
     private noteBookservice: NotebookService,
@@ -107,8 +108,8 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     this.isExportModalVisible = false;
     this.isExportModalLoading = false;
-    this.isNewPageModalVisible = false;
-    this.isNewPageModalLoading = false;
+    this.isPageMenuModalVisible = false;
+    this.isPageMenuModalLoading = false;
     this.isSingleDocumentChecked = false;
     this.isNoteBook = false;
     this.pageIds = this.noteBook.pages.map((page) => page.id);
@@ -236,13 +237,24 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.log.info(`app::component::ngAfterViewInit - assigned listener to div`);
   }
 
-  openNewPage() {
+  pageMenu(){
+    if (this.pageMenuChoice.length == 0) return;
+
+    switch(this.pageMenuChoice){
+      case "new" : this.createNewPage();
+      break;
+      case "open" : this.openPage();
+      break; 
+    }
+  }
+
+  openPageMenu() {
     this.log.debug(
       `tab opening new page -test-`,
-      this.openNewPage.name,
+      this.openPageMenu.name,
       AppComponent.name
     );
-    this.isNewPageModalVisible = true;
+    this.isPageMenuModalVisible = true;
   }
 
   createNewPage() {
@@ -260,7 +272,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     
     this.pageNameList.set(newId.toString(), this.newPageEntry.name);
 
-    this.isNewPageModalVisible = false;
+    this.isPageMenuModalVisible = false;
+  }
+
+  openPage(){
+    
   }
 
   closePage({ index }: { index: number }) {
@@ -273,8 +289,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.pageNameList.delete((index+1).toString())
   }
 
-  newPageModelCancel() {
-    this.isNewPageModalVisible = false;
+  pageMenuModalCancel() {
+    this.isPageMenuModalVisible = false;
   }
 
   exportMenu() {
