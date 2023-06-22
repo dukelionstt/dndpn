@@ -73,27 +73,59 @@
           (nzOnOk)=pageMenu()
           [nzOkLoading]="isPageMenuModalLoading">
           <ng-container *nzModalContent>
-            <h3>Create New Page</h3>
-            <div nz row>
-              <div nz-col nz-flex="6">
-                <span nz-typography><strong>Title</strong></span>
-              </div>    
-              <div nz-col nzSpan="16">
-                <input nz-input type="text" name="newPageTitle" id="newPageTitle" [(ngModel)]="newPageEntry.name">
-              </div>
-              <div nz-col nz-flex="6">
-                <span nz-typography><strong>Type</strong></span>
-              </div> 
-              <div nz-col nzSpan="10">
-                <input nz-input type="text" name="newPageType" id="newPageType" [(ngModel)]="newPageEntry.type">
-              </div>
-              <div nz-col nz-flex="6">
-                <span nz-typography><strong>Date</strong></span>
-              </div> 
-              <div nz-col nzSpan="8">
-                <input nz-input type="text" name="newPageDate" id="newPageDate" [(ngModel)]="newPageEntry.date" disabled="true" placeholder="{{dateToday}}">
-              </div>
-            </div>
+            <nz-tabset>
+              <nz-tab nz-title="New Page">
+                <h3>Create New Page</h3>
+                <div nz row>
+                  <div nz-col nz-flex="6">
+                    <span nz-typography><strong>Title</strong></span>
+                  </div>    
+                  <div nz-col nzSpan="16">
+                    <input nz-input type="text" name="newPageTitle" id="newPageTitle" [(ngModel)]="newPageEntry.name">
+                  </div>
+                  <div nz-col nz-flex="6">
+                    <span nz-typography><strong>Type</strong></span>
+                  </div> 
+                  <div nz-col nzSpan="10">
+                    <input nz-input type="text" name="newPageType" id="newPageType" [(ngModel)]="newPageEntry.type">
+                  </div>
+                  <div nz-col nz-flex="6">
+                    <span nz-typography><strong>Date</strong></span>
+                  </div> 
+                  <div nz-col nzSpan="8">
+                    <input nz-input type="text" name="newPageDate" id="newPageDate" [(ngModel)]="newPageEntry.date" disabled="true" placeholder="{{dateToday}}">
+                  </div>
+                </div>
+              </nz-tab>
+              <span nz-tooltip nzTooltipTitle="All Pages open" *ngIf="isAllPagesOpen">
+                <nz-tab nz-title="Open Page" [nzDisabled]="isAllPagesOpen">
+                  <div nz-row>
+                     <div nz-col nzSpan="8">
+                        <span nz-typography><strong>Open Saved Pages</strong></span>
+                    </div>
+                    <div nz-col nzSpan="8">
+                        <span nz-typography>Select any option below that does not already checked</span>
+                    </div>
+                    <div nz-col nzSpan="14">
+                      <nz-list nzItemLayout="horazontal">
+                        <nz-list-item *ngFor="let pagesOpen of noteBook.pages">
+                          <nz-list-item-meta
+                          nzAvatar="https://img.icons8.com/ios-glyphs/50/magical-scroll.png"
+                            nzDescription="{{pagesOpen.Name}}">
+                            <nz-list-item-meta-title>
+                              <a (click)="checkPageToBeOpened({{pagesOpen.id}})">Click to Select for opening</a>
+                            </nz-list-item-meta-title>
+                          </nz-list-item-meta>
+                          <nz-list-item-action>
+                            <span nz-icon nzType="plus-square" nzTheme="outline" id="{{pagesOpen.id}}uncheckedPageOption"></span>
+                            <span nz-icon nzType="check-square" nzTheme="outline" id="{{pagesOpen.id}}checkedPageOption"></span>
+                          </nz-list-item-action>
+                        </nz-list-item>
+                      </nz-list>
+                    </div>
+                  </div>
+                </nz-tab>
+              </span>
           </ng-container>
   
 </nz-modal>
