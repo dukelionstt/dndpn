@@ -107,13 +107,13 @@
                         <span nz-typography>Select any option below that does not already checked</span>
                     </div>
                     <div nz-col nzSpan="14">
-                      <nz-list nzItemLayout="horazontal">
+                      <nz-list nzItemLayout="horizontal">
                         <nz-list-item *ngFor="let pagesOpen of noteBook.pages">
                           <nz-list-item-meta
                           nzAvatar="https://img.icons8.com/ios-glyphs/50/magical-scroll.png"
-                            nzDescription="{{pagesOpen.Name}}">
+                            nzDescription="{{pagesOpen.name}}">
                             <nz-list-item-meta-title>
-                              <a (click)="checkPageToBeOpened({{pagesOpen.id}})">Click to Select for opening</a>
+                              <a (click)="checkPageToBeOpened(pagesOpen.id)">Click to Select for opening</a>
                             </nz-list-item-meta-title>
                           </nz-list-item-meta>
                           <nz-list-item-action>
@@ -126,6 +126,7 @@
                   </div>
                 </nz-tab>
               </span>
+            </nz-tabset>
           </ng-container>
   
 </nz-modal>

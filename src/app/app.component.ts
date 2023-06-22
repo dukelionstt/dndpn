@@ -59,6 +59,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   document!: any;
   noteBook!: NoteBook;
   pages!: Page[];
+  pagesToOpen!: number[];
   htmlEncoder = new HttpUrlEncodingCodec();
   pageNameList!: Map<string, string>;
   newPageEntry!: NewPageEntry;
@@ -68,6 +69,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   isPageMenuModalVisible!: BooleanInput;
   isPageMenuModalLoading!: BooleanInput;
   isNoteBook!: boolean;
+  isAllPagesOpen!: boolean;
   dateToday!: string;
   pageIds!: number[];
   selectClass!: string[];
@@ -113,7 +115,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.isSingleDocumentChecked = false;
     this.isNoteBook = false;
     this.pageIds = this.noteBook.pages.map((page) => page.id);
-    this.selectClass = this.exportContents = [];
+    this.selectClass = this.exportContents = this.pagesToOpen = [];
     this.exportPageButtonFlags = new Map();
     this.toggleClass = '';
     this.dateToday = new Date().toLocaleDateString();
@@ -291,6 +293,26 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   pageMenuModalCancel() {
     this.isPageMenuModalVisible = false;
+  }
+
+  checkPageToBeOpened(id: number){
+    if(this.pagesToOpen.indexOf(id) != -1){
+      this.checkPage(id, true);
+    } else {
+      this.checkPage(id, false);
+    }
+  }
+
+  private checkPage(id: number, state: boolean){
+    let uncheckbox = this.elementRef.nativeElement.querySelector(`#${id}uncheckedPageOption`)
+    let checkbox = this.elementRef.nativeElement.querySelector(`#${id}checkedPageOption`)
+    if(state){
+      this.renderer.setAttribute(checkbox,"hidden", "true");
+      this.renderer.setAttribute(uncheckbox,"hidden", "false");
+    } else {
+      this.renderer.setAttribute(checkbox,"hidden", "false");
+      this.renderer.setAttribute(uncheckbox,"hidden", "true");
+    }
   }
 
   exportMenu() {
