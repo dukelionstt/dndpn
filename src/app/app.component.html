@@ -73,8 +73,8 @@
           (nzOnOk)=pageMenu()
           [nzOkLoading]="isPageMenuModalLoading">
           <ng-container *nzModalContent>
-            <nz-tabset>
-              <nz-tab nz-title="New Page">
+            <nz-collapse>
+              <nz-collapse-panel nzHeader="New Page" nzActive="true">
                 <h3>Create New Page</h3>
                 <div nz row>
                   <div nz-col nz-flex="6">
@@ -96,9 +96,9 @@
                     <input nz-input type="text" name="newPageDate" id="newPageDate" [(ngModel)]="newPageEntry.date" disabled="true" placeholder="{{dateToday}}">
                   </div>
                 </div>
-              </nz-tab>
-              <span nz-tooltip nzTooltipTitle="All Pages open" *ngIf="isAllPagesOpen">
-                <nz-tab nz-title="Open Page" [nzDisabled]="isAllPagesOpen">
+              </nz-collapse-panel>
+              <!-- <span nz-tooltip nzTooltipTitle="All Pages open" *ngIf="isAllPagesOpen"> -->
+                <nz-collapse-panel nzHeader="Open Page" >
                   <div nz-row>
                      <div nz-col nzSpan="8">
                         <span nz-typography><strong>Open Saved Pages</strong></span>
@@ -116,17 +116,17 @@
                               <a (click)="checkPageToBeOpened(pagesOpen.id)">Click to Select for opening</a>
                             </nz-list-item-meta-title>
                           </nz-list-item-meta>
-                          <nz-list-item-action>
+                          <nz-list-item-extra>
                             <span nz-icon nzType="plus-square" nzTheme="outline" id="{{pagesOpen.id}}uncheckedPageOption"></span>
                             <span nz-icon nzType="check-square" nzTheme="outline" id="{{pagesOpen.id}}checkedPageOption"></span>
-                          </nz-list-item-action>
+                          </nz-list-item-extra>
                         </nz-list-item>
                       </nz-list>
                     </div>
                   </div>
-                </nz-tab>
-              </span>
-            </nz-tabset>
+                </nz-collapse-panel>
+              <!-- </span> -->
+            </nz-collapse>
           </ng-container>
   
 </nz-modal>

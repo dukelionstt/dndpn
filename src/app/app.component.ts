@@ -5,6 +5,7 @@ import {
   AfterViewInit,
   ElementRef,
   Renderer2,
+  ViewContainerRef
 } from '@angular/core';
 import { PersonBlot } from './quill/person.blot';
 import Quill, { Delta } from 'quill';
@@ -30,6 +31,9 @@ import { Place } from './model/place-model';
 import { Tags } from './model/tags-model';
 import { ITEM, MISC, PERSON, PLACE } from './constants';
 import { NewPageEntry } from './model/new-page-entry-model';
+import { NzModalService } from 'ng-zorro-antd/modal';
+import { OpenMenuComponent } from './modal/open-menu/open-menu.component';
+import { PageMenu } from './model/page-menu-model';
 
 PersonBlot['blotName'] = 'person';
 PersonBlot['tagName'] = 'button';
@@ -86,7 +90,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     private log: LoggerService,
     private renderer: Renderer2,
     private menuService: MenuService,
-    private exportService: ExportImportService
+    private exportService: ExportImportService,
+    private modal: NzModalService,
+    private viewContainerRef: ViewContainerRef
   ) {}
 
   ngOnInit(): void {
@@ -114,6 +120,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.isPageMenuModalLoading = false;
     this.isSingleDocumentChecked = false;
     this.isNoteBook = false;
+    this.isAllPagesOpen = false;
     this.pageIds = this.noteBook.pages.map((page) => page.id);
     this.selectClass = this.exportContents = this.pagesToOpen = [];
     this.exportPageButtonFlags = new Map();
@@ -251,12 +258,19 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   openPageMenu() {
-    this.log.debug(
-      `tab opening new page -test-`,
-      this.openPageMenu.name,
-      AppComponent.name
-    );
-    this.isPageMenuModalVisible = true;
+    // this.log.debug(
+    //   `tab opening new page -test-`,
+    //   this.openPageMenu.name,
+    //   AppComponent.name
+    // );
+    // this.isPageMenuModalVisible = true;
+
+    const modal = this.modal.create<OpenMenuComponent, PageMenu>({
+      nzTitle: 'Page Menu',
+      nzContent: OpenMenuComponent,
+      nzViewContainerRef this.viewContainerRef
+    })
+
   }
 
   createNewPage() {
@@ -303,17 +317,19 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private checkPage(id: number, state: boolean){
-    let uncheckbox = this.elementRef.nativeElement.querySelector(`#${id}uncheckedPageOption`)
-    let checkbox = this.elementRef.nativeElement.querySelector(`#${id}checkedPageOption`)
-    if(state){
-      this.renderer.setAttribute(checkbox,"hidden", "true");
-      this.renderer.setAttribute(uncheckbox,"hidden", "false");
-    } else {
-      this.renderer.setAttribute(checkbox,"hidden", "false");
-      this.renderer.setAttribute(uncheckbox,"hidden", "true");
-    }
-  }
+  // private checkPage(id: number, state: boolean){
+  //   let uncheckboxId = `${id}uncheckedPageOption`
+  //   let checkboxId = `${id}checkedPageOption`
+  //   let uncheckbox = this.elementRef.nativeElement.querySelector(uncheckboxId)
+  //   let checkbox = this.elementRef.nativeElement.querySelector(checkboxId)
+  //   if(state){
+  //     this.renderer.setAttribute(checkbox,"hidden", "true");
+  //     this.renderer.setAttribute(uncheckbox,"hidden", "false");
+  //   } else {
+  //     this.renderer.setAttribute(checkbox,"hidden", "false");
+  //     this.renderer.setAttribute(uncheckbox,"hidden", "true");
+  //   }
+  // }
 
   exportMenu() {
     this.isExportModalVisible = true;

@@ -32,7 +32,8 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
-import { NzListModule } from 'ng-zorro-antd/list'
+import { NzListModule } from 'ng-zorro-antd/list';
+import { OpenMenuComponent } from './modal/open-menu/open-menu.component'
 
 registerLocaleData(en);
 
@@ -43,6 +44,7 @@ registerLocaleData(en);
     TagListComponent,
     SidebarComponent,
     MenuComponent,
+    OpenMenuComponent,
   ],
   imports: [
     BrowserModule,
