@@ -268,8 +268,15 @@ export class AppComponent implements OnInit, AfterViewInit {
     const modal = this.modal.create<OpenMenuComponent, PageMenu>({
       nzTitle: 'Page Menu',
       nzContent: OpenMenuComponent,
-      nzViewContainerRef this.viewContainerRef
-    })
+      nzViewContainerRef: this.viewContainerRef,
+      nzComponentParams: {
+        newPageEntry: this.newPageEntry,
+        pageNameList: this.pageNameList,
+        isAllPagesOpen: this.pageNameList.size != this.noteBook.pages.length? false : true 
+      },
+      nzOnOk: () => console.debug(this.newPageEntry)//this.createNewPage()
+    });
+    modal.getContentComponent();
 
   }
 
@@ -309,13 +316,13 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.isPageMenuModalVisible = false;
   }
 
-  checkPageToBeOpened(id: number){
-    if(this.pagesToOpen.indexOf(id) != -1){
-      this.checkPage(id, true);
-    } else {
-      this.checkPage(id, false);
-    }
-  }
+  // checkPageToBeOpened(id: number){
+  //   if(this.pagesToOpen.indexOf(id) != -1){
+  //     this.checkPage(id, true);
+  //   } else {
+  //     this.checkPage(id, false);
+  //   }
+  // }
 
   // private checkPage(id: number, state: boolean){
   //   let uncheckboxId = `${id}uncheckedPageOption`
