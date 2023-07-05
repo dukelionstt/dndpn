@@ -22,13 +22,18 @@ export class OpenMenuComponent implements OnInit, AfterViewInit {
   @Input()
   isAllPagesOpen!: boolean;
 
-  pagesToOpen!: string[];
+  @Input()
+  pagesToOpen!: Map<string, boolean>;
+
+  @Input()
+  isNewPage!: boolean;
+
   dateToday = new Date().toLocaleDateString();
 
   constructor(private elementRef: ElementRef, private renderer: Renderer2) {}
 
   ngOnInit(): void {
-    this.pagesToOpen = [];
+    // this.pagesToOpen = new Map();
   }
 
   ngAfterViewInit(): void {
@@ -39,16 +44,12 @@ export class OpenMenuComponent implements OnInit, AfterViewInit {
   }
 
   checkPageToBeOpened(id: string) {
-    if (!this.pageNameList.has(id)) {
-      this.checkPage(id, true);
-      this.pagesToOpen.push(id);
+    if(this.pagesToOpen.has(id)){
+      this.checkPage(id, !this.pagesToOpen.get(id));
+      this.pagesToOpen.set(id, !this.pagesToOpen.get(id));
     } else {
-      this.checkPage(id, false);
-      let temp: string[] = [];
-      this.pagesToOpen.forEach((val) => {
-        if (val != id) temp.push(val);
-      });
-      this.pagesToOpen = temp;
+      this.checkPage(id, true);
+      this.pagesToOpen.set(id, true);
     }
   }
 
@@ -74,5 +75,10 @@ export class OpenMenuComponent implements OnInit, AfterViewInit {
       this.renderer.setStyle(checkbox, 'display', 'none');
       this.renderer.removeStyle(uncheckbox, 'display');
     }
+  }
+
+  updateActivePanel(state: boolean){
+    console.debug(`current state of isNewPage = ${state}`);
+    this.isNewPage = state;
   }
 }

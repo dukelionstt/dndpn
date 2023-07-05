@@ -63,7 +63,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   document!: any;
   noteBook!: NoteBook;
   pages!: Page[];
-  pagesToOpen!: number[];
+  pagesToOpen!: Map<string, boolean>;
   htmlEncoder = new HttpUrlEncodingCodec();
   pageNameList!: Map<string, string>;
   newPageEntry!: NewPageEntry;
@@ -74,6 +74,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   isPageMenuModalLoading!: BooleanInput;
   isNoteBook!: boolean;
   isAllPagesOpen!: boolean;
+  isNewPage!: boolean;
   dateToday!: string;
   pageIds!: number[];
   selectClass!: string[];
@@ -121,9 +122,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.isSingleDocumentChecked = false;
     this.isNoteBook = false;
     this.isAllPagesOpen = false;
+    this.isNewPage = false;
     this.pageIds = this.noteBook.pages.map((page) => page.id);
-    this.selectClass = this.exportContents = this.pagesToOpen = [];
-    this.exportPageButtonFlags = new Map();
+    this.selectClass = this.exportContents =  [];
+    this.exportPageButtonFlags = this.pagesToOpen = new Map();
     this.toggleClass = '';
     this.dateToday = new Date().toLocaleDateString();
 
@@ -135,7 +137,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     let temp = new Map<string, string>();
     pages.forEach((page) => {
       temp.set(page.id.toString(), page.name);
+      this.pagesToOpen.set(page.id.toString(), true);
     });
+    
 
     return temp;
   }
@@ -246,16 +250,16 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.log.info(`app::component::ngAfterViewInit - assigned listener to div`);
   }
 
-  pageMenu(){
-    if (this.pageMenuChoice.length == 0) return;
+  // pageMenu(){
+  //   if (this.pageMenuChoice.length == 0) return;
 
-    switch(this.pageMenuChoice){
-      case "new" : this.createNewPage();
-      break;
-      case "open" : this.openPage();
-      break; 
-    }
-  }
+  //   switch(this.pageMenuChoice){
+  //     case "new" : this.createNewPage();
+  //     break;
+  //     case "open" : this.openPage();
+  //     break; 
+  //   }
+  // }
 
   openPageMenu() {
     // this.log.debug(
@@ -272,7 +276,9 @@ export class AppComponent implements OnInit, AfterViewInit {
       nzComponentParams: {
         newPageEntry: this.newPageEntry,
         pageNameList: this.pageNameList,
-        isAllPagesOpen: this.pageNameList.size != this.noteBook.pages.length? false : true 
+        isAllPagesOpen: this.pageNameList.size != this.noteBook.pages.length? false : true, 
+        pagesToOpen: this.pagesToOpen,
+        isNewPage: this.isNewPage
       },
       nzOnOk: () => console.debug(this.newPageEntry)//this.createNewPage()
     });
@@ -280,22 +286,30 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   }
 
-  createNewPage() {
-    console.debug(this.newPageEntry);
-    let newId = this.pageIds[this.pageIds.length - 1] + 1
-    this.noteBook.pages.push({
-      id: newId,
-      date: this.newPageEntry.date,
-      name: this.newPageEntry.name,
-      type: this.newPageEntry.type,
-      page: '',
-      tags: this.setupNewpageTags(),
-    });
-    console.debug(this.noteBook);
-    
-    this.pageNameList.set(newId.toString(), this.newPageEntry.name);
+  pageMenuSuccess() {
+    if(this.isNewPage){
+      console.debug(this.newPageEntry);
+      let newId = this.pageIds[this.pageIds.length - 1] + 1
+      this.noteBook.pages.push({
+        id: newId,
+        date: this.newPageEntry.date,
+        name: this.newPageEntry.name,
+        type: this.newPageEntry.type,
+        page: '',
+        tags: this.setupNewpageTags(),
+      });
+      console.debug(this.noteBook);
+      
+      this.pageNameList.set(newId.toString(), this.newPageEntry.name);
 
-    this.isPageMenuModalVisible = false;
+      this.isPageMenuModalVisible = false;
+    } else {
+      this.pagesToOpen.forEach((val: boolean, key: string) => {
+        if(!this.pageNameList.has(key) && val){
+          this.pageNameList.set(key, this.noteBook.pages[parseInt(key)].name);
+        }
+      })
+    }
   }
 
   openPage(){
@@ -310,6 +324,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     );
 
     this.pageNameList.delete((index+1).toString())
+    this.pagesToOpen.set(index.toString(), false);
   }
 
   pageMenuModalCancel() {
