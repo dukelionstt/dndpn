@@ -24,7 +24,8 @@
     </div>
     </nz-collapse-panel>
     <span nz-tooltip nzTooltipTitle="All Pages open" *ngIf="isAllPagesOpen">
-    <nz-collapse-panel nzHeader="Open Page" [nzDisabled]="isAllPagesOpen">
+    <!-- <nz-collapse-panel nzHeader="Open Page" [nzDisabled]="isAllPagesOpen"> -->
+      <nz-collapse-panel nzHeader="Open Page" >
         <div nz-row>
             <div nz-col nzSpan="8">
             <span nz-typography><strong>Open Saved Pages</strong></span>
@@ -39,12 +40,20 @@
                 nzAvatar="https://img.icons8.com/ios-glyphs/50/magical-scroll.png"
                 nzDescription="{{pagesOpen.value}}">
                 <nz-list-item-meta-title>
-                    <!-- <a (click)="checkPageToBeOpened(pagesOpen.id)">Click to Select for opening</a> -->
+                    <a (click)="checkPageToBeOpened(pagesOpen.key)">Click to Select for opening</a>
                 </nz-list-item-meta-title>
                 </nz-list-item-meta>
                 <nz-list-item-extra>
-                <span nz-icon nzType="plus-square" nzTheme="outline" id="{{pagesOpen.key}}uncheckedPageOption"></span>
-                <span nz-icon nzType="check-square" nzTheme="outline" id="{{pagesOpen.key}}checkedPageOption"></span>
+                <span nz-icon nzType="plus-square"
+                      nzTheme="twotone" 
+                      [nzTwotoneColor]="'#ff004f'"
+                      style="font-size: 30px;"
+                      id="uncheckedPageOption{{pagesOpen.key}}" ></span>
+                <span nz-icon nzType="check-square" 
+                      nzTheme="twotone" 
+                      [nzTwotoneColor]="'#52c41a'"
+                      style="font-size: 30px;"
+                      id="checkedPageOption{{pagesOpen.key}}"></span>
                 </nz-list-item-extra>
             </nz-list-item>
             </nz-list>
