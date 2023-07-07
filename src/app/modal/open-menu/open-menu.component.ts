@@ -40,7 +40,7 @@ export class OpenMenuComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.log.info('starting', 'ngOnInit', 'OpenMenuComponent');
-    this.isNewPage = true;
+    // this.isNewPage = true;
     this.log.info('finishing', 'ngOnInit', 'OpenMenuComponent');
   }
 
@@ -72,6 +72,7 @@ export class OpenMenuComponent implements OnInit, AfterViewInit {
     let newIsOpen = !this.pages[parseInt(id) - 1].isOpen;
 
     this.pages[parseInt(id) - 1].isOpen = newIsOpen;
+    this.pagesToOpen.set(id, newIsOpen)
     this.checkPage(id, newIsOpen);
 
     // if (this.pagesToOpen.has(id)) {

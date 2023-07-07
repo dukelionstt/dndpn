@@ -29,6 +29,7 @@ import { NewPageEntry } from './model/new-page-entry-model';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { OpenMenuComponent } from './modal/open-menu/open-menu.component';
 import { PageMenu } from './model/page-menu-model';
+import { PageNameData } from './model/page-name.model';
 
 PersonBlot['blotName'] = 'person';
 PersonBlot['tagName'] = 'button';
@@ -59,8 +60,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   noteBook!: NoteBook;
   pages!: Page[];
   htmlEncoder = new HttpUrlEncodingCodec();
-  pageNameList!: Map<string, string>;
+  pageNameList!: Map<string, PageNameData>;
   newPageEntry!: NewPageEntry;
+  pagesToOpen!: Map<string, boolean>;
 
   isExportModalVisible!: BooleanInput;
   isExportModalLoading!: BooleanInput;
@@ -77,6 +79,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   toggleClass!: string;
   isSingleDocumentChecked!: Boolean;
   pageMenuChoice!: string;
+  currentSelectedTab!: number;
 
   constructor(
     private noteBookservice: NotebookService,
@@ -116,10 +119,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.isSingleDocumentChecked = false;
     this.isNoteBook = false;
     this.isAllPagesOpen = false;
-    this.isNewPage = false;
+    this.isNewPage = true;
     this.pageIds = this.noteBook.pages.map((page) => page.id);
     this.selectClass = this.exportContents = [];
-    this.exportPageButtonFlags = new Map();
+    this.exportPageButtonFlags = this.pagesToOpen = new Map();
     this.toggleClass = '';
     this.dateToday = new Date().toLocaleDateString();
 
@@ -135,10 +138,12 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   private pageNameListExtraction(pages: Page[]) {
     this.log.info('starting', 'pageNameListExtraction', 'AppComponent');
-    let temp = new Map<string, string>();
+    let temp = new Map<string, PageNameData>();
+    let tabIndex = 0;
     pages.forEach((page) => {
       if (page.isOpen) {
-        temp.set(page.id.toString(), page.name);
+        temp.set(page.id.toString(), {name: page.name, tab: tabIndex});
+        tabIndex++;
       }
     });
 
@@ -197,11 +202,13 @@ export class AppComponent implements OnInit, AfterViewInit {
       nzComponentParams: {
         newPageEntry: this.newPageEntry,
         pages: this.noteBook.pages,
+        pagesToOpen: this.pagesToOpen,
         isAllPagesOpen:
           this.pageNameList.size != this.noteBook.pages.length ? false : true,
         isNewPage: this.isNewPage,
       },
       nzOnOk: () => this.pageMenuSuccess(),
+      nzOnCancel: () =>this.pageMenuModalCancel()
     });
     modal.getContentComponent();
   }
@@ -213,6 +220,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       'pageMenuSuccess',
       'AppComponent'
     );
+    let newTabindex;
     if (this.isNewPage) {
       console.debug(this.newPageEntry);
       let newId = this.pageIds[this.pageIds.length - 1] + 1;
@@ -226,13 +234,28 @@ export class AppComponent implements OnInit, AfterViewInit {
         isOpen: true,
       });
       console.debug(this.noteBook);
+      newTabindex = this.pageNameList.size+1
+      this.pageNameList.set(newId.toString(), {name: this.newPageEntry.name, tab: newTabindex});
 
-      this.pageNameList.set(newId.toString(), this.newPageEntry.name);
-
-      this.isPageMenuModalVisible = false;
+      this.currentSelectedTab = newTabindex
     } else {
       console.debug(this.noteBook.pages);
+      if(this.pagesToOpen.size >= 1){
+        this.pagesToOpen.forEach((val,key) => {
+          if(val){
+            if(!this.pageNameList.has(key)){
+              newTabindex = this.pageNameList.size+1
+              this.pageNameList.set(key, {name: this.noteBook.pages[parseInt(key)-1].name, tab: newTabindex})
+              this.currentSelectedTab = newTabindex
+            }
+          }
+        })
+      }
+
+      this.pagesToOpen = new Map();
     }
+    this.isNewPage = true;
+
     this.log.info('finishing', 'pageMenuSuccess', 'AppComponent');
   }
 
@@ -250,7 +273,12 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   pageMenuModalCancel() {
-    this.isPageMenuModalVisible = false;
+    this.noteBook.pages.forEach(page => {
+      if(!this.pageNameList.has(page.id.toString())){
+        page.isOpen = false;
+      }
+    });
+    this.pagesToOpen = new Map();
   }
 
   // checkPageToBeOpened(id: number){

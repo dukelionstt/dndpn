@@ -14,10 +14,11 @@
       <!-- [pages] is passing main data object for this page
             (newQuillEditor) is to get the editor object -->
       <nz-tabset nzType="editable-card"
+                [(nzSelectedIndex)]="currentSelectedTab"
                 (nzAdd)="openPageMenu()"
                 (nzClose)="closePage($event)">
         <nz-tab *ngFor="let pageName of pageNameList | keyvalue" 
-                [nzTitle]="pageName.value"
+                [nzTitle]="pageName.value.name"
                 nzClosable
                 >
           <div nz-row nzJustify="center">
