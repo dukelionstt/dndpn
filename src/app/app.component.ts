@@ -163,77 +163,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     };
   }
 
-  // private setupNewpageTags() {
-  //   return {
-  //     person: this.setupNewPageTagDetail(PERSON),
-  //     place: this.setupNewPageTagDetail(PLACE),
-  //     item: this.setupNewPageTagDetail(ITEM),
-  //     misc: this.setupNewPageTagDetail(MISC),
-  //   };
-  // }
-
-  private setupNewPageTagDetail(type: string) {
-    switch (type) {
-      case PERSON:
-        return [
-          {
-            id: 0,
-            name: '',
-            date: '',
-            notes: '',
-            misc: [],
-            metaData: this.setupNewPageTagDetailsMetaData(),
-          },
-        ];
-      case PLACE:
-        return [
-          {
-            id: 0,
-            name: '',
-            location: '',
-            area: '',
-            date: '',
-            notes: '',
-            misc: [],
-            metaData: this.setupNewPageTagDetailsMetaData(),
-          },
-        ];
-      case ITEM:
-        return [
-          {
-            id: 0,
-            name: '',
-            type: [],
-            date: '',
-            notes: '',
-            misc: [],
-            metaData: this.setupNewPageTagDetailsMetaData(),
-          },
-        ];
-      case MISC:
-        return [
-          {
-            id: 0,
-            name: '',
-            date: '',
-            notes: '',
-            misc: [],
-            metaData: this.setupNewPageTagDetailsMetaData(),
-          },
-        ];
-      default:
-        return {};
-    }
-  }
-
-  private setupNewPageTagDetailsMetaData() {
-    return {
-      range: 0,
-      length: 0,
-      buttonIndex: 0,
-    };
-  }
-
   exportModalCancel() {
     this.isExportModalVisible = false;
   }
@@ -257,17 +186,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       'AppComponent'
     );
   }
-
-  // pageMenu(){
-  //   if (this.pageMenuChoice.length == 0) return;
-
-  //   switch(this.pageMenuChoice){
-  //     case "new" : this.createNewPage();
-  //     break;
-  //     case "open" : this.openPage();
-  //     break;
-  //   }
-  // }
 
   openPageMenu() {
     this.log.info(`starting`, 'openPageMenu', 'AppComponent');
@@ -313,12 +231,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
       this.isPageMenuModalVisible = false;
     } else {
-      this.log.debug('new page opened', 'pageMenuSuccess', 'AppComponent');
-      // this.log.info(
-      //   `pageNameList is now ${this.pageNameList.size} in size`,
-      //   'pageMenuSuccess',
-      //   'AppComponent'
-      // );
+      console.debug(this.noteBook.pages);
     }
     this.log.info('finishing', 'pageMenuSuccess', 'AppComponent');
   }
