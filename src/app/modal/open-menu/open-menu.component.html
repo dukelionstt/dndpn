@@ -23,10 +23,9 @@
         </div>
     </div>
     </nz-collapse-panel>
-    <!-- <span nz-tooltip nzTooltipTitle="All Pages open" *ngIf="isAllPagesOpen"> -->
-    <!-- <nz-collapse-panel nzHeader="Open Page" [nzDisabled]="isAllPagesOpen"> -->
-      <nz-collapse-panel nzHeader="Open Page" (nzActiveChange)="updateActivePanel(false)">
-    <span nz-tooltip nzTooltipTitle="All Pages open" *ngIf="isAllPagesOpen">
+    <!-- <span nz-tooltip nzTooltipTitle="All Pages open"> -->
+    <nz-collapse-panel nzHeader="Open Page" [nzDisabled]="isAllPagesOpen" (nzActiveChange)="updateActivePanel(false)">
+      <!-- <nz-collapse-panel nzHeader="Open Page" (nzActiveChange)="updateActivePanel(false)"> -->
         <div nz-row>
             <div nz-col nzSpan="8">
             <span nz-typography><strong>Open Saved Pages</strong></span>
@@ -36,12 +35,12 @@
         </div>
         <div nz-col nzSpan="14">
             <nz-list nzItemLayout="horizontal">
-            <nz-list-item *ngFor="let pagesOpen of pageNameList | keyvalue">
+            <nz-list-item *ngFor="let page of pages | openPageFilter">
                 <nz-list-item-meta
-                nzAvatar="https://img.icons8.com/ios-glyphs/50/magical-scroll.png"
-                nzDescription="{{pagesOpen.value}}">
+                nzAvatar="https://img.icons8.com/ios-glyphs/50/848484/magical-scroll.png"
+                nzDescription="{{page.name}}">
                 <nz-list-item-meta-title>
-                    <a (click)="checkPageToBeOpened(pagesOpen.key)">Click to Select for opening</a>
+                    <a (click)="checkPageToBeOpened(page.id.toString())">Click to Select for opening</a>
                 </nz-list-item-meta-title>
                 </nz-list-item-meta>
                 <nz-list-item-extra>
@@ -49,18 +48,19 @@
                       nzTheme="twotone" 
                       [nzTwotoneColor]="'#ff004f'"
                       style="font-size: 30px;"
-                      id="uncheckedPageOption{{pagesOpen.key}}" ></span>
+                      id="uncheckedPageOption{{page.id}}" 
+                      (click)="checkPageToBeOpened(page.id.toString())"></span>
                 <span nz-icon nzType="check-square" 
                       nzTheme="twotone" 
                       [nzTwotoneColor]="'#52c41a'"
                       style="font-size: 30px;"
-                      id="checkedPageOption{{pagesOpen.key}}"></span>
+                      id="checkedPageOption{{page.id}}"
+                      (click)="checkPageToBeOpened(page.id.toString())"></span>
                 </nz-list-item-extra>
             </nz-list-item>
             </nz-list>
         </div>
         </div>
-    </span>
     </nz-collapse-panel>
     <!-- </span> -->
 </nz-collapse>
