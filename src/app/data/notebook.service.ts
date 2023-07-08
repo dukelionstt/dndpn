@@ -81,7 +81,6 @@ export class NotebookService {
       date: obj.date,
       name: obj.name,
       tags: obj.tags,
-      type: obj.type,
       page: obj.page,
       isOpen: obj.isOpen,
     };

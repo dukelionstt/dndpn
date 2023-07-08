@@ -5,7 +5,10 @@ import {
   Input,
   OnInit,
   Renderer2,
+  inject
 } from '@angular/core';
+import { NzModalRef } from 'ng-zorro-antd/modal';
+import { PageService } from 'src/app/data/page.service';
 import { LoggerService } from 'src/app/logger.service';
 import { Page } from 'src/app/model/page-model';
 
@@ -27,20 +30,19 @@ export class OpenMenuComponent implements OnInit, AfterViewInit {
   @Input()
   pagesToOpen!: Map<string, boolean>;
 
-  @Input()
-  isNewPage!: boolean;
-
   dateToday = new Date().toLocaleDateString();
 
   constructor(
     private elementRef: ElementRef,
     private renderer: Renderer2,
-    private log: LoggerService
+    private log: LoggerService,
+    private pageService: PageService
   ) {}
 
   ngOnInit(): void {
     this.log.info('starting', 'ngOnInit', 'OpenMenuComponent');
     // this.isNewPage = true;
+    this.pageService.newPageTitleError.subscribe(() => this.titleError());
     this.log.info('finishing', 'ngOnInit', 'OpenMenuComponent');
   }
 
@@ -54,7 +56,13 @@ export class OpenMenuComponent implements OnInit, AfterViewInit {
       'ngAfterViewInit',
       'OpenMenuComponent'
     );
+    // this.newPageEntry.newPage = true;
     this.log.info('finishing', 'ngAfterViewInit', 'OpenMenuComponent');
+  }
+
+  titleError(){
+    this.log.info('starting', 'titleError', 'OpenMenuComponent');
+    this.log.info('finishing', 'titleError', 'OpenMenuComponent');
   }
 
   checkPageToBeOpened(id: string) {
@@ -74,25 +82,6 @@ export class OpenMenuComponent implements OnInit, AfterViewInit {
     this.pages[parseInt(id) - 1].isOpen = newIsOpen;
     this.pagesToOpen.set(id, newIsOpen)
     this.checkPage(id, newIsOpen);
-
-    // if (this.pagesToOpen.has(id)) {
-    //   let newCheckedState = !this.pagesToOpen.get(id);
-    //   this.checkPage(id, newCheckedState);
-    //   this.pagesToOpen.set(id, newCheckedState);
-    //   this.log.info(
-    //     `id ${id} endtry in pages to open changed to ${newCheckedState}`,
-    //     'checkPageToBeOpened',
-    //     'OpenMenuComponent'
-    //   );
-    // } else {
-    //   this.checkPage(id, true);
-    //   this.pagesToOpen.set(id, true);
-    //   this.log.info(
-    //     `id ${id} added to pagesToOpen`,
-    //     'checkPageToBeOpened',
-    //     'OpenMenuComponent'
-    //   );
-    // }
 
     this.log.info('finishing', 'checkPageToBeOpened', 'OpenMenuComponent');
   }
@@ -138,11 +127,15 @@ export class OpenMenuComponent implements OnInit, AfterViewInit {
     this.log.info('finishing', 'checkPage', 'OpenMenuComponent');
   }
 
-  updateActivePanel(state: boolean) {
+  updateActivePanel(panel: string) {
     this.log.info('starting', 'updateActivePanel', 'OpenMenuComponent');
-    this.isNewPage = state;
+    if(panel == 'new'){
+      this.newPageEntry.newPage = true;
+    } else if(panel == 'open'){
+      this.newPageEntry.newPage = false;
+    }
     this.log.info(
-      `current state it ${state}`,
+      `current state of new page is ${this.newPageEntry.newPage}`,
       'updateActivePanel',
       'OpenMenuComponent'
     );

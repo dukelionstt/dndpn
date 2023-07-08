@@ -1,30 +1,24 @@
 
 <nz-collapse nzAccordion>
-    <nz-collapse-panel nzHeader="New Page" nzActive="true" (nzActiveChange)="updateActivePanel(true)">
+    <nz-collapse-panel nzHeader="New Page" nzActive="true" (nzActiveChange)="updateActivePanel('new')">
     <h3>Create New Page</h3>
     <div nz row>
         <div nz-col nz-flex="6">
-        <span nz-typography><strong>Title</strong></span>
+            <span nz-typography><strong>Title</strong></span>
         </div>    
         <div nz-col nzSpan="16">
-        <input nz-input type="text" name="newPageTitle" id="newPageTitle" [(ngModel)]="newPageEntry.name">
+            <input nz-input type="text" name="newPageTitle" id="newPageTitle" [(ngModel)]="newPageEntry.name">
         </div>
         <div nz-col nz-flex="6">
-        <span nz-typography><strong>Type</strong></span>
-        </div> 
-        <div nz-col nzSpan="10">
-        <input nz-input type="text" name="newPageType" id="newPageType" [(ngModel)]="newPageEntry.type">
-        </div>
-        <div nz-col nz-flex="6">
-        <span nz-typography><strong>Date</strong></span>
+            <span nz-typography><strong>Date</strong></span>
         </div> 
         <div nz-col nzSpan="8">
-        <input nz-input type="text" name="newPageDate" id="newPageDate" [(ngModel)]="newPageEntry.date" disabled="true" placeholder="{{dateToday}}">
+            <input nz-input type="text" name="newPageDate" id="newPageDate" [(ngModel)]="newPageEntry.date" disabled="true" placeholder="{{dateToday}}">
         </div>
     </div>
     </nz-collapse-panel>
     <!-- <span nz-tooltip nzTooltipTitle="All Pages open"> -->
-    <nz-collapse-panel nzHeader="Open Page" [nzDisabled]="isAllPagesOpen" (nzActiveChange)="updateActivePanel(false)">
+    <nz-collapse-panel nzHeader="Open Page" [nzDisabled]="isAllPagesOpen" (nzActiveChange)="updateActivePanel('open')">
       <!-- <nz-collapse-panel nzHeader="Open Page" (nzActiveChange)="updateActivePanel(false)"> -->
         <div nz-row>
             <div nz-col nzSpan="8">

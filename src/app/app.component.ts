@@ -63,14 +63,14 @@ export class AppComponent implements OnInit, AfterViewInit {
   pageNameList!: Map<string, PageNameData>;
   newPageEntry!: NewPageEntry;
   pagesToOpen!: Map<string, boolean>;
-
+  isNewPage!: string;
   isExportModalVisible!: BooleanInput;
   isExportModalLoading!: BooleanInput;
   isPageMenuModalVisible!: BooleanInput;
   isPageMenuModalLoading!: BooleanInput;
   isNoteBook!: boolean;
   isAllPagesOpen!: boolean;
-  isNewPage!: boolean;
+
   dateToday!: string;
   pageIds!: number[];
   selectClass!: string[];
@@ -119,7 +119,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.isSingleDocumentChecked = false;
     this.isNoteBook = false;
     this.isAllPagesOpen = false;
-    this.isNewPage = true;
+    this.isNewPage = '';
     this.pageIds = this.noteBook.pages.map((page) => page.id);
     this.selectClass = this.exportContents = [];
     this.exportPageButtonFlags = this.pagesToOpen = new Map();
@@ -156,6 +156,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       date: this.dateToday,
       type: '',
       name: '',
+      newPage: true
     };
   }
 
@@ -205,10 +206,37 @@ export class AppComponent implements OnInit, AfterViewInit {
         pagesToOpen: this.pagesToOpen,
         isAllPagesOpen:
           this.pageNameList.size != this.noteBook.pages.length ? false : true,
-        isNewPage: this.isNewPage,
+        // isNewPage: this.isNewPage,
       },
-      nzOnOk: () => this.pageMenuSuccess(),
-      nzOnCancel: () =>this.pageMenuModalCancel()
+      nzFooter: [
+        {
+          label: 'Cancel',
+          type: 'default',
+          loading: false,
+          onClick: () => {
+            this.pageMenuModalCancel();
+            modal.destroy();
+            
+          }
+        },
+        {
+          label: 'Ok',
+          type: 'primary',
+          loading: false,
+          onClick: () => {
+            if(this.newPageEntry.newPage){
+              if(this.newPageEntry.name != undefined && this.newPageEntry.name != '' && this.newPageEntry.name != ' '){
+                this.pageMenuSuccess();
+                modal.destroy();
+              } else {
+                this.pageService.sendnewPageTitleError();
+              }
+            }
+          }
+        }
+      ]
+      // nzOnOk: () => this.pageMenuSuccess(),
+      // nzOnCancel: () =>this.pageMenuModalCancel()
     });
     modal.getContentComponent();
   }
@@ -216,19 +244,18 @@ export class AppComponent implements OnInit, AfterViewInit {
   pageMenuSuccess() {
     this.log.info('starting', 'pageMenuSuccess', 'AppComponent');
     this.log.debug(
-      `isNewPage currently set to ${this.isNewPage}`,
+      `isNewPage currently set to ${this.newPageEntry.newPage}`,
       'pageMenuSuccess',
       'AppComponent'
     );
     let newTabindex;
-    if (this.isNewPage) {
+    if (this.newPageEntry.newPage) {
       console.debug(this.newPageEntry);
       let newId = this.pageIds[this.pageIds.length - 1] + 1;
       this.noteBook.pages.push({
         id: newId,
         date: this.newPageEntry.date,
         name: this.newPageEntry.name,
-        type: this.newPageEntry.type,
         page: '',
         tags: this.setupNewpageTags(),
         isOpen: true,
@@ -240,7 +267,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.currentSelectedTab = newTabindex
     } else {
       console.debug(this.noteBook.pages);
-      if(this.pagesToOpen.size >= 1){
+      // if(this.pagesToOpen.size >= 1){
         this.pagesToOpen.forEach((val,key) => {
           if(val){
             if(!this.pageNameList.has(key)){
@@ -250,14 +277,29 @@ export class AppComponent implements OnInit, AfterViewInit {
             }
           }
         })
-      }
+      // }
 
       this.pagesToOpen = new Map();
+      this.newPageEntry = this.setupNewPageEntry();
     }
-    this.isNewPage = true;
 
     this.log.info('finishing', 'pageMenuSuccess', 'AppComponent');
   }
+
+  // isNewPage(){
+
+  //   if(this.pagesToOpen.size > 0){
+  //     this.pagesToOpen.forEach((val,key) => {
+  //       if(val){
+  //         if(!this.pageNameList.has(key)){
+  //           return false
+  //         }
+  //       }
+  //     });
+  //   }
+
+  //   return true
+  // }
 
   openPage() {}
 
@@ -269,7 +311,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     );
 
     this.pageNameList.delete((index + 1).toString());
-    //TODO: update the isOpen on page or pages
+    this.noteBook.pages[index].isOpen = false;
   }
 
   pageMenuModalCancel() {
