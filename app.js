@@ -58,11 +58,11 @@ const menuTemplate = [
       { type: "separator" },
       {
         label: "Save Page...",
-        click: () => mainWindow.webContents.send("menuCommand", "saveNotebook"),
+        click: () => mainWindow.webContents.send("menuCommand", "savePage"),
       },
       {
         label: "Save Notebook...",
-        click: () => mainWindow.webContents.send("menuCommand", "savePage"),
+        click: () => mainWindow.webContents.send("menuCommand", "saveNotebook"),
       },
       { type: "separator" },
       {

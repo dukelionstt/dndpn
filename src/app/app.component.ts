@@ -109,8 +109,11 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     this.menuService.openPageEvent.subscribe(() => this.openPageMenu('open', true))
     this.menuService.newPageEvent.subscribe(() => this.openPageMenu('new', true))
-    this.menuService.saveEvent.subscribe((event) => this.savePage());
+    this.menuService.savePageEvent.subscribe(() => this.savePage());
     this.menuService.exportEvent.subscribe(() => this.exportMenu());
+    this.menuService.closePageEvent.subscribe(() => this.closePage({index: this.currentSelectedTab}));
+    this.menuService.closeAllPagesEvent.subscribe(() => this.pageNameList.forEach((val, key) => this.closePage({index: parseInt(key)-1})))
+    
 
 
 
@@ -171,9 +174,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     };
   }
 
-  exportModalCancel() {
-    this.isExportModalVisible = false;
-  }
+  
 
   ngAfterViewInit(): void {
     this.log.info(
@@ -317,17 +318,14 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.log.info('finishing', 'pageMenuSuccess', 'AppComponent');
   }
 
-
-
   closePage({ index }: { index: number }) {
-    this.log.debug(
-      `tab ${index} closed -test-`,
-      this.closePage.name,
-      AppComponent.name
-    );
+    this.log.info('starting', 'closePage', 'AppComponent');
+    
 
     this.pageNameList.delete((index + 1).toString());
     this.noteBook.pages[index].isOpen = false;
+    this.log.info(`page with id ${index} closed`, 'closePage', 'AppComponent');
+    this.log.info('finishing', 'closePage', 'AppComponent');
   }
 
   pageMenuModalCancel() {
@@ -378,7 +376,13 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   savePage() {
-    this.log.info('page has been saved fool');
+    this.log.info(`starting`, 'savePage', 'AppComponent');
+    let messageId = this.message.loading("Saving Page...", {nzDuration: 0}).messageId;
+    this.log.debug(`current tab is ${this.currentSelectedTab}`, 'savePage', 'AppComponent');
+    this.noteBook.pages[this.currentSelectedTab].page = this.htmlEncoder.encodeValue(this.quill.root.innerHTML);
+    this.message.remove(messageId);
+    this.message.success("Page has been saved.");
+    this.log.info(`finish`, 'savePage', 'AppComponent');
   }
 
   selectNotebook() {
@@ -387,7 +391,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   export() {
     this.isExportModalLoading = true;
-    this.pages[0].page = this.htmlEncoder.encodeValue(
+    this.pages[this.currentSelectedTab].page = this.htmlEncoder.encodeValue(
       this.quill.root.innerHTML
     );
     this.noteBook.pages = this.pages;
@@ -436,6 +440,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     //      }
     // });
     // }
+  }
+
+  exportModalCancel() {
+    this.isExportModalVisible = false;
   }
 
 
