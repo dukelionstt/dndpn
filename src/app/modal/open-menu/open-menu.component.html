@@ -4,11 +4,25 @@
     <h3>Create New Page</h3>
     <div nz row>
         <div nz-col nz-flex="6">
-            <span nz-typography><strong>Title</strong></span>
-        </div>    
+            <span nz-typography><strong>Name</strong></span>
+        </div>   
         <div nz-col nzSpan="16">
-            <input nz-input type="text" name="newPageTitle" id="newPageTitle" [(ngModel)]="newPageEntry.name">
+            <input 
+                nz-input type="text" 
+                placeholder="Please enter Page Name" 
+                name="newPageName" 
+                id="newPageName"
+                (keyup)="validateName()" 
+                [(ngModel)]="newPageEntry.name" 
+                [nzStatus]="noNameErrorFlag || duplicateNameErrorFlag">
         </div>
+        <div nz-col nzSpan="16" *ngIf="noNameErrorFlag == 'error'">
+            <span nz-typography nzType="danger"><strong>Error - Please enter page Name.</strong></span>
+        </div>
+        <div nz-col nzSpan="16" *ngIf="duplicateNameErrorFlag == 'error'">
+            <span nz-typography nzType="danger"><strong>Error - Duplicate Page Name, please change.</strong></span>
+        </div>
+        
         <div nz-col nz-flex="6">
             <span nz-typography><strong>Date</strong></span>
         </div> 

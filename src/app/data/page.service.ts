@@ -10,7 +10,7 @@ export class PageService {
 
   @Output() activePage: EventEmitter<any> = new EventEmitter();
 
-  @Output() newPageTitleError: EventEmitter<any> = new EventEmitter();
+  @Output() newPageNameError: EventEmitter<any> = new EventEmitter();
 
   constructor(private file: FileService, private log: LoggerService) { }
 
@@ -28,8 +28,8 @@ export class PageService {
     this.activePage.emit(id);
   }
 
-  sendnewPageTitleError(){
-    this.newPageTitleError.emit('');
+  sendnewPageNameError(errorType: string){
+    this.newPageNameError.emit(errorType);
   }
 
 }

@@ -224,13 +224,22 @@ export class AppComponent implements OnInit, AfterViewInit {
           type: 'primary',
           loading: false,
           onClick: () => {
+            this.log.info(`ok button starting`, 'openPageMenu', 'AppComponent');
+            this.log.debug(`the new page indicator is ${this.newPageEntry.newPage}`, 'openPageMenu', 'AppComponent');
             if(this.newPageEntry.newPage){
-              if(this.newPageEntry.name != undefined && this.newPageEntry.name != '' && this.newPageEntry.name != ' '){
-                this.pageMenuSuccess();
-                modal.destroy();
+              if(this.newPageEntry.name != undefined && this.newPageEntry.name != '' && this.newPageEntry.name.search('\s') != -1){
+                if(this.duplicateName()){
+                  this.pageService.sendnewPageNameError('duplicate');
+                } else {
+                  this.pageMenuSuccess();
+                  modal.destroy();
+                }
               } else {
-                this.pageService.sendnewPageTitleError();
+                this.pageService.sendnewPageNameError('name');
               }
+            } else {
+              this.pageMenuSuccess();
+              modal.destroy();
             }
           }
         }
@@ -239,6 +248,15 @@ export class AppComponent implements OnInit, AfterViewInit {
       // nzOnCancel: () =>this.pageMenuModalCancel()
     });
     modal.getContentComponent();
+  }
+
+  duplicateName(){
+    let flag = false;
+    this.noteBook.pages.forEach((page: Page ) => {
+      if(page.name == this.newPageEntry.name) flag = true;
+    });
+
+    return flag;
   }
 
   pageMenuSuccess() {
@@ -279,9 +297,11 @@ export class AppComponent implements OnInit, AfterViewInit {
         })
       // }
 
-      this.pagesToOpen = new Map();
-      this.newPageEntry = this.setupNewPageEntry();
+      
     }
+    this.pagesToOpen = new Map();
+    this.newPageEntry = this.setupNewPageEntry();
+    this.log.debug(this.newPageEntry, 'pageMenuSuccess', 'AppComponent');
 
     this.log.info('finishing', 'pageMenuSuccess', 'AppComponent');
   }

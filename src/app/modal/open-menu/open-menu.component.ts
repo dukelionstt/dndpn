@@ -31,6 +31,10 @@ export class OpenMenuComponent implements OnInit, AfterViewInit {
   pagesToOpen!: Map<string, boolean>;
 
   dateToday = new Date().toLocaleDateString();
+  noNameErrorFlag!: any;
+  duplicateNameErrorFlag!: any;
+  duplicatedName!: string;
+  isValidateState!: boolean;
 
   constructor(
     private elementRef: ElementRef,
@@ -41,8 +45,8 @@ export class OpenMenuComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.log.info('starting', 'ngOnInit', 'OpenMenuComponent');
-    // this.isNewPage = true;
-    this.pageService.newPageTitleError.subscribe(() => this.titleError());
+    this.noNameErrorFlag = '';
+    this.pageService.newPageNameError.subscribe((errorType) => errorType == 'name'? this.noNameError() : this.duplicateNameError());
     this.log.info('finishing', 'ngOnInit', 'OpenMenuComponent');
   }
 
@@ -56,13 +60,41 @@ export class OpenMenuComponent implements OnInit, AfterViewInit {
       'ngAfterViewInit',
       'OpenMenuComponent'
     );
-    // this.newPageEntry.newPage = true;
+    this.isValidateState = false;
     this.log.info('finishing', 'ngAfterViewInit', 'OpenMenuComponent');
   }
 
-  titleError(){
-    this.log.info('starting', 'titleError', 'OpenMenuComponent');
-    this.log.info('finishing', 'titleError', 'OpenMenuComponent');
+  noNameError(){
+    this.log.info('starting', 'noNameError', 'OpenMenuComponent');
+    this.noNameErrorFlag = 'error';
+    this.isValidateState = true;
+    this.log.info('finishing', 'noNameError', 'OpenMenuComponent');
+  }
+  
+  validateName(){
+    this.log.info('starting', 'validateName', 'OpenMenuComponent');
+    if(this.isValidateState){
+      this.log.info('validating name input', 'validateName', 'OpenMenuComponent');
+      if(this.newPageEntry.name.length != 0 && this.newPageEntry.name.search('\s') != -1){
+        this.noNameErrorFlag = ''
+        this.log.debug(`the two validating inputs are previous name: ${this.duplicatedName} and current name: ${this.newPageEntry.name}`, 'validateName', 'OpenMenuComponent');
+        if(this.duplicatedName != this.newPageEntry.name){
+          this.log.debug('clearing duplicate error', 'validateName', 'OpenMenuComponent');
+          this.duplicateNameErrorFlag = ''
+        } else {
+          this.duplicateNameErrorFlag = 'error'
+        }
+      }
+    }
+    this.log.info('finishing', 'validateName', 'OpenMenuComponent');
+  }
+
+  duplicateNameError(){
+    this.log.info('starting', 'duplicateNameError', 'OpenMenuComponent');
+    this.duplicateNameErrorFlag = 'error';
+    this.duplicatedName = this.newPageEntry.name
+    this.isValidateState = true;
+    this.log.info('finishing', 'duplicateNameError', 'OpenMenuComponent');
   }
 
   checkPageToBeOpened(id: string) {
