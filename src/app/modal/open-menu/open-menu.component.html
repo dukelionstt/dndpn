@@ -1,6 +1,6 @@
 
 <nz-collapse nzAccordion>
-    <nz-collapse-panel nzHeader="New Page" nzActive="true" (nzActiveChange)="updateActivePanel('new')">
+    <nz-collapse-panel nzHeader="New Page" [nzActive]="isNewPage" (nzActiveChange)="updateActivePanel('new')" *ngIf="isNewPage">
     <h3>Create New Page</h3>
     <div nz row>
         <div nz-col nz-flex="6">
@@ -32,7 +32,7 @@
     </div>
     </nz-collapse-panel>
     <!-- <span nz-tooltip nzTooltipTitle="All Pages open"> -->
-    <nz-collapse-panel nzHeader="Open Page" [nzDisabled]="isAllPagesOpen" (nzActiveChange)="updateActivePanel('open')">
+    <nz-collapse-panel nzHeader="Open Page" [nzActive]="fromMenu" [nzDisabled]="isAllPagesOpen" (nzActiveChange)="updateActivePanel('open')" *ngIf="isOpenPage">
       <!-- <nz-collapse-panel nzHeader="Open Page" (nzActiveChange)="updateActivePanel(false)"> -->
         <div nz-row>
             <div nz-col nzSpan="8">

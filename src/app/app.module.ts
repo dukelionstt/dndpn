@@ -33,6 +33,7 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzListModule } from 'ng-zorro-antd/list';
+import { NzMessageModule } from 'ng-zorro-antd/message'
 import { OpenMenuComponent } from './modal/open-menu/open-menu.component';
 import { OpenPageFilter } from './pipe/open-page-filter.pipe';
 
@@ -72,6 +73,7 @@ registerLocaleData(en);
     NzCheckboxModule,
     NzTabsModule,
     NzListModule,
+    NzMessageModule,
   ],
   providers: [{ provide: NZ_I18N, useValue: en_US }],
   bootstrap: [AppComponent],

@@ -30,6 +30,7 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 import { OpenMenuComponent } from './modal/open-menu/open-menu.component';
 import { PageMenu } from './model/page-menu-model';
 import { PageNameData } from './model/page-name.model';
+import { NzMessageService  } from 'ng-zorro-antd/message';
 
 PersonBlot['blotName'] = 'person';
 PersonBlot['tagName'] = 'button';
@@ -90,7 +91,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     private menuService: MenuService,
     private exportService: ExportImportService,
     private modal: NzModalService,
-    private viewContainerRef: ViewContainerRef
+    private viewContainerRef: ViewContainerRef,
+    private message: NzMessageService 
   ) {}
 
   ngOnInit(): void {
@@ -105,12 +107,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.noteBook = NOTEBOOK;
     this.pages = this.noteBook.pages;
 
-    this.menuService.saveEvent.subscribe((event) => {
-      this.savePage();
-    });
-    this.menuService.exportEvent.subscribe(() => {
-      this.exportMenu();
-    });
+    this.menuService.openPageEvent.subscribe(() => this.openPageMenu('open', true))
+    this.menuService.newPageEvent.subscribe(() => this.openPageMenu('new', true))
+    this.menuService.saveEvent.subscribe((event) => this.savePage());
+    this.menuService.exportEvent.subscribe(() => this.exportMenu());
+
+
 
     this.isExportModalVisible = false;
     this.isExportModalLoading = false;
@@ -179,6 +181,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       'ngAfterViewInit',
       'AppComponent'
     );
+
     let bridgeDiv = this.elementRef.nativeElement.querySelector('#bridgeDiv');
     this.renderer.listen(bridgeDiv, 'command', (event) => {
       this.log.info(`angular got the event finally`);
@@ -186,6 +189,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.menuService.runCommnad(event.detail.text());
       this.log.info(`menuservice command called`);
     });
+
     this.log.info(
       `assigned listener to div`,
       'ngAfterViewInit',
@@ -193,8 +197,15 @@ export class AppComponent implements OnInit, AfterViewInit {
     );
   }
 
-  openPageMenu() {
+  openPageMenu(menuChoice?: string, fromMenu: boolean = false) {
     this.log.info(`starting`, 'openPageMenu', 'AppComponent');
+
+    if(fromMenu && menuChoice == 'open'){
+      if(this.pageNameList.size == this.noteBook.pages.length){
+        this.message.warning("All available pages are open!");
+        return;
+      }
+    }
 
     const modal = this.modal.create<OpenMenuComponent, PageMenu>({
       nzTitle: 'Page Menu',
@@ -205,8 +216,9 @@ export class AppComponent implements OnInit, AfterViewInit {
         pages: this.noteBook.pages,
         pagesToOpen: this.pagesToOpen,
         isAllPagesOpen:
-          this.pageNameList.size != this.noteBook.pages.length ? false : true,
-        // isNewPage: this.isNewPage,
+        this.pageNameList.size != this.noteBook.pages.length ? false : true,
+        menuChoice: menuChoice,
+        fromMenu: fromMenu
       },
       nzFooter: [
         {
@@ -216,7 +228,6 @@ export class AppComponent implements OnInit, AfterViewInit {
           onClick: () => {
             this.pageMenuModalCancel();
             modal.destroy();
-            
           }
         },
         {
@@ -306,22 +317,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.log.info('finishing', 'pageMenuSuccess', 'AppComponent');
   }
 
-  // isNewPage(){
 
-  //   if(this.pagesToOpen.size > 0){
-  //     this.pagesToOpen.forEach((val,key) => {
-  //       if(val){
-  //         if(!this.pageNameList.has(key)){
-  //           return false
-  //         }
-  //       }
-  //     });
-  //   }
-
-  //   return true
-  // }
-
-  openPage() {}
 
   closePage({ index }: { index: number }) {
     this.log.debug(
@@ -342,28 +338,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
     this.pagesToOpen = new Map();
   }
-
-  // checkPageToBeOpened(id: number){
-  //   if(this.pagesToOpen.indexOf(id) != -1){
-  //     this.checkPage(id, true);
-  //   } else {
-  //     this.checkPage(id, false);
-  //   }
-  // }
-
-  // private checkPage(id: number, state: boolean){
-  //   let uncheckboxId = `${id}uncheckedPageOption`
-  //   let checkboxId = `${id}checkedPageOption`
-  //   let uncheckbox = this.elementRef.nativeElement.querySelector(uncheckboxId)
-  //   let checkbox = this.elementRef.nativeElement.querySelector(checkboxId)
-  //   if(state){
-  //     this.renderer.setAttribute(checkbox,"hidden", "true");
-  //     this.renderer.setAttribute(uncheckbox,"hidden", "false");
-  //   } else {
-  //     this.renderer.setAttribute(checkbox,"hidden", "false");
-  //     this.renderer.setAttribute(uncheckbox,"hidden", "true");
-  //   }
-  // }
 
   exportMenu() {
     this.isExportModalVisible = true;
@@ -464,16 +438,5 @@ export class AppComponent implements OnInit, AfterViewInit {
     // }
   }
 
-  // savePage(id: number){
-  //   // this.document = this.quill.getContents();
-  //   let page = this.quill.root.innerHTML;
-  //   this.pages[id].page = this.htmlEncoder.encodeValue(page)
-  //   this.noteBook.pages = this.pages
-  //   try{
-  //     this.pageService.savePage(this.pages[id], this.noteBook.saveLocation+ "\\pages\\" +this.pages[id].name+".json")
-  //     this.log.info("notebook saved")
-  //   } catch(error){
-  //     this.log.error(`notebook not saved`)
-  //   }
-  // }
+
 }

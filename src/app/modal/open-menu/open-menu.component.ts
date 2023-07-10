@@ -30,11 +30,19 @@ export class OpenMenuComponent implements OnInit, AfterViewInit {
   @Input()
   pagesToOpen!: Map<string, boolean>;
 
+  @Input()
+  menuChoice!: string;
+
+  @Input()
+  fromMenu!: boolean;
+
   dateToday = new Date().toLocaleDateString();
   noNameErrorFlag!: any;
   duplicateNameErrorFlag!: any;
   duplicatedName!: string;
   isValidateState!: boolean;
+  isOpenPage!: boolean;
+  isNewPage!: boolean;
 
   constructor(
     private elementRef: ElementRef,
@@ -47,6 +55,8 @@ export class OpenMenuComponent implements OnInit, AfterViewInit {
     this.log.info('starting', 'ngOnInit', 'OpenMenuComponent');
     this.noNameErrorFlag = '';
     this.pageService.newPageNameError.subscribe((errorType) => errorType == 'name'? this.noNameError() : this.duplicateNameError());
+    this.isOpenPage = true;
+    this.isNewPage = true;
     this.log.info('finishing', 'ngOnInit', 'OpenMenuComponent');
   }
 
@@ -61,6 +71,21 @@ export class OpenMenuComponent implements OnInit, AfterViewInit {
       'OpenMenuComponent'
     );
     this.isValidateState = false;
+
+    this.log.debug(`the from menu is ${this.fromMenu}`, 'ngAfterViewInit', 'OpenMenuComponent');
+    this.log.debug(`the menu choice is ${this.menuChoice}`, 'ngAfterViewInit', 'OpenMenuComponent');
+    if(this.fromMenu){
+      this.log.info('coming from the menu, setting view.', 'ngAfterViewInit', 'OpenMenuComponent');
+      if(this.menuChoice == "open"){
+        this.isOpenPage = true;
+        this.isNewPage = false;
+        this.newPageEntry.newPage = false;
+      } else if(this.menuChoice == "new") {
+        this.isOpenPage = false;
+        this.isNewPage = true;
+      }
+    }
+
     this.log.info('finishing', 'ngAfterViewInit', 'OpenMenuComponent');
   }
 
