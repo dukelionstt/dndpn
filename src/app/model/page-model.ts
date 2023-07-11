@@ -7,4 +7,6 @@ export interface Page {
   tags: Tags;
   page: any;
   isOpen: boolean;
+  lastSaved: string;
+  saveUpToDate: boolean;
 }

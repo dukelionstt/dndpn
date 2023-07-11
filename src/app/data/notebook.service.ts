@@ -82,7 +82,9 @@ export class NotebookService {
       name: obj.name,
       tags: obj.tags,
       page: obj.page,
-      isOpen: obj.isOpen,
+      isOpen: true,
+      lastSaved: obj.date,
+      saveUpToDate: true,
     };
 
     // this.log.debug(`checking the tags situation: ${page.tags.get('person')[0].id}`)
