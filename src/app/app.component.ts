@@ -5,6 +5,7 @@ import {
   AfterViewInit,
   ElementRef,
   Renderer2,
+  ViewContainerRef,
 } from '@angular/core';
 import { PersonBlot } from './quill/person.blot';
 import Quill, { Delta } from 'quill';
@@ -22,7 +23,15 @@ import { MiscBlot } from './quill/misc.blot';
 import { MenuService } from './service/menu.service';
 import { ExportImportService } from './data/export.import.service';
 import { ExportConents } from './model/export.contetns-model';
-import { BooleanInput } from 'ng-zorro-antd/core/types';
+import { BooleanInput, tuple } from 'ng-zorro-antd/core/types';
+import { ITEM, MISC, PERSON, PLACE } from './constants';
+import { NewPageEntry } from './model/new-page-entry-model';
+import { NzModalService } from 'ng-zorro-antd/modal';
+import { OpenMenuComponent } from './modal/open-menu/open-menu.component';
+import { PageMenu } from './model/page-menu-model';
+import { PageNameData } from './model/page-name.model';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { UnsavedComponent } from './modal/unsaved/unsaved.component';
 
 PersonBlot['blotName'] = 'person';
 PersonBlot['tagName'] = 'button';
@@ -53,16 +62,26 @@ export class AppComponent implements OnInit, AfterViewInit {
   noteBook!: NoteBook;
   pages!: Page[];
   htmlEncoder = new HttpUrlEncodingCodec();
-
+  pageNameList!: Map<string, PageNameData>;
+  newPageEntry!: NewPageEntry;
+  pagesToOpen!: Map<string, boolean>;
+  isNewPage!: string;
   isExportModalVisible!: BooleanInput;
   isExportModalLoading!: BooleanInput;
+  isPageMenuModalVisible!: BooleanInput;
+  isPageMenuModalLoading!: BooleanInput;
   isNoteBook!: boolean;
-  pageIds!: string[];
+  isAllPagesOpen!: boolean;
+
+  dateToday!: string;
+  pageIds!: number[];
   selectClass!: string[];
   exportContents!: ExportConents[];
   exportPageButtonFlags!: Map<string, boolean>;
   toggleClass!: string;
   isSingleDocumentChecked!: Boolean;
+  pageMenuChoice!: string;
+  currentSelectedTab!: number;
 
   constructor(
     private noteBookservice: NotebookService,
@@ -71,11 +90,14 @@ export class AppComponent implements OnInit, AfterViewInit {
     private log: LoggerService,
     private renderer: Renderer2,
     private menuService: MenuService,
-    private exportService: ExportImportService
+    private exportService: ExportImportService,
+    private modal: NzModalService,
+    private viewContainerRef: ViewContainerRef,
+    private message: NzMessageService
   ) {}
 
   ngOnInit(): void {
-    this.log.info(`setting up notebook`, this.ngOnInit.name, AppComponent.name);
+    this.log.info(`starting`, this.ngOnInit.name, AppComponent.name);
     // this.noteBookservice.getNoteBook().subscribe((data: any) => {
     //   this.log.info(`notebook setup start`)
     //   this.noteBook = this.noteBookservice.buildNoteBook(data)
@@ -86,31 +108,87 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.noteBook = NOTEBOOK;
     this.pages = this.noteBook.pages;
 
-    this.menuService.saveEvent.subscribe((event) => {
-      this.savePage();
-    });
-    this.menuService.exportEvent.subscribe(() => {
-      this.exportMenu();
-    });
+    this.menuService.openPageEvent.subscribe(() =>
+      this.openPageMenu('open', true)
+    );
+    this.menuService.newPageEvent.subscribe(() =>
+      this.openPageMenu('new', true)
+    );
+    this.menuService.savePageEvent.subscribe(() => this.savePage());
+    this.menuService.exportEvent.subscribe(() => this.exportMenu());
+    this.menuService.closePageEvent.subscribe(() =>
+      this.closePage({ index: this.currentSelectedTab })
+    );
+    this.menuService.closeAllPagesEvent.subscribe(() =>
+      this.pageNameList.forEach((val, key) =>
+        this.closePage({ index: parseInt(key) - 1 })
+      )
+    );
 
     this.isExportModalVisible = false;
     this.isExportModalLoading = false;
+    this.isPageMenuModalVisible = false;
+    this.isPageMenuModalLoading = false;
     this.isSingleDocumentChecked = false;
     this.isNoteBook = false;
-    this.pageIds = [];
+    this.isAllPagesOpen = false;
+    this.isNewPage = '';
+    this.pageIds = this.noteBook.pages.map((page) => page.id);
     this.selectClass = this.exportContents = [];
-    this.exportPageButtonFlags = new Map();
+    this.exportPageButtonFlags = this.pagesToOpen = new Map();
     this.toggleClass = '';
+    this.dateToday = new Date().toLocaleDateString();
+
+    this.pageNameList = this.pageNameListExtraction(this.pages);
+    this.log.debug(
+      `the pageNameList size is ${this.pageNameList.size}`,
+      'ngOnInit',
+      'AppComponent'
+    );
+    this.newPageEntry = this.setupNewPageEntry();
+    this.log.info(`finishing`, 'ngOnInit', 'AppComponent');
   }
 
-  exportModalCancel() {
-    this.isExportModalVisible = false;
+  private pageNameListExtraction(pages: Page[]) {
+    this.log.info('starting', 'pageNameListExtraction', 'AppComponent');
+    let temp = new Map<string, PageNameData>();
+    let tabIndex = 0;
+    pages.forEach((page) => {
+      if (page.isOpen) {
+        temp.set(page.id.toString(), { name: page.name, tab: tabIndex });
+        tabIndex++;
+      }
+    });
+
+    this.log.info('finishing', 'pageNameListExtraction', 'AppComponent');
+    return temp;
+  }
+
+  private setupNewPageEntry() {
+    return {
+      date: this.dateToday,
+      type: '',
+      name: '',
+      newPage: true,
+    };
+  }
+
+  private setupNewpageTags() {
+    return {
+      person: [],
+      place: [],
+      item: [],
+      misc: [],
+    };
   }
 
   ngAfterViewInit(): void {
     this.log.info(
-      `app::component::ngAfterViewInit - setting up electron brige`
+      `setting up electron brige`,
+      'ngAfterViewInit',
+      'AppComponent'
     );
+
     let bridgeDiv = this.elementRef.nativeElement.querySelector('#bridgeDiv');
     this.renderer.listen(bridgeDiv, 'command', (event) => {
       this.log.info(`angular got the event finally`);
@@ -118,7 +196,211 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.menuService.runCommnad(event.detail.text());
       this.log.info(`menuservice command called`);
     });
-    this.log.info(`app::component::ngAfterViewInit - assigned listener to div`);
+
+    this.log.info(
+      `assigned listener to div`,
+      'ngAfterViewInit',
+      'AppComponent'
+    );
+  }
+
+  openPageMenu(menuChoice?: string, fromMenu: boolean = false) {
+    this.log.info(`starting`, 'openPageMenu', 'AppComponent');
+
+    if (fromMenu && menuChoice == 'open') {
+      if (this.pageNameList.size == this.noteBook.pages.length) {
+        this.message.warning('All available pages are open!');
+        return;
+      }
+    }
+
+    const modal = this.modal.create<OpenMenuComponent, PageMenu>({
+      nzTitle: 'Page Menu',
+      nzContent: OpenMenuComponent,
+      nzViewContainerRef: this.viewContainerRef,
+      nzComponentParams: {
+        newPageEntry: this.newPageEntry,
+        pages: this.noteBook.pages,
+        pagesToOpen: this.pagesToOpen,
+        isAllPagesOpen:
+          this.pageNameList.size != this.noteBook.pages.length ? false : true,
+        menuChoice: menuChoice,
+        fromMenu: fromMenu,
+      },
+      nzFooter: [
+        {
+          label: 'Cancel',
+          type: 'default',
+          loading: false,
+          onClick: () => {
+            this.pageMenuModalCancel();
+            modal.destroy();
+          },
+        },
+        {
+          label: 'Ok',
+          type: 'primary',
+          loading: false,
+          onClick: () => {
+            this.log.info(`ok button starting`, 'openPageMenu', 'AppComponent');
+            this.log.debug(
+              `the new page indicator is ${this.newPageEntry.newPage}`,
+              'openPageMenu',
+              'AppComponent'
+            );
+            if (this.newPageEntry.newPage) {
+              if (
+                this.newPageEntry.name != undefined &&
+                this.newPageEntry.name != '' &&
+                this.newPageEntry.name.search('s') != -1
+              ) {
+                if (this.duplicateName()) {
+                  this.pageService.sendnewPageNameError('duplicate');
+                } else {
+                  this.pageMenuSuccess();
+                  modal.destroy();
+                }
+              } else {
+                this.pageService.sendnewPageNameError('name');
+              }
+            } else {
+              this.pageMenuSuccess();
+              modal.destroy();
+            }
+          },
+        },
+      ],
+      // nzOnOk: () => this.pageMenuSuccess(),
+      // nzOnCancel: () =>this.pageMenuModalCancel()
+    });
+    modal.getContentComponent();
+  }
+
+  duplicateName() {
+    let flag = false;
+    this.noteBook.pages.forEach((page: Page) => {
+      if (page.name == this.newPageEntry.name) flag = true;
+    });
+
+    return flag;
+  }
+
+  pageMenuSuccess() {
+    this.log.info('starting', 'pageMenuSuccess', 'AppComponent');
+    this.log.debug(
+      `isNewPage currently set to ${this.newPageEntry.newPage}`,
+      'pageMenuSuccess',
+      'AppComponent'
+    );
+    let newTabindex;
+    if (this.newPageEntry.newPage) {
+      console.debug(this.newPageEntry);
+      let newId = this.pageIds[this.pageIds.length - 1] + 1;
+      this.noteBook.pages.push({
+        id: newId,
+        date: this.newPageEntry.date,
+        name: this.newPageEntry.name,
+        page: '',
+        tags: this.setupNewpageTags(),
+        isOpen: true,
+        lastSaved: this.newPageEntry.date,
+        saveUpToDate: true,
+      });
+      console.debug(this.noteBook);
+      newTabindex = this.pageNameList.size + 1;
+      this.pageNameList.set(newId.toString(), {
+        name: this.newPageEntry.name,
+        tab: newTabindex,
+      });
+
+      this.currentSelectedTab = newTabindex;
+    } else {
+      console.debug(this.noteBook.pages);
+      // if(this.pagesToOpen.size >= 1){
+      this.pagesToOpen.forEach((val, key) => {
+        if (val) {
+          if (!this.pageNameList.has(key)) {
+            newTabindex = this.pageNameList.size + 1;
+            this.pageNameList.set(key, {
+              name: this.noteBook.pages[parseInt(key) - 1].name,
+              tab: newTabindex,
+            });
+            this.currentSelectedTab = newTabindex;
+          }
+        }
+      });
+      // }
+    }
+    this.pagesToOpen = new Map();
+    this.newPageEntry = this.setupNewPageEntry();
+    this.log.debug(this.newPageEntry, 'pageMenuSuccess', 'AppComponent');
+
+    this.log.info('finishing', 'pageMenuSuccess', 'AppComponent');
+  }
+
+  closePage({ index }: { index: number }) {
+    this.log.info('starting', 'closePage', 'AppComponent');
+
+    if (this.noteBook.pages[index].saveUpToDate) {
+      this.pageNameList.delete((index + 1).toString());
+      this.noteBook.pages[index].isOpen = false;
+      this.log.info(
+        `page with id ${index} closed`,
+        'closePage',
+        'AppComponent'
+      );
+    } else {
+      this.unsavedModel(index);
+    }
+
+    this.log.info('finishing', 'closePage', 'AppComponent');
+  }
+
+  unsavedModel(index: number) {
+    const modal = this.modal.create<UnsavedComponent>({
+      nzTitle: 'Page Menu',
+      nzContent: UnsavedComponent,
+      nzViewContainerRef: this.viewContainerRef,
+      nzFooter: [
+        {
+          label: 'Cancel',
+          type: 'default',
+          loading: false,
+          onClick: () => {
+            this.message.info('Please save page first before close');
+            modal.destroy();
+          },
+        },
+        {
+          label: 'Ok',
+          type: 'primary',
+          loading: false,
+          onClick: () => {
+            let tempMessageId = this.message.loading(
+              'Closing page without saving',
+              { nzDuration: 0 }
+            ).messageId;
+            modal.destroy();
+            this.noteBook.pages[index].isOpen = false;
+            this.noteBook.pages[index].saveUpToDate = true;
+            this.noteBook.pages[index].lastSaved = new Date().toDateString();
+            this.pageNameList.delete((index + 1).toString());
+            this.message.remove(tempMessageId);
+            this.message.info('Page closed');
+          },
+        },
+      ]
+    });
+    modal.getContentComponent();
+  }
+
+  pageMenuModalCancel() {
+    this.noteBook.pages.forEach((page) => {
+      if (!this.pageNameList.has(page.id.toString())) {
+        page.isOpen = false;
+      }
+    });
+    this.pagesToOpen = new Map();
   }
 
   exportMenu() {
@@ -143,7 +425,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.selectClass[id] = '';
     }
     if (this.pageIds.includes(id)) {
-      let tempIds: string[] = [];
+      let tempIds: number[] = [];
       this.pageIds.forEach((pageId) => {
         if (id != pageId) {
           tempIds.push(id);
@@ -160,7 +442,20 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   savePage() {
-    this.log.info('page has been saved fool');
+    this.log.info(`starting`, 'savePage', 'AppComponent');
+    let messageId = this.message.loading('Saving Page...', {
+      nzDuration: 0,
+    }).messageId;
+    this.log.debug(
+      `current tab is ${this.currentSelectedTab}`,
+      'savePage',
+      'AppComponent'
+    );
+    this.noteBook.pages[this.currentSelectedTab].page =
+      this.htmlEncoder.encodeValue(this.quill.root.innerHTML);
+    this.message.remove(messageId);
+    this.message.success('Page has been saved.');
+    this.log.info(`finish`, 'savePage', 'AppComponent');
   }
 
   selectNotebook() {
@@ -169,7 +464,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   export() {
     this.isExportModalLoading = true;
-    this.pages[0].page = this.htmlEncoder.encodeValue(
+    this.pages[this.currentSelectedTab].page = this.htmlEncoder.encodeValue(
       this.quill.root.innerHTML
     );
     this.noteBook.pages = this.pages;
@@ -220,16 +515,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     // }
   }
 
-  // savePage(id: number){
-  //   // this.document = this.quill.getContents();
-  //   let page = this.quill.root.innerHTML;
-  //   this.pages[id].page = this.htmlEncoder.encodeValue(page)
-  //   this.noteBook.pages = this.pages
-  //   try{
-  //     this.pageService.savePage(this.pages[id], this.noteBook.saveLocation+ "\\pages\\" +this.pages[id].name+".json")
-  //     this.log.info("notebook saved")
-  //   } catch(error){
-  //     this.log.error(`notebook not saved`)
-  //   }
-  // }
+  exportModalCancel() {
+    this.isExportModalVisible = false;
+  }
 }

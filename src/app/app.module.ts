@@ -7,6 +7,7 @@ import { QuillToolbarComponent } from './quill/quill.toolbar.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { TagListComponent } from './widgets/tag.list.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { UnsavedComponent } from './modal/unsaved/unsaved.component';
 
 import { NZ_I18N } from 'ng-zorro-antd/i18n';
 import { en_US } from 'ng-zorro-antd/i18n';
@@ -31,6 +32,11 @@ import { NzBadgeModule } from 'ng-zorro-antd/badge';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { NzListModule } from 'ng-zorro-antd/list';
+import { NzMessageModule } from 'ng-zorro-antd/message';
+import { OpenMenuComponent } from './modal/open-menu/open-menu.component';
+import { OpenPageFilter } from './pipe/open-page-filter.pipe';
 
 registerLocaleData(en);
 
@@ -41,6 +47,9 @@ registerLocaleData(en);
     TagListComponent,
     SidebarComponent,
     MenuComponent,
+    OpenMenuComponent,
+    OpenPageFilter,
+    UnsavedComponent,
   ],
   imports: [
     BrowserModule,
@@ -64,6 +73,9 @@ registerLocaleData(en);
     NzIconModule,
     NzModalModule,
     NzCheckboxModule,
+    NzTabsModule,
+    NzListModule,
+    NzMessageModule,
   ],
   providers: [{ provide: NZ_I18N, useValue: en_US }],
   bootstrap: [AppComponent],

@@ -2,7 +2,9 @@
   <nz-header>
     <menu [quill]="quill"
           [pages]="pages"
-          [notebook]="noteBook"></menu>
+          [notebook]="noteBook"
+          [hidden]="'true'"></menu>
+    <h1 nz-typography>Notebook - {{noteBook.name}}</h1>>
   </nz-header>
   <nz-layout>
     <nz-sider>
@@ -12,13 +14,23 @@
     <nz-content>
       <!-- [pages] is passing main data object for this page
             (newQuillEditor) is to get the editor object -->
-      
-        <div nz-row nzJustify="center">
-          <div nzSpan="20" nz-col>
-            <toolbar [pages]="pages"
-                (newQuillEditor)="setNewQuillEditor($event)"></toolbar>
+      <nz-tabset nzType="editable-card"
+                [(nzSelectedIndex)]="currentSelectedTab"
+                (nzAdd)="openPageMenu()"
+                (nzClose)="closePage($event)">
+        <nz-tab *ngFor="let pageName of pageNameList | keyvalue" 
+                [nzTitle]="pageName.value.name"
+                nzClosable
+                >
+          <div nz-row nzJustify="center">
+            <div nzSpan="20" nz-col>
+              <toolbar [pages]="pages"
+                       [passingPageId]="pageName.key"
+                  (newQuillEditor)="setNewQuillEditor($event)"></toolbar>
+            </div>
           </div>
-        </div>
+        </nz-tab>
+      </nz-tabset>
       
       <div nz-row>
         <div nz-col>
@@ -28,6 +40,7 @@
     </nz-content>
   </nz-layout>
 </nz-layout>
+<!-- Model that deals with exporting content -->
 <nz-modal [(nzVisible)]="isExportModalVisible"
           nzTitle="Export Options"
           (nzOnCancel)="exportModalCancel()"
@@ -54,5 +67,7 @@
           </ng-container>
   
 </nz-modal>
+<!-- --------------------------------- -->
+<!-- --------------------------------- -->
 <button nz-button (click)="exportMenu()">modal</button>
 <div id="bridgeDiv" hidden></div>

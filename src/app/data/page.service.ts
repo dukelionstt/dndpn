@@ -10,6 +10,8 @@ export class PageService {
 
   @Output() activePage: EventEmitter<any> = new EventEmitter();
 
+  @Output() newPageNameError: EventEmitter<any> = new EventEmitter();
+
   constructor(private file: FileService, private log: LoggerService) { }
 
   savePage(page: Page, fileName: string){
@@ -24,6 +26,10 @@ export class PageService {
 
   sendActivePage(id: number){
     this.activePage.emit(id);
+  }
+
+  sendnewPageNameError(errorType: string){
+    this.newPageNameError.emit(errorType);
   }
 
 }

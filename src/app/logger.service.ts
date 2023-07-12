@@ -21,8 +21,7 @@ export class LoggerService {
   }
 
   message(messageText: any, functionName?: string, className?: string) {
-    return `${className ? className : ''}::${
-      functionName ? functionName : ''
-    } - ${messageText}`;
+    return functionName == undefined || className == undefined ? messageText : `${className ? className : ''}::${
+      functionName ? functionName : ''} - ${messageText}`;
   }
 }
