@@ -146,11 +146,13 @@ export class QuillToolbarComponent implements OnInit {
     this.quill = editor;
     this.newQuillEditor.emit(this.quill);
     this.log.info(`new editor announced and shared`);
+    let editorJustFilled = false;
 
     this.log.info(`Setting content for the page:: Started`);
     this.loadingContent = true;
     try {
       this.loadPageContent();
+      editorJustFilled = true;
     } catch (error) {
       this.log.error(`issue loading content`);
       this.log.error(`${error}`);
@@ -158,6 +160,11 @@ export class QuillToolbarComponent implements OnInit {
       this.loadingContent = false;
     }
 
+    this.log.debug(
+      `before setting on change editor just filled is ${editorJustFilled}`,
+      'editorCreated',
+      'QuillToolbarComponent'
+    );
     this.quill.on(
       'text-change',
       (delta: Delta, oldDelta: Delta, source: string) => {
@@ -166,26 +173,46 @@ export class QuillToolbarComponent implements OnInit {
           'editorCreated',
           'QuillToolbarComponent'
         );
-        
-        if (delta != oldDelta) {
-          this.log.debug(
-            `difference in detected, marking as not update`,
-            'editorCreated',
-            'QuillToolbarComponent'
-          );
-          this.pages[this.pageId - 1].saveUpToDate = false;
+        this.log.info(
+          `before checking flag it is ${editorJustFilled}`,
+          'editorCreated',
+          'QuillToolbarComponent'
+        );
+        if (editorJustFilled) {
+          editorJustFilled = false;
         } else {
-          this.log.debug(
-            `no difference update`,
-            'editorCreated',
-            'QuillToolbarComponent'
-          );
-          this.pages[this.pageId - 1].saveUpToDate = true;
+          if (delta != oldDelta) {
+            this.log.debug(
+              `difference in detected, marking as not update`,
+              'editorCreated',
+              'QuillToolbarComponent'
+            );
+            this.pages[this.pageId - 1].saveUpToDate = false;
+          } else {
+            this.log.debug(
+              `no difference update`,
+              'editorCreated',
+              'QuillToolbarComponent'
+            );
+            this.pages[this.pageId - 1].saveUpToDate = true;
+          }
         }
       }
     );
 
     this.quill.focus();
+    this.log.debug(
+      `focus brought to the editor`,
+      'editorCreated',
+      'QuillToolbarComponent'
+    );
+    // this.log.debug(
+    //   `just about to change editor fill flag to false`,
+    //   'editorCreated',
+    //   'QuillToolbarComponent'
+    // );
+    // editorJustFilled = false;
+    // this.log.debug(`flag now changed`, 'editorCreated', 'QuillToolbarComponent');
     this.log.info(`finish`, 'editorCreated', 'QuillToolbarComponent');
   }
 

@@ -30,7 +30,8 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 import { OpenMenuComponent } from './modal/open-menu/open-menu.component';
 import { PageMenu } from './model/page-menu-model';
 import { PageNameData } from './model/page-name.model';
-import { NzMessageService  } from 'ng-zorro-antd/message';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { UnsavedComponent } from './modal/unsaved/unsaved.component';
 
 PersonBlot['blotName'] = 'person';
 PersonBlot['tagName'] = 'button';
@@ -92,7 +93,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     private exportService: ExportImportService,
     private modal: NzModalService,
     private viewContainerRef: ViewContainerRef,
-    private message: NzMessageService 
+    private message: NzMessageService
   ) {}
 
   ngOnInit(): void {
@@ -107,15 +108,22 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.noteBook = NOTEBOOK;
     this.pages = this.noteBook.pages;
 
-    this.menuService.openPageEvent.subscribe(() => this.openPageMenu('open', true))
-    this.menuService.newPageEvent.subscribe(() => this.openPageMenu('new', true))
+    this.menuService.openPageEvent.subscribe(() =>
+      this.openPageMenu('open', true)
+    );
+    this.menuService.newPageEvent.subscribe(() =>
+      this.openPageMenu('new', true)
+    );
     this.menuService.savePageEvent.subscribe(() => this.savePage());
     this.menuService.exportEvent.subscribe(() => this.exportMenu());
-    this.menuService.closePageEvent.subscribe(() => this.closePage({index: this.currentSelectedTab}));
-    this.menuService.closeAllPagesEvent.subscribe(() => this.pageNameList.forEach((val, key) => this.closePage({index: parseInt(key)-1})))
-    
-
-
+    this.menuService.closePageEvent.subscribe(() =>
+      this.closePage({ index: this.currentSelectedTab })
+    );
+    this.menuService.closeAllPagesEvent.subscribe(() =>
+      this.pageNameList.forEach((val, key) =>
+        this.closePage({ index: parseInt(key) - 1 })
+      )
+    );
 
     this.isExportModalVisible = false;
     this.isExportModalLoading = false;
@@ -147,7 +155,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     let tabIndex = 0;
     pages.forEach((page) => {
       if (page.isOpen) {
-        temp.set(page.id.toString(), {name: page.name, tab: tabIndex});
+        temp.set(page.id.toString(), { name: page.name, tab: tabIndex });
         tabIndex++;
       }
     });
@@ -161,7 +169,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       date: this.dateToday,
       type: '',
       name: '',
-      newPage: true
+      newPage: true,
     };
   }
 
@@ -173,8 +181,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       misc: [],
     };
   }
-
-  
 
   ngAfterViewInit(): void {
     this.log.info(
@@ -201,9 +207,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   openPageMenu(menuChoice?: string, fromMenu: boolean = false) {
     this.log.info(`starting`, 'openPageMenu', 'AppComponent');
 
-    if(fromMenu && menuChoice == 'open'){
-      if(this.pageNameList.size == this.noteBook.pages.length){
-        this.message.warning("All available pages are open!");
+    if (fromMenu && menuChoice == 'open') {
+      if (this.pageNameList.size == this.noteBook.pages.length) {
+        this.message.warning('All available pages are open!');
         return;
       }
     }
@@ -217,9 +223,9 @@ export class AppComponent implements OnInit, AfterViewInit {
         pages: this.noteBook.pages,
         pagesToOpen: this.pagesToOpen,
         isAllPagesOpen:
-        this.pageNameList.size != this.noteBook.pages.length ? false : true,
+          this.pageNameList.size != this.noteBook.pages.length ? false : true,
         menuChoice: menuChoice,
-        fromMenu: fromMenu
+        fromMenu: fromMenu,
       },
       nzFooter: [
         {
@@ -229,7 +235,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           onClick: () => {
             this.pageMenuModalCancel();
             modal.destroy();
-          }
+          },
         },
         {
           label: 'Ok',
@@ -237,10 +243,18 @@ export class AppComponent implements OnInit, AfterViewInit {
           loading: false,
           onClick: () => {
             this.log.info(`ok button starting`, 'openPageMenu', 'AppComponent');
-            this.log.debug(`the new page indicator is ${this.newPageEntry.newPage}`, 'openPageMenu', 'AppComponent');
-            if(this.newPageEntry.newPage){
-              if(this.newPageEntry.name != undefined && this.newPageEntry.name != '' && this.newPageEntry.name.search('\s') != -1){
-                if(this.duplicateName()){
+            this.log.debug(
+              `the new page indicator is ${this.newPageEntry.newPage}`,
+              'openPageMenu',
+              'AppComponent'
+            );
+            if (this.newPageEntry.newPage) {
+              if (
+                this.newPageEntry.name != undefined &&
+                this.newPageEntry.name != '' &&
+                this.newPageEntry.name.search('s') != -1
+              ) {
+                if (this.duplicateName()) {
                   this.pageService.sendnewPageNameError('duplicate');
                 } else {
                   this.pageMenuSuccess();
@@ -253,19 +267,19 @@ export class AppComponent implements OnInit, AfterViewInit {
               this.pageMenuSuccess();
               modal.destroy();
             }
-          }
-        }
-      ]
+          },
+        },
+      ],
       // nzOnOk: () => this.pageMenuSuccess(),
       // nzOnCancel: () =>this.pageMenuModalCancel()
     });
     modal.getContentComponent();
   }
 
-  duplicateName(){
+  duplicateName() {
     let flag = false;
-    this.noteBook.pages.forEach((page: Page ) => {
-      if(page.name == this.newPageEntry.name) flag = true;
+    this.noteBook.pages.forEach((page: Page) => {
+      if (page.name == this.newPageEntry.name) flag = true;
     });
 
     return flag;
@@ -290,28 +304,32 @@ export class AppComponent implements OnInit, AfterViewInit {
         tags: this.setupNewpageTags(),
         isOpen: true,
         lastSaved: this.newPageEntry.date,
-        saveUpToDate: true
+        saveUpToDate: true,
       });
       console.debug(this.noteBook);
-      newTabindex = this.pageNameList.size+1
-      this.pageNameList.set(newId.toString(), {name: this.newPageEntry.name, tab: newTabindex});
+      newTabindex = this.pageNameList.size + 1;
+      this.pageNameList.set(newId.toString(), {
+        name: this.newPageEntry.name,
+        tab: newTabindex,
+      });
 
-      this.currentSelectedTab = newTabindex
+      this.currentSelectedTab = newTabindex;
     } else {
       console.debug(this.noteBook.pages);
       // if(this.pagesToOpen.size >= 1){
-        this.pagesToOpen.forEach((val,key) => {
-          if(val){
-            if(!this.pageNameList.has(key)){
-              newTabindex = this.pageNameList.size+1
-              this.pageNameList.set(key, {name: this.noteBook.pages[parseInt(key)-1].name, tab: newTabindex})
-              this.currentSelectedTab = newTabindex
-            }
+      this.pagesToOpen.forEach((val, key) => {
+        if (val) {
+          if (!this.pageNameList.has(key)) {
+            newTabindex = this.pageNameList.size + 1;
+            this.pageNameList.set(key, {
+              name: this.noteBook.pages[parseInt(key) - 1].name,
+              tab: newTabindex,
+            });
+            this.currentSelectedTab = newTabindex;
           }
-        })
+        }
+      });
       // }
-
-      
     }
     this.pagesToOpen = new Map();
     this.newPageEntry = this.setupNewPageEntry();
@@ -322,17 +340,63 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   closePage({ index }: { index: number }) {
     this.log.info('starting', 'closePage', 'AppComponent');
-    
 
-    this.pageNameList.delete((index + 1).toString());
-    this.noteBook.pages[index].isOpen = false;
-    this.log.info(`page with id ${index} closed`, 'closePage', 'AppComponent');
+    if (this.noteBook.pages[index].saveUpToDate) {
+      this.pageNameList.delete((index + 1).toString());
+      this.noteBook.pages[index].isOpen = false;
+      this.log.info(
+        `page with id ${index} closed`,
+        'closePage',
+        'AppComponent'
+      );
+    } else {
+      this.unsavedModel(index);
+    }
+
     this.log.info('finishing', 'closePage', 'AppComponent');
   }
 
+  unsavedModel(index: number) {
+    const modal = this.modal.create<UnsavedComponent>({
+      nzTitle: 'Page Menu',
+      nzContent: UnsavedComponent,
+      nzViewContainerRef: this.viewContainerRef,
+      nzFooter: [
+        {
+          label: 'Cancel',
+          type: 'default',
+          loading: false,
+          onClick: () => {
+            this.message.info('Please save page first before close');
+            modal.destroy();
+          },
+        },
+        {
+          label: 'Ok',
+          type: 'primary',
+          loading: false,
+          onClick: () => {
+            let tempMessageId = this.message.loading(
+              'Closing page without saving',
+              { nzDuration: 0 }
+            ).messageId;
+            modal.destroy();
+            this.noteBook.pages[index].isOpen = false;
+            this.noteBook.pages[index].saveUpToDate = true;
+            this.noteBook.pages[index].lastSaved = new Date().toDateString();
+            this.pageNameList.delete((index + 1).toString());
+            this.message.remove(tempMessageId);
+            this.message.info('Page closed');
+          },
+        },
+      ]
+    });
+    modal.getContentComponent();
+  }
+
   pageMenuModalCancel() {
-    this.noteBook.pages.forEach(page => {
-      if(!this.pageNameList.has(page.id.toString())){
+    this.noteBook.pages.forEach((page) => {
+      if (!this.pageNameList.has(page.id.toString())) {
         page.isOpen = false;
       }
     });
@@ -379,11 +443,18 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   savePage() {
     this.log.info(`starting`, 'savePage', 'AppComponent');
-    let messageId = this.message.loading("Saving Page...", {nzDuration: 0}).messageId;
-    this.log.debug(`current tab is ${this.currentSelectedTab}`, 'savePage', 'AppComponent');
-    this.noteBook.pages[this.currentSelectedTab].page = this.htmlEncoder.encodeValue(this.quill.root.innerHTML);
+    let messageId = this.message.loading('Saving Page...', {
+      nzDuration: 0,
+    }).messageId;
+    this.log.debug(
+      `current tab is ${this.currentSelectedTab}`,
+      'savePage',
+      'AppComponent'
+    );
+    this.noteBook.pages[this.currentSelectedTab].page =
+      this.htmlEncoder.encodeValue(this.quill.root.innerHTML);
     this.message.remove(messageId);
-    this.message.success("Page has been saved.");
+    this.message.success('Page has been saved.');
     this.log.info(`finish`, 'savePage', 'AppComponent');
   }
 
@@ -447,6 +518,4 @@ export class AppComponent implements OnInit, AfterViewInit {
   exportModalCancel() {
     this.isExportModalVisible = false;
   }
-
-
 }
