@@ -1,0 +1,74 @@
+
+<nz-collapse nzAccordion>
+    <nz-collapse-panel nzHeader="New Page" [nzActive]="isNewPage" (nzActiveChange)="updateActivePanel('new')" *ngIf="isNewPage">
+    <h3>Create New Page</h3>
+    <div nz row>
+        <div nz-col nz-flex="6">
+            <span nz-typography><strong>Name</strong></span>
+        </div>   
+        <div nz-col nzSpan="16">
+            <input 
+                nz-input type="text" 
+                placeholder="Please enter Page Name" 
+                name="newPageName" 
+                id="newPageName"
+                (keyup)="validateName()" 
+                [(ngModel)]="newPageEntry.name" 
+                [nzStatus]="noNameErrorFlag || duplicateNameErrorFlag">
+        </div>
+        <div nz-col nzSpan="16" *ngIf="noNameErrorFlag == 'error'">
+            <span nz-typography nzType="danger"><strong>Error - Please enter page Name.</strong></span>
+        </div>
+        <div nz-col nzSpan="16" *ngIf="duplicateNameErrorFlag == 'error'">
+            <span nz-typography nzType="danger"><strong>Error - Duplicate Page Name, please change.</strong></span>
+        </div>
+        
+        <div nz-col nz-flex="6">
+            <span nz-typography><strong>Date</strong></span>
+        </div> 
+        <div nz-col nzSpan="8">
+            <input nz-input type="text" name="newPageDate" id="newPageDate" [(ngModel)]="newPageEntry.date" disabled="true" placeholder="{{dateToday}}">
+        </div>
+    </div>
+    </nz-collapse-panel>
+    <!-- <span nz-tooltip nzTooltipTitle="All Pages open"> -->
+    <nz-collapse-panel nzHeader="Open Page" [nzActive]="fromMenu" [nzDisabled]="isAllPagesOpen" (nzActiveChange)="updateActivePanel('open')" *ngIf="isOpenPage">
+      <!-- <nz-collapse-panel nzHeader="Open Page" (nzActiveChange)="updateActivePanel(false)"> -->
+        <div nz-row>
+            <div nz-col nzSpan="8">
+            <span nz-typography><strong>Open Saved Pages</strong></span>
+        </div>
+        <div nz-col nzSpan="8">
+            <span nz-typography>Select any option below that does not already checked</span>
+        </div>
+        <div nz-col nzSpan="14">
+            <nz-list nzItemLayout="horizontal">
+            <nz-list-item *ngFor="let page of pages | openPageFilter">
+                <nz-list-item-meta
+                nzAvatar="https://img.icons8.com/ios-glyphs/50/848484/magical-scroll.png"
+                nzDescription="{{page.name}}">
+                <nz-list-item-meta-title>
+                    <a (click)="checkPageToBeOpened(page.id.toString())">Click to Select for opening</a>
+                </nz-list-item-meta-title>
+                </nz-list-item-meta>
+                <nz-list-item-extra>
+                <span nz-icon nzType="plus-square"
+                      nzTheme="twotone" 
+                      [nzTwotoneColor]="'#ff004f'"
+                      style="font-size: 30px;"
+                      id="uncheckedPageOption{{page.id}}" 
+                      (click)="checkPageToBeOpened(page.id.toString())"></span>
+                <span nz-icon nzType="check-square" 
+                      nzTheme="twotone" 
+                      [nzTwotoneColor]="'#52c41a'"
+                      style="font-size: 30px;"
+                      id="checkedPageOption{{page.id}}"
+                      (click)="checkPageToBeOpened(page.id.toString())"></span>
+                </nz-list-item-extra>
+            </nz-list-item>
+            </nz-list>
+        </div>
+        </div>
+    </nz-collapse-panel>
+    <!-- </span> -->
+</nz-collapse>

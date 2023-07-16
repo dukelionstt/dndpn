@@ -1,25 +1,41 @@
-<h1>{{title}}</h1>
 <nz-layout>
-  <nz-sider>
-    <tag-list [quill]="quill"
-              [pages]="pages"></tag-list>
-  </nz-sider>
+  <nz-header>
+    <menu [quill]="quill"
+          [pages]="pages"
+          [notebook]="noteBook"
+          [hidden]="'true'"></menu>
+    <h1 nz-typography>Notebook - {{noteBook.name}}</h1>>
+  </nz-header>
   <nz-layout>
+    <nz-sider>
+      <tag-list [quill]="quill"
+                [pages]="pages"></tag-list>
+    </nz-sider>
     <nz-content>
       <!-- [pages] is passing main data object for this page
             (newQuillEditor) is to get the editor object -->
 
-        <div nz-row nzJustify="center">
-          <div nzSpan="20" nz-col>
-            <toolbar [pages]="pages"
-                (newQuillEditor)="setNewQuillEditor($event)"></toolbar>
+      <nz-tabset nzType="editable-card"
+                [(nzSelectedIndex)]="currentSelectedTab"
+                (nzAdd)="openPageMenu()"
+                (nzClose)="closePage($event)">
+        <nz-tab *ngFor="let pageName of pageNameList | keyvalue" 
+                [nzTitle]="pageName.value.name"
+                nzClosable
+                >
+          <div nz-row nzJustify="center">
+            <div nzSpan="20" nz-col>
+              <toolbar [pages]="pages"
+                       [passingPageId]="pageName.key"
+                  (newQuillEditor)="setNewQuillEditor($event)"></toolbar>
+            </div>
           </div>
-        </div>
-
+        </nz-tab>
+      </nz-tabset>
+      
       <div nz-row>
         <div nz-col>
-          <button nz-button (click)="savePage(0)">Save</button>
-          {{document}}
+          <!-- <button nz-button (click)="savePage(0)">Save</button> -->
         </div>
       </div>
     </nz-content>
@@ -28,3 +44,34 @@
     </nz-footer>
   </nz-layout>
 </nz-layout>
+<!-- Model that deals with exporting content -->
+<nz-modal [(nzVisible)]="isExportModalVisible"
+          nzTitle="Export Options"
+          (nzOnCancel)="exportModalCancel()"
+          (nzOnOk)=export()
+          [nzOkLoading]="isExportModalLoading">
+          <ng-container *nzModalContent>
+            <h3>Export Options</h3>
+            <label nz-checkbox [(ngModel)]="isNoteBook" (click)="selectNotebook()">Notebook</label>
+            <div *ngFor="let page of this.noteBook.pages">
+              <button 
+                      nz-button
+                      [nzSize]="'large'"
+                      nzShape="round"
+                      (click)="updateIds(page.id.toString())"
+                      style="height:60px"
+                      [class]="selectClass[page.id]"
+                      id="export{{page.id}}Button">
+                      <span nz-icon nzType="file-word" 
+                            nzTheme="outline" 
+                            style="font-size: 40px;"></span>
+              </button>
+            </div>
+            <label nz-checkbox [(ngModel)]="isSingleDocumentChecked">Single Document</label>
+          </ng-container>
+  
+</nz-modal>
+<!-- --------------------------------- -->
+<!-- --------------------------------- -->
+<button nz-button (click)="exportMenu()">modal</button>
+<div id="bridgeDiv" hidden></div>

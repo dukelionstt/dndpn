@@ -1,5 +1,11 @@
 import { Page } from '../model/page-model';
 import { TAG_MAPS } from './tag-map-mock';
+
+import { PERSONS } from '../mock-data/person-mock';
+import { PLACES } from './place-mock';
+import { ITEMS } from './item-mock';
+import { MISCS } from './misc-mock';
+import { ITEM, MISC, PERSON, PLACE } from '../constants';
 import { TAGS } from './TAGS';
 
 export const PAGE: Page = {
@@ -13,4 +19,7 @@ export const PAGE: Page = {
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
   ],
   tagMap: TAG_MAPS,
+  isOpen: true,
+  lastSaved: Date.toString(),
+  saveUpToDate: true,
 };

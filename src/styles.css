@@ -6,6 +6,7 @@
 @import "css/misc.css";
 @import "css/tag.css";
 
+
 :root {
   --tagButonColor: black;
   --header: #828282;
@@ -34,6 +35,7 @@
 }
 
 .widget,
+
 .highlight,
 .tabMarker {
   border: none;
@@ -49,6 +51,7 @@
 .widget::before,
 .highlight::before,
 .tabMarker::before {
+
   content: "";
   position: absolute;
   top: -2px;
@@ -125,6 +128,21 @@
   box-shadow: 0 0 3px rgba(56, 54, 54, 0.86);
 }
 
+.btn-select {
+  color: #141414;
+  background: #177ddc;
+}
+
+.btn-select:focus {
+  color: #141414;
+  background: #177ddc;
+}
+
+.btn-select:hover {
+  color: #fff;
+  background: #177ddc;
+}
+
 /*bottom*/
 
 .bottom .tooltip {
@@ -142,6 +160,7 @@
   border: transparent;
   text-align: left;
 }
+
 
 /*  tags list tab container */
 .card-container ::ng-deep p {
@@ -169,4 +188,86 @@
 .card-container ::ng-deep > .ant-tabs-card .ant-tabs-tab-active {
   border-color: #fff;
   background: #fff;
+
+.closed {
+  display: none;
+}
+
+.close {
+  /* display: block;
+  opacity: 0;
+  transition: opacity 1s linear; */
+  animation: closing forwards 0.75s linear 1;
+}
+
+.open {
+  display: block;
+  width: 0;
+  min-width: 0;
+  opacity: 0;
+  padding: 0;
+  margin: 0;
+  animation: opening forwards 1s linear 1;
+  /* animation-delay: 0.5s; */
+}
+
+@keyframes closing {
+  0% {
+    transform: scale(1);
+    width: 250px;
+    min-width: 250px;
+    opacity: 1;
+    transform-origin: 125px 125px;
+  }
+  25% {
+    transform: scale(0.75);
+    opacity: 0.75;
+  }
+  50% {
+    transform: scale(0.5);
+    opacity: 0.5;
+  }
+  75% {
+    transform: scale(0.25);
+    opacity: 0.25;
+  }
+  100% {
+    width: 0;
+    min-width: 0;
+    transform: scale(0);
+    opacity: 0;
+    padding: 0;
+    margin: 0;
+  }
+}
+
+@keyframes opening {
+  1000% {
+    transform: scale(1);
+    width: 250px;
+    min-width: 250px;
+    opacity: 1;
+    transform-origin: 125px 125px;
+  }
+  75% {
+    transform: scale(0.8);
+    opacity: 0.75;
+  }
+  50% {
+    transform: scale(0.6);
+    opacity: 0.5;
+  }
+  25% {
+    transform: scale(0.4);
+    opacity: 0.25;
+  }
+  0% {
+    width: 0;
+    min-width: 0;
+    transform: scale(0.2);
+    opacity: 0;
+    padding: 0;
+    margin: 0;
+    /* visibility: visible; */
+  }
 }

@@ -9,6 +9,7 @@ import {
   Renderer2,
   OnChanges,
   SimpleChange,
+  HostListener,
 } from '@angular/core';
 import { ITEM, MISC, PERSON, PLACE } from '../constants';
 import { LoggerService } from '../logger.service';
@@ -17,7 +18,10 @@ import { TagEntry } from '../model/tag-entry-model';
 import { Tag } from '../model/tag-model';
 import { Tags } from '../model/tags-model';
 import { IconService } from '../service/icon.service';
+import { MenuService } from '../service/menu.service';
 import { HiglightEditorTagsService } from '../widgets/higlight.editor.tags.service';
+import { Delta } from 'quill';
+
 
 @Component({
   selector: 'toolbar',
@@ -26,6 +30,9 @@ import { HiglightEditorTagsService } from '../widgets/higlight.editor.tags.servi
 export class QuillToolbarComponent implements OnInit {
   @Input()
   pages!: Page[];
+
+  @Input()
+  passingPageId!: string;
 
   @Input()
   tagEntry!: TagEntry;
@@ -41,6 +48,14 @@ export class QuillToolbarComponent implements OnInit {
 
   @Output() newQuillEditor = new EventEmitter<any>();
 
+
+  // @HostListener('document:command', ['$event'])
+  // handleCommand(event: any){
+  //   this.log.info(`Angular has receieved event`)
+  //   this.log.info(event)
+  // }
+
+
   range: any;
   text: string = '';
 
@@ -54,6 +69,9 @@ export class QuillToolbarComponent implements OnInit {
   updateType!: string;
   toolType!: string;
   toolId!: number;
+  pageId!: number;
+  lastCursorPosition!: number;
+
 
   personTag: string = PERSON;
   placeTag: string = PLACE;
@@ -66,20 +84,23 @@ export class QuillToolbarComponent implements OnInit {
   buttonEvents = new Map();
 
   htmlDecoder = new HttpUrlEncodingCodec();
+  htmlEncoder = new HttpUrlEncodingCodec();
+
 
   constructor(
     private renderer: Renderer2,
     private elementRef: ElementRef,
     private log: LoggerService,
-    private highlightTagService: HiglightEditorTagsService
+    private highlightTagService: HiglightEditorTagsService,
+    private menuService: MenuService
   ) {}
 
   ngOnInit(): void {
-    this.log.info(`initilising variables for puill tool bar:: Started`);
-    // this.icons.set(PERSON, '<img src="https://img.icons8.com/ios-glyphs/15/2b00d5/human-head.png"/>')
-    // this.icons.set(PLACE, '<img src="https://img.icons8.com/ios-glyphs/15/FE9A76/castle.png"/>')
-    // this.icons.set(ITEM, '<img src="https://img.icons8.com/ios-glyphs/15/016936/armored-breastplate.png"/>')
-    // this.icons.set(MISC, '<img src="https://img.icons8.com/ios-glyphs/15/B413EC/magical-scroll.png"/>')
+    this.log.info(
+      `initilising variables for puill tool bar:: Started`,
+      this.ngOnInit.name,
+      QuillToolbarComponent.name
+    );
 
     this.buttonEvents.set(PERSON, 0);
     this.buttonEvents.set(PLACE, 0);
@@ -93,15 +114,15 @@ export class QuillToolbarComponent implements OnInit {
     this.changeIndicator = false;
     this.loadingContent = false;
 
-    this.highlightTagService.highLightTag.subscribe((tags) => {
-      this.log.debug(`highlight tag service called`);
-      this.log.debug(
-        `about to toggle the following: ids -> ${tags.ids.toString()} type -> ${
-          tags.type
-        } state -> ${tags.active}`
-      );
-      this.highlightTag(tags.ids, tags.type, tags.active);
-    });
+
+
+    this.pageId = parseInt(this.passingPageId);
+    console.debug(this.pageId);
+
+    this.highlightTagService.highLightTag.subscribe((tags) =>
+      this.highlightTag(tags.ids, tags.type, tags.active)
+    );
+    // this.menuService.getPasteQuill.subscribe(clipbaord => this.pasteClipboard(clipbaord))
 
     this.log.info(`initilising variables for puill tool bar:: finished`);
   }
@@ -126,16 +147,94 @@ export class QuillToolbarComponent implements OnInit {
     };
   }
 
+
+  editorCreated(editor: any) {
+    this.log.info(`starting`, 'editorCreated', 'QuillToolbarComponent');
+
+    this.quill = editor;
+    this.newQuillEditor.emit(this.quill);
+    this.log.info(`new editor announced and shared`);
+    let editorJustFilled = false;
+
+    this.log.info(`Setting content for the page:: Started`);
+    this.loadingContent = true;
+    try {
+      this.loadPageContent();
+      editorJustFilled = true;
+    } catch (error) {
+      this.log.error(`issue loading content`);
+      this.log.error(`${error}`);
+    } finally {
+      this.loadingContent = false;
+    }
+    this.log.info(`Applying event handlers to taged words :: Finished`);
+  }
+    this.log.debug(
+      `before setting on change editor just filled is ${editorJustFilled}`,
+      'editorCreated',
+      'QuillToolbarComponent'
+    );
+    this.quill.on(
+      'text-change',
+      (delta: Delta, oldDelta: Delta, source: string) => {
+        this.log.info(
+          `text change from ${source}`,
+          'editorCreated',
+          'QuillToolbarComponent'
+        );
+        this.log.info(
+          `before checking flag it is ${editorJustFilled}`,
+          'editorCreated',
+          'QuillToolbarComponent'
+        );
+        if (editorJustFilled) {
+          editorJustFilled = false;
+        } else {
+          if (delta != oldDelta) {
+            this.log.debug(
+              `difference in detected, marking as not update`,
+              'editorCreated',
+              'QuillToolbarComponent'
+            );
+            this.pages[this.pageId - 1].saveUpToDate = false;
+          } else {
+            this.log.debug(
+              `no difference update`,
+              'editorCreated',
+              'QuillToolbarComponent'
+            );
+            this.pages[this.pageId - 1].saveUpToDate = true;
+          }
+        }
+      }
+    );
+
+    this.quill.focus();
+    this.log.debug(
+      `focus brought to the editor`,
+      'editorCreated',
+      'QuillToolbarComponent'
+    );
+    // this.log.debug(
+    //   `just about to change editor fill flag to false`,
+    //   'editorCreated',
+    //   'QuillToolbarComponent'
+    // );
+    // editorJustFilled = false;
+    // this.log.debug(`flag now changed`, 'editorCreated', 'QuillToolbarComponent');
+    this.log.info(`finish`, 'editorCreated', 'QuillToolbarComponent');
+  }
+
   private loadPageContent() {
     this.log.info(`setting text content :: Started`);
     // this.quill.setContents(this.pages[0].page)
     this.quill.root.innerHTML = this.htmlDecoder.decodeValue(
-      this.pages[0].page
+      this.pages[this.pageId - 1].page
     );
     this.log.info(`setting text content :: Finished`);
 
     this.log.info(`Applying event handlers to taged words :: Started`);
-    for (let [key, value] of Object.entries(this.pages[0].tags)) {
+    for (let [key, value] of Object.entries(this.pages[this.pageId - 1].tags)) {
       this.log.info(`Working through ${key} set:: Started`);
       this.updateButtons(value, key);
       this.log.info(`Working through ${key} set:: Finished`);
@@ -148,11 +247,53 @@ export class QuillToolbarComponent implements OnInit {
       this.log.debug(`Attacking click of ${tag.name}`);
       this.attachClickEvent(tagtype, tag.metaData.buttonIndex);
     }
+
     this.buttonEvents.set(tagtype, tagSet.length);
     this.log.info(
       `buttonevent tracker updated for ${tagtype} to ${tagSet.length}`
     );
   }
+
+  changeOccured() {
+    this.log.info(`starting`, 'changeOccured', 'QuillToolbarComponent');
+    let currentContent = this.htmlEncoder.encodeValue(
+      this.quill.root.innerHTML
+    );
+    if (currentContent != this.pages[this.pageId].page) {
+      this.log.debug(
+        `there is a difference since last save`,
+        'changeOccured',
+        'QuillToolbarComponent'
+      );
+      this.pages[this.pageId].saveUpToDate = false;
+    } else {
+      this.log.debug(
+        `no change since last save`,
+        'changeOccured',
+        'QuillToolbarComponent'
+      );
+      this.pages[this.pageId].saveUpToDate = true;
+    }
+    this.log.info(`finish`, 'changeOccured', 'QuillToolbarComponent');
+  }
+
+  // trackFocus(element: string){
+  //   this.log.info("focus change event recieved.");
+  //   this.menuService.sendFocusEvent(element);
+  // }
+
+  // trackCursor(){
+  //   if(this.quill.hasFocus()){
+  //     this.lastCursorPosition = this.quill.getSelection();
+  //   }
+  // }
+
+  private pasteClipboard(clipboard: ClipboardItems) {
+    for (let item of clipboard) {
+      let contents = item.getType('blob');
+    }
+  }
+
 
   //values passed in by the opening button.
   onNewTagSave(event: any[]) {
@@ -170,9 +311,12 @@ export class QuillToolbarComponent implements OnInit {
         this.log.debug(`Change indicator present`);
 
         let range =
-          this.pages[0].tags[this.updateType as keyof Tags][id].metaData.range;
+          this.pages[this.pageId - 1].tags[this.updateType as keyof Tags][id]
+            .metaData.range;
         let length =
-          this.pages[0].tags[this.updateType as keyof Tags][id].name.length;
+          this.pages[this.pageId - 1].tags[this.updateType as keyof Tags][id]
+            .name.length;
+
 
         this.log.debug(
           `Setting the following: range = ${range} and length = ${length}`
@@ -184,7 +328,9 @@ export class QuillToolbarComponent implements OnInit {
           range,
           this.updateType,
           this.forValue(
-            this.pages[0].tags[this.updateType as keyof Tags][id].name,
+
+            this.pages[this.pageId - 1].tags[this.updateType as keyof Tags][id]
+              .name,
             this.updateType,
             id
           )
@@ -213,7 +359,11 @@ export class QuillToolbarComponent implements OnInit {
           this.range.index,
           this.sideBarTitle,
           this.forValue(
-            this.pages[0].tags[this.sideBarTitle as keyof Tags][id].name,
+
+            this.pages[this.pageId - 1].tags[this.sideBarTitle as keyof Tags][
+              id
+            ].name,
+
             this.sideBarTitle,
             id
           )
@@ -241,20 +391,21 @@ export class QuillToolbarComponent implements OnInit {
       case PERSON:
         tooltip =
           '<div class="tooltip"><table class="tooltipTable"><tr><td><strong>Notes:</strong></td><td>' +
-          this.pages[0].tags.person[id].notes +
+
+          this.pages[this.pageId - 1].tags.person[id].notes +
           '</td><table></div>';
         break;
       case PLACE:
         tooltip =
           '<div class="tooltip">' +
           '<table class="tooltipTable"><tr><td><strong>Location:</strong></td><td>' +
-          this.pages[0].tags.place[id].location +
+          this.pages[this.pageId - 1].tags.place[id].location +
           '</td></tr>' +
           '<tr><td><strong>Area:</strong></td><td>' +
-          this.pages[0].tags.place[id].area +
+          this.pages[this.pageId - 1].tags.place[id].area +
           '</td></tr>' +
           '<tr><td><strong>Notes:</strong></td><td>' +
-          this.pages[0].tags.place[id].notes +
+          this.pages[this.pageId - 1].tags.place[id].notes +
           '</td></tr></table>' +
           '</div>';
         break;
@@ -262,10 +413,10 @@ export class QuillToolbarComponent implements OnInit {
         tooltip =
           '<div class="tooltip">' +
           '<table class="tooltipTable"><tr><td><strong>Type:</strong></td><td>' +
-          this.pages[0].tags.item[id].type +
+          this.pages[this.pageId - 1].tags.item[id].type +
           '</td>' +
           '<tr><td><strong>Notes:</strong></td><td>' +
-          this.pages[0].tags.item[id].notes +
+          this.pages[this.pageId - 1].tags.item[id].notes +
           '</td></tr></table>' +
           '</div>';
         break;
@@ -273,7 +424,7 @@ export class QuillToolbarComponent implements OnInit {
         tooltip =
           '<div class="tooltip">' +
           '<table class="tooltipTable"><tr><td><strong>Notes:</strong></td><td>' +
-          this.pages[0].tags.misc[id].notes +
+          this.pages[this.pageId - 1].tags.misc[id].notes +
           '</td></tr></table>' +
           '</div>';
         break;
@@ -316,12 +467,14 @@ export class QuillToolbarComponent implements OnInit {
       );
       this.log.debug(
         `Updating button that matches index number: ${
-          this.pages[0].tags[buttonClass as keyof Tags][id].metaData.buttonIndex
+          this.pages[this.pageId - 1].tags[buttonClass as keyof Tags][id]
+            .metaData.buttonIndex
         }`
       );
       button =
         this.elementRef.nativeElement.querySelectorAll(queryString)[
-          this.pages[0].tags[buttonClass as keyof Tags][id].metaData.buttonIndex
+          this.pages[this.pageId - 1].tags[buttonClass as keyof Tags][id]
+            .metaData.buttonIndex
         ];
     } else {
       this.log.debug(`Running a new button`);
@@ -340,8 +493,10 @@ export class QuillToolbarComponent implements OnInit {
     if (!this.changeIndicator && !this.loadingContent) {
       //recording the number of the button in order of buttons for that type so that if the text
       //is channge we can assign the correct button
-      this.pages[0].tags[buttonClass as keyof Tags][id].metaData.buttonIndex =
-        count;
+      this.pages[this.pageId - 1].tags[buttonClass as keyof Tags][
+        id
+      ].metaData.buttonIndex = count;
+
       this.log.debug(`Button id is updated in page to ${count}`);
 
       //increment the button so we can find the new one on the next call
@@ -441,26 +596,7 @@ export class QuillToolbarComponent implements OnInit {
     }
   }
 
-  created(editor: any) {
-    this.log.info(`Quill editor created`);
 
-    this.quill = editor;
-    this.newQuillEditor.emit(this.quill);
-    this.log.info(`new editor announced and shared`);
-
-    this.log.info(`Setting content for the page:: Started`);
-    this.loadingContent = true;
-    try {
-      this.loadPageContent();
-    } catch (error) {
-      this.log.error(`issue loading content`);
-      this.log.error(`${error}`);
-    } finally {
-      this.loadingContent = false;
-    }
-
-    this.quill.focus();
-  }
 
   tagMenu(tagType: string) {
     this.sideBarTitle = tagType;
@@ -515,12 +651,11 @@ export class QuillToolbarComponent implements OnInit {
 
   highlightTag(ids: number[], type: string, active: boolean) {
     this.log.debug(`iterating array`);
-    this.log.debug(
-      `about to toggle the following: ids -> ${ids.toString()} type -> ${type} state -> ${active}`
-    );
+
     for (let id of ids) {
       this.log.debug(
-        `first button with id ${id} and type ${type} and this will be an active=${active} highlight`
+        `first button wit id ${id} and type ${type} and this will be an active=${active} highlight`
+
       );
       this.applyHighlight(id, type, active);
     }

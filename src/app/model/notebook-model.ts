@@ -6,5 +6,5 @@ export interface NoteBook {
   type: string,
   date: string,
   pages: Page[],
-  pagesLocation: string[]
+  saveLocation: string
 }

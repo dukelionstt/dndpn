@@ -1,7 +1,9 @@
     <div nz-col *ngFor="let tag of this.pages[0].tags | keyvalue">
-      <nz-card [nzBorderless]="false"
+      <nz-card 
                 nzTitle="{{tag.key}}"
-                [nzLoading]="loading">
+                [nzLoading]="loading"
+                [nzExtra]="closeTemplate"
+                id="{{tag.key}}Widget">
               <button class="widget {{tag.key}}Tag"
                     *ngFor="let widget of tag.value"
                     (click)="goToTagInPage($event, widget.metaData.buttonIndex, tag.key)"
@@ -10,4 +12,15 @@
             <img [src]="icons.getSrc(tag.key)"/>{{widget.name}}
           </button>
       </nz-card>
+      <ng-template #closeTemplate>
+        <button nz-button
+                nzType="text"
+                (click)="openCloseWidget(tag.key, false, false)">
+                <span nz-icon 
+                      nzType="close" 
+                      nzTheme="outline" 
+                      style="background-color: #828282;">
+                </span> 
+        </button>
+      </ng-template>
   </div>
