@@ -1,11 +1,9 @@
 .person {
-
   background-image: url("data:image/svg+xml;charset=utf8,%3Csvg id='squiggle-link' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:ev='http://www.w3.org/2001/xml-events' viewBox='0 0 20 4'%3E%3Cstyle type='text/css'%3E.squiggle{animation:shift .75s linear infinite; background-color: transparent;}@keyframes shift {from {transform:translateX(0);}to {transform:translateX(-20px);}}%3C/style%3E%3Cpath fill='none' stroke='%233D91E0' stroke-width='1' class='squiggle' d='M0,3.5 c 5,0,5,-3,10,-3 s 5,3,10,3 c 5,0,5,-3,10,-3 s 5,3,10,3'/%3E%3C/svg%3E");
-  
 }
 
 .personTag:before {
-  background: #3D91E0;
+  background: #3d91e0;
 }
 
 /* ------------------------------- */
@@ -15,19 +13,30 @@
 .personTagActive {
   color: #fff;
   background: transparent;
-
 }
 
 .personTagActive:before {
-  background: linear-gradient(45deg, #41beff,#20b5ff,#00adff,#00a4ff,#009aff,#0091ff,#0087fe,#007dfc,#0072f9,#0066f4,#005aef,#2a4de8,#413de0);
-  
+  background: linear-gradient(
+    45deg,
+    #41beff,
+    #20b5ff,
+    #00adff,
+    #00a4ff,
+    #009aff,
+    #0091ff,
+    #0087fe,
+    #007dfc,
+    #0072f9,
+    #0066f4,
+    #005aef,
+    #2a4de8,
+    #413de0
+  );
 }
 
 .personTagActive:after {
-    background: transparent;
+  background: transparent;
 }
-
-
 
 /* ------------------------------- */
 
@@ -35,26 +44,38 @@
 /* Kocsten CSS Button Hover Glow Effect */
 .highlight.personGlow {
   background: transparent;
-
 }
 
 .personGlow:before {
-  background: linear-gradient(45deg, #41beff,#20b5ff,#00adff,#00a4ff,#009aff,#0091ff,#0087fe,#007dfc,#0072f9,#0066f4,#005aef,#2a4de8,#413de0);
+  background: linear-gradient(
+    45deg,
+    #41beff,
+    #20b5ff,
+    #00adff,
+    #00a4ff,
+    #009aff,
+    #0091ff,
+    #0087fe,
+    #007dfc,
+    #0072f9,
+    #0066f4,
+    #005aef,
+    #2a4de8,
+    #413de0
+  );
 }
 
 .highlight.personGlow:after {
-    background: transparent;
+  background: transparent;
 }
 /* ------------------------------ */
 
 /* --------- tooltip elements ----- */
-.person:hover .tooltip{
-
+.person:hover .tooltip {
   background: #5f81ae;
   visibility: visible;
-  transform: translateY(-10px);
+  transform: translateY(-2.5px);
   opacity: 1;
-  transition: .3s linear;
-  animation: odsoky 1s ease-in-out infinite  alternate;
-
+  transition: 0.3s linear;
+  animation: odsoky 1s ease-in-out infinite alternate;
 }

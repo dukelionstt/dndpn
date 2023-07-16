@@ -14,6 +14,7 @@
     <nz-content>
       <!-- [pages] is passing main data object for this page
             (newQuillEditor) is to get the editor object -->
+
       <nz-tabset nzType="editable-card"
                 [(nzSelectedIndex)]="currentSelectedTab"
                 (nzAdd)="openPageMenu()"
@@ -38,6 +39,9 @@
         </div>
       </div>
     </nz-content>
+    <nz-footer>
+      <tags [pages]="pages"></tags>
+    </nz-footer>
   </nz-layout>
 </nz-layout>
 <!-- Model that deals with exporting content -->

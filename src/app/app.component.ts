@@ -1,3 +1,4 @@
+
 import {
   Component,
   OnInit,
@@ -59,6 +60,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   title = 'dndpn';
   quill: any;
   document!: any;
+  pageHtml!: any;
   noteBook!: NoteBook;
   pages!: Page[];
   htmlEncoder = new HttpUrlEncodingCodec();
@@ -437,9 +439,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
   }
 
+
   setNewQuillEditor(editor: any) {
     this.quill = editor;
   }
+
 
   savePage() {
     this.log.info(`starting`, 'savePage', 'AppComponent');

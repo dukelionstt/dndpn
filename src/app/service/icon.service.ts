@@ -23,6 +23,9 @@ export class IconService {
         case 'misc':
             img = '<img src="https://img.icons8.com/ios-glyphs/15/' + colour + '/magical-scroll.png"/>"';
         break;
+        case 'tag':
+            img = '<img src="https://img.icons8.com/ios-glyphs/15/' + colour + '/tags.png"/>"';
+        break;
       }
     } else {
       switch(icon){
@@ -38,11 +41,14 @@ export class IconService {
         case 'misc':
             img = '<img src="https://img.icons8.com/ios-glyphs/15/B413EC/magical-scroll.png"/>';
         break;
+        case 'tag':
+            img = '<img src="https://img.icons8.com/ios-glyphs/15/F8D512/tags.png"/>';
+        break;
       }
     }
 
     return img;
-    
+
   }
 
   getSrc(icon: string, colour?:string){
@@ -61,6 +67,9 @@ export class IconService {
         case 'misc':
             src = 'https://img.icons8.com/ios-glyphs/15/' + colour + '/magical-scroll.png';
         break;
+        case 'tag':
+            src = 'https://img.icons8.com/ios-glyphs/15/' + colour + '/tags.png';
+        break;
       }
     } else {
       switch(icon){
@@ -76,10 +85,13 @@ export class IconService {
         case 'misc':
             src = 'https://img.icons8.com/ios-glyphs/15/B413EC/magical-scroll.png';
         break;
+        case 'tag':
+            src = 'https://img.icons8.com/ios-glyphs/15/F8D512/tags.png';
+        break;
       }
     }
 
     return src;
-    
+
   }
 }
