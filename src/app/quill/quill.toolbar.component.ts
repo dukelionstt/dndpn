@@ -22,6 +22,7 @@ import { MenuService } from '../service/menu.service';
 import { HiglightEditorTagsService } from '../widgets/higlight.editor.tags.service';
 import { Delta } from 'quill';
 
+
 @Component({
   selector: 'toolbar',
   templateUrl: './quill.toolbar.component.html',
@@ -47,11 +48,13 @@ export class QuillToolbarComponent implements OnInit {
 
   @Output() newQuillEditor = new EventEmitter<any>();
 
+
   // @HostListener('document:command', ['$event'])
   // handleCommand(event: any){
   //   this.log.info(`Angular has receieved event`)
   //   this.log.info(event)
   // }
+
 
   range: any;
   text: string = '';
@@ -69,6 +72,7 @@ export class QuillToolbarComponent implements OnInit {
   pageId!: number;
   lastCursorPosition!: number;
 
+
   personTag: string = PERSON;
   placeTag: string = PLACE;
   itemTag: string = ITEM;
@@ -81,6 +85,7 @@ export class QuillToolbarComponent implements OnInit {
 
   htmlDecoder = new HttpUrlEncodingCodec();
   htmlEncoder = new HttpUrlEncodingCodec();
+
 
   constructor(
     private renderer: Renderer2,
@@ -108,6 +113,8 @@ export class QuillToolbarComponent implements OnInit {
     this.updateIndicator = false;
     this.changeIndicator = false;
     this.loadingContent = false;
+
+
 
     this.pageId = parseInt(this.passingPageId);
     console.debug(this.pageId);
@@ -139,6 +146,7 @@ export class QuillToolbarComponent implements OnInit {
       lenght: 0,
     };
   }
+
 
   editorCreated(editor: any) {
     this.log.info(`starting`, 'editorCreated', 'QuillToolbarComponent');
@@ -238,6 +246,7 @@ export class QuillToolbarComponent implements OnInit {
       this.log.debug(`Attacking click of ${tag.name}`);
       this.attachClickEvent(tagtype, tag.metaData.buttonIndex);
     }
+
     this.buttonEvents.set(tagtype, tagSet.length);
     this.log.info(
       `buttonevent tracker updated for ${tagtype} to ${tagSet.length}`
@@ -284,6 +293,7 @@ export class QuillToolbarComponent implements OnInit {
     }
   }
 
+
   //values passed in by the opening button.
   onNewTagSave(event: any[]) {
     this.log.info(`newTagSave process :: Started`);
@@ -306,6 +316,7 @@ export class QuillToolbarComponent implements OnInit {
           this.pages[this.pageId - 1].tags[this.updateType as keyof Tags][id]
             .name.length;
 
+
         this.log.debug(
           `Setting the following: range = ${range} and length = ${length}`
         );
@@ -316,6 +327,7 @@ export class QuillToolbarComponent implements OnInit {
           range,
           this.updateType,
           this.forValue(
+
             this.pages[this.pageId - 1].tags[this.updateType as keyof Tags][id]
               .name,
             this.updateType,
@@ -346,9 +358,11 @@ export class QuillToolbarComponent implements OnInit {
           this.range.index,
           this.sideBarTitle,
           this.forValue(
+
             this.pages[this.pageId - 1].tags[this.sideBarTitle as keyof Tags][
               id
             ].name,
+
             this.sideBarTitle,
             id
           )
@@ -376,6 +390,7 @@ export class QuillToolbarComponent implements OnInit {
       case PERSON:
         tooltip =
           '<div class="tooltip"><table class="tooltipTable"><tr><td><strong>Notes:</strong></td><td>' +
+
           this.pages[this.pageId - 1].tags.person[id].notes +
           '</td><table></div>';
         break;
@@ -480,6 +495,7 @@ export class QuillToolbarComponent implements OnInit {
       this.pages[this.pageId - 1].tags[buttonClass as keyof Tags][
         id
       ].metaData.buttonIndex = count;
+
       this.log.debug(`Button id is updated in page to ${count}`);
 
       //increment the button so we can find the new one on the next call
@@ -579,6 +595,8 @@ export class QuillToolbarComponent implements OnInit {
     }
   }
 
+
+
   tagMenu(tagType: string) {
     this.sideBarTitle = tagType;
     this.range = this.quill.getSelection();
@@ -632,9 +650,11 @@ export class QuillToolbarComponent implements OnInit {
 
   highlightTag(ids: number[], type: string, active: boolean) {
     this.log.debug(`iterating array`);
+
     for (let id of ids) {
       this.log.debug(
         `first button wit id ${id} and type ${type} and this will be an active=${active} highlight`
+
       );
       this.applyHighlight(id, type, active);
     }

@@ -4,6 +4,8 @@
 @import "css/place.css";
 @import "css/item.css";
 @import "css/misc.css";
+@import "css/tag.css";
+
 
 :root {
   --tagButonColor: black;
@@ -33,7 +35,8 @@
 }
 
 .widget,
-.highlight {
+.highlight,
+.tabMarker {
   border: none;
   outline: none;
   background: var(--tagButonColor);
@@ -45,7 +48,9 @@
 }
 
 .widget::before,
-.highlight::before {
+.highlight::before,
+.tabMarker::before {
+
   content: "";
   position: absolute;
   top: -2px;
@@ -54,8 +59,8 @@
   animation: glowing 20s linear infinite;
   z-index: -1;
   filter: blur(5px);
-  width: calc(100% + 4px);
-  height: calc(100% + 4px);
+  width: calc(100% + 6px);
+  height: calc(100% + 6px);
 
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
@@ -76,7 +81,8 @@
 }
 
 .widget:after,
-.highlight::after {
+.highlight::after,
+.tabMarker::after {
   z-index: -1;
   content: "";
   position: absolute;
@@ -85,7 +91,7 @@
   background: var(--tagButonColor);
   left: 0;
   top: 0;
-  border-radius: 10px;
+  border-radius: 15px;
 }
 /* maybe add a ReferenceHighlighted class to cover the tranparent background*/
 
@@ -152,6 +158,35 @@
 .tooltipTable {
   border: transparent;
   text-align: left;
+}
+
+
+/*  tags list tab container */
+.card-container ::ng-deep p {
+  margin: 0;
+}
+.card-container ::ng-deep > .ant-tabs-card .ant-tabs-content {
+  height: 120px;
+  margin-top: -16px;
+}
+.card-container
+  ::ng-deep
+  > .ant-tabs-card
+  .ant-tabs-content
+  > .ant-tabs-tabpane {
+  background: #fff;
+  padding: 16px;
+}
+.card-container ::ng-deep > .ant-tabs-card > .ant-tabs-nav::before {
+  display: none;
+}
+.card-container ::ng-deep > .ant-tabs-card .ant-tabs-tab {
+  border-color: transparent;
+  background: transparent;
+}
+.card-container ::ng-deep > .ant-tabs-card .ant-tabs-tab-active {
+  border-color: #fff;
+  background: #fff;
 }
 
 .closed {

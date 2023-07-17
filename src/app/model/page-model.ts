@@ -1,3 +1,6 @@
+
+import { TagMap } from './tag-map-model';
+
 import { Tags } from './tags-model';
 
 export interface Page {
@@ -6,7 +9,10 @@ export interface Page {
   date: string;
   tags: Tags;
   page: any;
+  tagReference?: number[];
+  tagMap?: TagMap[];
   isOpen: boolean;
   lastSaved: string;
   saveUpToDate: boolean;
+
 }

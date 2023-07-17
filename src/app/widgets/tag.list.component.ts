@@ -1,4 +1,5 @@
 import {
+
   AfterViewInit,
   Component,
   Directive,
@@ -18,6 +19,7 @@ import { ITEM, MISC, PERSON, PLACE } from '../constants';
 import { WidgetsListService } from '../data/widgets.list.service';
 import { LoggerService } from '../logger.service';
 import { WIDGET_STATES } from '../mock-data/widget-states-mock';
+
 import { Page } from '../model/page-model';
 import { Widget } from '../model/widget-model';
 import { QuillToolbarComponent } from '../quill/quill.toolbar.component';
@@ -32,7 +34,9 @@ const POST_FIX = 'Tag';
   selector: 'tag-list',
   templateUrl: './tag.list.component.html',
 })
+
 export class TagListComponent implements OnInit, AfterViewInit {
+
   @Input()
   quill!: any;
 
@@ -48,6 +52,7 @@ export class TagListComponent implements OnInit, AfterViewInit {
   tag = 'person';
 
   widgets!: Widget[];
+
   widgetStates!: Map<string, boolean>;
   loading!: boolean;
   active!: boolean;
@@ -314,4 +319,5 @@ export class TagListComponent implements OnInit, AfterViewInit {
   // getImgSrc(imgtype: string){
   //   return this.icons.get(imgtype);
   // }
+
 }

@@ -1,0 +1,30 @@
+
+<nz-layout>
+  <nz-header></nz-header>
+    <nz-layout>
+      <nz-sider>
+        <ul nz-menu [nzMode]="'vertical'">
+          <li nz-menu-item *ngFor="let tags of pageTagList | keyvalue">
+            <button class="tabMarker" (click)="selectCard(tags.key +'Card')">{{tags.key}}</button>
+          </li>
+        </ul>
+      </nz-sider>
+    <nz-content>
+      <nz-card *ngFor="let tags of pageTagList | keyvalue"
+                id="{{tags.key | trim }}Card"
+                hidden="true">
+        <button class="globalTag widget"
+                  *ngFor="let tag of tags.value"
+                  id="{{tag.id}}"
+                  nzTooltipTitle="{{tag.type}}"m
+                  nzTooltipPosition="left"
+                  (click)="selectTags($event, tag.id)"
+                  nz-tooltip>
+                <img [src]="icons.getSrc('tag')"/>{{tag.name}}
+          </button>
+      </nz-card>
+    </nz-content>
+    <nz-footer></nz-footer>
+  </nz-layout>
+</nz-layout>
+  
