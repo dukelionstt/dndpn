@@ -40,6 +40,7 @@ import { NzListModule } from 'ng-zorro-antd/list';
 import { NzMessageModule } from 'ng-zorro-antd/message';
 import { OpenMenuComponent } from './modal/open-menu/open-menu.component';
 import { OpenPageFilter } from './pipe/open-page-filter.pipe';
+import { NzMenuModule } from 'ng-zorro-antd/menu';
 
 registerLocaleData(en);
 

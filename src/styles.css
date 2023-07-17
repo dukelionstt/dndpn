@@ -35,7 +35,6 @@
 }
 
 .widget,
-
 .highlight,
 .tabMarker {
   border: none;
@@ -188,6 +187,7 @@
 .card-container ::ng-deep > .ant-tabs-card .ant-tabs-tab-active {
   border-color: #fff;
   background: #fff;
+}
 
 .closed {
   display: none;

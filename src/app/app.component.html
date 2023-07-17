@@ -1,4 +1,6 @@
 <nz-layout>
+  <!-- for the webVersion of the notebook app will have a menu options displayed by this, 
+    otherwise will just be title -->
   <nz-header>
     <menu [quill]="quill"
           [pages]="pages"
@@ -7,10 +9,12 @@
     <h1 nz-typography>Notebook - {{noteBook.name}}</h1>>
   </nz-header>
   <nz-layout>
+    <!-- display any tag widgets  -->
     <nz-sider>
       <tag-list [quill]="quill"
                 [pages]="pages"></tag-list>
     </nz-sider>
+    <!-- any pages of the notebook -->
     <nz-content>
       <!-- [pages] is passing main data object for this page
             (newQuillEditor) is to get the editor object -->
@@ -39,10 +43,11 @@
         </div>
       </div>
     </nz-content>
-    <nz-footer>
-      <tags [pages]="pages"></tags>
-    </nz-footer>
   </nz-layout>
+  <!-- global tag widgets -->
+  <nz-footer>
+    <tags [pages]="pages"></tags>
+  </nz-footer>
 </nz-layout>
 <!-- Model that deals with exporting content -->
 <nz-modal [(nzVisible)]="isExportModalVisible"
@@ -71,7 +76,6 @@
           </ng-container>
   
 </nz-modal>
-<!-- --------------------------------- -->
 <!-- --------------------------------- -->
 <button nz-button (click)="exportMenu()">modal</button>
 <div id="bridgeDiv" hidden></div>

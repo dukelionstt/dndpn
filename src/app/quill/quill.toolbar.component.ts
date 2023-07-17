@@ -167,8 +167,7 @@ export class QuillToolbarComponent implements OnInit {
     } finally {
       this.loadingContent = false;
     }
-    this.log.info(`Applying event handlers to taged words :: Finished`);
-  }
+
     this.log.debug(
       `before setting on change editor just filled is ${editorJustFilled}`,
       'editorCreated',
