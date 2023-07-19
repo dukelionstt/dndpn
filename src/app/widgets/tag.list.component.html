@@ -1,4 +1,5 @@
-    <div nz-col *ngFor="let tag of this.pages[0].tags | keyvalue">
+
+    <div nz-col *ngFor="let tag of this.pages[selectedTab].tags | keyvalue">
       <nz-card 
                 nzTitle="{{tag.key}}"
                 [nzLoading]="loading"

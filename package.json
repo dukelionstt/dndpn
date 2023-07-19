@@ -4,8 +4,8 @@
   "main": "app.js",
   "scripts": {
     "ng": "ng",
-    "start": "ng build --base-href ./  && electron .",
-    "other": "ng s --disable-host-check",
+    "other": "ng build --base-href ./  && electron .",
+    "start": "ng s --disable-host-check",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng s && electron ."

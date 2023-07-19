@@ -1,4 +1,3 @@
-
 import {
   Component,
   OnInit,
@@ -148,6 +147,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       'AppComponent'
     );
     this.newPageEntry = this.setupNewPageEntry();
+    this.currentSelectedTab = 0;
     this.log.info(`finishing`, 'ngOnInit', 'AppComponent');
   }
 
@@ -391,7 +391,7 @@ export class AppComponent implements OnInit, AfterViewInit {
             this.message.info('Page closed');
           },
         },
-      ]
+      ],
     });
     modal.getContentComponent();
   }
@@ -439,11 +439,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
   }
 
-
   setNewQuillEditor(editor: any) {
     this.quill = editor;
   }
-
 
   savePage() {
     this.log.info(`starting`, 'savePage', 'AppComponent');
