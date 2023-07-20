@@ -25,6 +25,7 @@ import { QuillToolbarComponent } from '../quill/quill.toolbar.component';
 import { IconService } from '../service/icon.service';
 import { MenuService } from '../service/menu.service';
 import { HiglightEditorTagsService } from './higlight.editor.tags.service';
+import { HighlightedTag } from '../model/highlighted-tag.model';
 
 const POST_FIX_ACTIVE = 'TagActive';
 const POST_FIX = 'Tag';
@@ -40,16 +41,8 @@ export class TagListComponent implements OnInit, AfterViewInit {
   @Input()
   pages!: Page[];
 
-  private _selectedTab = new BehaviorSubject<number>(0);
-
   @Input()
-  set getTab(value: number) {
-    this._selectedTab.next(value);
-  }
-
-  get getTab() {
-    return this._selectedTab.getValue();
-  }
+  selectedTab!: number;
 
   @Input()
   quilltoolbar!: QuillToolbarComponent;
@@ -65,14 +58,13 @@ export class TagListComponent implements OnInit, AfterViewInit {
   loading!: boolean;
   active!: boolean;
   isNewButton!: boolean;
-  previousIndex!: number;
   previousButton!: any;
   previousID!: number;
-  selectedTab!: number;
   previousType!: string;
   previousState!: boolean;
   icons = new IconService();
   tags = new Map();
+  highlightedTagMap!: Map<string, HighlightedTag>
 
   constructor(
     private widgetsList: WidgetsListService,
@@ -86,7 +78,6 @@ export class TagListComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.log.info(`starting`, 'OnInit', 'TagListComponent');
     this.loading = true;
-    this._selectedTab.subscribe((tab) => (this.selectedTab = tab));
     // this.icons.set(PERSON, 'https://img.icons8.com/ios-glyphs/15/3D91E0/human-head.png')
     // this.icons.set(PLACE, 'https://img.icons8.com/ios-glyphs/15/F1B620/castle.png')
     // this.icons.set(ITEM, 'https://img.icons8.com/ios-glyphs/15/016936/armored-breastplate.png')
@@ -113,6 +104,7 @@ export class TagListComponent implements OnInit, AfterViewInit {
       'ngAfterViewInit',
       'TagListComponent'
     );
+    // this.pages[this.selectedTab].
 
     this.menuService.personWidgetEvent.subscribe((flag) => {
       this.openCloseWidget(PERSON);
@@ -260,7 +252,7 @@ export class TagListComponent implements OnInit, AfterViewInit {
     this.log.info(`Finishing`, 'openCloseWidget', 'TagListComponent');
   }
 
-  goToTagInPage(event: any, index: number, type: string) {
+  goToTagInPage(buttonId: string, index: number, type: string) {
     this.log.info(`Started`, 'goToTagInPage', 'TagListComponent');
     this.log.debug(
       `highlight tag called, index:${index} & type:${type} passed. This is in tag list component`,
@@ -269,133 +261,150 @@ export class TagListComponent implements OnInit, AfterViewInit {
     );
 
     this.log.debug(type + index, 'goToTagInPage', 'TagListComponent');
-    this.log.debug(event, 'goToTagInPage', 'TagListComponent');
-    let pathIndex = this.findButtonElement(event.path);
+    
+    
 
-    if (this.isNewButton) {
-      this.log.info(
-        `tag button toggle present, switching highlights`,
-        'goToTagInPage',
-        'TagListComponent'
-      );
-      this.previousState = !this.previousState;
-      this.previousButton[this.previousIndex].classList = this.updateClassList(
-        this.previousButton[this.previousIndex].classList,
-        this.previousType,
-        this.previousState
-      );
-      this.highlightTagService.sendHighlightTag(
-        [this.previousID],
-        this.previousType,
-        this.previousState
-      );
-      this.isNewButton = false;
-      this.log.info(
-        `tag button toggle present, highlights switched`,
-        'goToTagInPage',
-        'TagListComponent'
-      );
+    this.log.debug(
+      `This is a ${this.previousButton != buttonId? 'new button' : 'previous button'}`,
+      'goToTagInPage',
+      'TagListComponent'
+    );
+
+    if(this.previousButton != undefined){
+      
+      if (this.previousButton != buttonId) {
+        this.log.info(
+          `tag button toggle present, switching highlights`,
+          'goToTagInPage',
+          'TagListComponent'
+        );
+        this.previousState = !this.previousState;
+        this.previousButton = this.updateClassList(
+          this.previousButton,
+          this.previousType,
+          this.previousState
+        );
+        this.highlightTagService.sendHighlightTag(
+          [this.previousID],
+          this.previousType,
+          this.previousState
+        );
+        this.isNewButton = false;
+        this.log.info(
+          `tag button toggle present, highlights switched`,
+          'goToTagInPage',
+          'TagListComponent'
+        );
+        
+      } else {
+        this.active = !this.active;
+      }
     } else {
       this.active = !this.active;
     }
 
-    event.path[pathIndex].classList = this.updateClassList(
-      event.path[pathIndex].classList,
-      type,
-      this.active
-    );
+    this.updateClassList(buttonId, type, this.active );
     this.highlightTagService.sendHighlightTag([index], type, this.active);
     this.log.info(
       `new tag button entries highlighted`,
       'goToTagInPage',
       'TagListComponent'
     );
-
-    this.previousButton = event.path;
-    this.previousIndex = pathIndex;
+    this.previousButton = buttonId;
     this.previousID = index;
     this.previousType = type;
     this.previousState = this.active;
 
+    
+
+    
+
     this.log.info(`Finished`, 'goToTagInPage', 'TagListComponent');
   }
 
-  private findButtonElement(path: any) {
-    this.log.info(`Started`, 'findButtonElement', 'TagListComponent');
-    let index = 0;
-    for (let element of path) {
-      if (element.nodeName == 'BUTTON') {
-        if (this.previousButton) {
-          this.log.debug(
-            `The previous element: ${
-              this.previousButton[this.previousIndex].id
-            }`,
-            'findButtonElement',
-            'TagListComponent'
-          );
-          this.log.debug(
-            `new element to be checked: ${element.id}`,
-            'findButtonElement',
-            'TagListComponent'
-          );
-          if (this.previousButton[this.previousIndex].id != element.id) {
-            if (this.previousState) {
-              this.log.debug(
-                `changing the is new button to true`,
-                'findButtonElement',
-                'TagListComponent'
-              );
-              this.isNewButton = true;
-            }
-          }
-        }
-        break;
-      } else {
-        index++;
-      }
-    }
-    this.log.info(`Finished`, 'findButtonElement', 'TagListComponent');
-    return index;
-  }
+  // private findButtonElement(path: any) {
+  //   this.log.info(`Started`, 'findButtonElement', 'TagListComponent');
+  //   let index = 0;
+  //   for (let element of path) {
+  //     if (element.nodeName == 'BUTTON') {
+  //       if (this.previousButton) {
+  //         this.log.debug(
+  //           `The previous element: ${
+  //             this.previousButton[this.previousIndex].id
+  //           }`,
+  //           'findButtonElement',
+  //           'TagListComponent'
+  //         );
+  //         this.log.debug(
+  //           `new element to be checked: ${element.id}`,
+  //           'findButtonElement',
+  //           'TagListComponent'
+  //         );
+  //         if (this.previousButton[this.previousIndex].id != element.id) {
+  //           if (this.previousState) {
+  //             this.log.debug(
+  //               `changing the is new button to true`,
+  //               'findButtonElement',
+  //               'TagListComponent'
+  //             );
+  //             this.isNewButton = true;
+  //           }
+  //         }
+  //       }
+  //       break;
+  //     } else {
+  //       index++;
+  //     }
+  //   }
+  //   this.log.info(`Finished`, 'findButtonElement', 'TagListComponent');
+  //   return index;
+  // }
 
   private updateClassList(
-    classList: DOMTokenList,
+    id: string,
     type: string,
     active: boolean
   ) {
-    this.log.info(`updateing tag button :: Started`);
-    this.log.info(`updating ${type} tag button status to active: ${active}`);
-    this.log.debug(`altering class list`);
-    this.log.debug(classList);
+    this.log.info(`starting`, 'updateClassList', 'TagListComponent');
+    this.log.info(`updating ${type} tag button status to active: ${active}`, 'updateClassList', 'TagListComponent');
+    let button = this.elementRef.nativeElement.querySelector(`#${id}`)
+    this.log.debug(`altering class list`, 'updateClassList', 'TagListComponent');
+    this.log.debug(button);
     let index = 0;
 
     if (active) {
       try {
-        classList.replace(type + POST_FIX, type + POST_FIX_ACTIVE);
-        this.log.info(`${type} tag button active`);
-        this.log.debug(`class list changed`);
-        this.log.debug(classList);
+        this.renderer.removeClass(button,type + POST_FIX);
+        this.renderer.addClass(button, type + POST_FIX_ACTIVE);
+        // (type + POST_FIX, type + POST_FIX_ACTIVE);
+        this.log.info(`${type} tag button active`, 'updateClassList', 'TagListComponent');
+        this.log.debug(`class list changed`, 'updateClassList', 'TagListComponent');
+        // this.log.debug(classList);
       } catch (error) {
         this.log.error(
           `issue in changing activer class for tag button, please review below`
+          , 'updateClassList', 'TagListComponent'
         );
         this.log.error(error);
       }
     } else {
       try {
-        classList.replace(type + POST_FIX_ACTIVE, type + POST_FIX);
-        this.log.info(`${type} tag button de-active`);
-        this.log.debug(`class list changed`);
-        this.log.debug(classList);
+        // classList.replace(type + POST_FIX_ACTIVE, type + POST_FIX);
+        this.renderer.removeClass(button,type + POST_FIX_ACTIVE);
+        this.renderer.addClass(button, type + POST_FIX);
+        this.log.info(`${type} tag button de-active`, 'updateClassList', 'TagListComponent');
+        this.log.debug(`class list changed`, 'updateClassList', 'TagListComponent');
+        // this.log.debug(classList);
       } catch (error) {
         this.log.error(
           `issue in changing activer class for tag button, please review below`
+          , 'updateClassList', 'TagListComponent'
         );
         this.log.error(error);
       }
     }
-    this.log.info(`updateing tag button :: Finished`);
-    return classList;
+    this.log.info(`Finished`, 'updateClassList', 'TagListComponent');
+    return id;
   }
 
   // getImgSrc(imgtype: string){

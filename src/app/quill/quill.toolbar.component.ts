@@ -78,7 +78,7 @@ export class QuillToolbarComponent implements OnInit {
 
   icons = new IconService();
   buttonEvents = new Map();
-  buttonList: Map<string, Map<string, ElementRef>> = new Map();
+  
 
   htmlDecoder = new HttpUrlEncodingCodec();
   htmlEncoder = new HttpUrlEncodingCodec();
@@ -103,10 +103,10 @@ export class QuillToolbarComponent implements OnInit {
     this.buttonEvents.set(ITEM, 0);
     this.buttonEvents.set(MISC, 0);
 
-    this.buttonList.set(PERSON, new Map());
-    this.buttonList.set(PLACE, new Map());
-    this.buttonList.set(ITEM, new Map());
-    this.buttonList.set(MISC, new Map());
+    
+    
+    
+    
 
     this.tagEntry = this.setupOrClearTagEntry();
 
@@ -266,15 +266,20 @@ export class QuillToolbarComponent implements OnInit {
   }
 
   private updateButtons(tagSet: any, tagtype: string) {
+    this.log.info(`starting`, 'updateButtons', 'QuillToolbarComponent');
+    
     for (let tag of tagSet) {
-      this.log.debug(`Attacking click of ${tag.name}`);
+      this.log.debug(`Attacking click of ${tag.name}`, 'updateButtons', 'QuillToolbarComponent');
       this.attachClickEvent(tagtype, tag.metaData.buttonIndex);
     }
 
     this.buttonEvents.set(tagtype, tagSet.length);
     this.log.info(
       `buttonevent tracker updated for ${tagtype} to ${tagSet.length}`
+      , 'updateButtons', 'QuillToolbarComponent'
     );
+    
+    this.log.info(`finish`, 'updateButtons', 'QuillToolbarComponent');
   }
 
   changeOccured() {
@@ -583,15 +588,7 @@ export class QuillToolbarComponent implements OnInit {
       //store the increment
       this.buttonEvents.set(buttonClass, count);
       let tempMap: Map<string, ElementRef> = new Map();
-      this.buttonList.set(
-        buttonClass,
-        tempMap.set(
-          this.pages[this.pageId - 1].tags[buttonClass as keyof Tags][
-            id
-          ].metaData.buttonIndex.toString(),
-          button
-        )
-      );
+      
       this.log.debug(
         `button set ${buttonClass} has been updated to ${count}`,
         'attachClickEvent',
@@ -768,8 +765,7 @@ export class QuillToolbarComponent implements OnInit {
 
   private applyHighlight(id: number, type: string, active: boolean) {
     this.log.info('Starting', 'applyHighlight', 'QuillToolbarComponent');
-    // let button = this.elementRef.nativeElement.querySelectorAll('.' + type)[id];
-    let button = this.buttonList.get(type)?.get(id.toString());
+    let button = this.elementRef.nativeElement.querySelectorAll('.' + type)[id];
     this.log.debug(
       `button found ${button}`,
       'applyHighlight',

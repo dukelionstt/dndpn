@@ -7,7 +7,7 @@
                 id="{{tag.key}}Widget">
               <button class="widget {{tag.key}}Tag"
                     *ngFor="let widget of tag.value"
-                    (click)="goToTagInPage($event, widget.metaData.buttonIndex, tag.key)"
+                    (click)="goToTagInPage(tag.key+widget.metaData.buttonIndex, widget.metaData.buttonIndex, tag.key)"
                     id="{{tag.key}}{{widget.metaData.buttonIndex}}"
                     #tagButton>
             <img [src]="icons.getSrc(tag.key)"/>{{widget.name}}

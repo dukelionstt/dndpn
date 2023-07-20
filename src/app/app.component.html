@@ -11,10 +11,10 @@
   <nz-layout>
     <!-- display any tag widgets  -->
     <nz-sider>
-      <div *ngIf="currentSelectedTab">
+      <div *ngIf="currentSelectedTab != undefined">
         <tag-list [quill]="quill"
                   [pages]="pages"
-                  [getTab]="currentSelectedTab | async"></tag-list>
+                  [selectedTab]="currentSelectedTab"></tag-list>
       </div>
     </nz-sider>
     <!-- any pages of the notebook -->
