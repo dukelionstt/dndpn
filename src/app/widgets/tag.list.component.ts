@@ -89,14 +89,27 @@ export class TagListComponent implements OnInit, AfterViewInit {
   }
 
   buildHighlightedTagMap() {
+    this.log.info(`starting`, 'buildHighlightedTagMap', 'TagListComponent');
     let childmap: Map<string, HighlightedTag> = new Map();
 
     for (let [key, value] of Object.entries(
       this.pages[this.selectedTab].tags
     )) {
+      this.log.debug(
+        `running loop for key ${key} and value (next line)`,
+        'buildHighlightedTagMap',
+        'TagListComponent'
+      );
+      this.log.debug(value);
       for (let tag of value) {
+        this.log.debug(
+          `running loop tag (next line)`,
+          'buildHighlightedTagMap',
+          'TagListComponent'
+        );
+        this.log.debug(tag);
         let tempHighlightedTag: HighlightedTag = {
-          buttonID: key + value.metaData.buttonIndex,
+          buttonID: key + tag.metaData.buttonIndex,
           state: this.active,
           change: false,
         };
@@ -104,6 +117,7 @@ export class TagListComponent implements OnInit, AfterViewInit {
       }
       this.highlightedTagMap.set(key, childmap);
     }
+    this.log.info(`finished`, 'buildHighlightedTagMap', 'TagListComponent');
   }
 
   ngAfterViewInit(): void {
@@ -273,7 +287,7 @@ export class TagListComponent implements OnInit, AfterViewInit {
   goToTagInPage(buttonId: string, index: number, type: string) {
     this.log.info(`Started`, 'goToTagInPage', 'TagListComponent');
 
-    if (this.previousButton == undefined) {
+    if (this.previousButton != undefined) {
       if (this.previousButton != buttonId) {
         this.updateHighlightedTagMap(
           this.previousButton,
@@ -341,10 +355,10 @@ export class TagListComponent implements OnInit, AfterViewInit {
     //   'goToTagInPage',
     //   'TagListComponent'
     // );
-    // this.previousButton = buttonId;
-    // this.previousID = index;
-    // this.previousType = type;
-    // this.previousState = this.active;
+
+    this.previousButton = buttonId;
+    this.previousID = index;
+    this.previousType = type;
 
     this.log.info(`Finished`, 'goToTagInPage', 'TagListComponent');
   }
