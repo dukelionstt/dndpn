@@ -62,6 +62,7 @@ export class TagsComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
+    this.log.info(`Starting`, 'ngOnInit', 'TagsComponent');
     this.tags = this.tagService.getTags();
     this.pageTagList = this.buildPageTagList();
     this.tagMap = this.tagService.getTagMap();
@@ -69,17 +70,20 @@ export class TagsComponent implements OnInit, AfterViewInit {
       this.tagMap.map((tags) => [tags.id, tags.locations])
     );
     this.animationState = DEFAULT;
+    this.log.info(`finishing`, 'ngOnInit', 'TagsComponent');
   }
 
   ngAfterViewInit(): void {
+    this.log.info(`Starting`, 'ngAfterViewInit', 'TagsComponent');
     this.log.debug('running change ');
     this.switchCard(
       this.elementRef.nativeElement.querySelector('#NotebookCard')
     );
+    this.log.info(`finishing`, 'ngAfterViewInit', 'TagsComponent');
   }
 
   private buildPageTagList() {
-    this.log.info(`building tags dictionary :: Starting`);
+    this.log.info(`Starting`, 'buildPageTagList', 'TagsComponent');
     let temp = new Map<string, Tag[]>();
 
     temp.set('Notebook', this.tags);
@@ -89,12 +93,12 @@ export class TagsComponent implements OnInit, AfterViewInit {
       let tempList: Tag[] = [];
       if (page.tagReference) {
         //remove once all page refences are fixed
-        this.log.debug(`using the following ids for to search tags`);
+        this.log.debug(`using the following ids for to search tags`, 'buildPageTagList', 'TagsComponent');
         this.log.debug(page.tagReference);
         for (let id of page.tagReference) {
-          this.log.debug(`searching with id ${id}`);
+          this.log.debug(`searching with id ${id}`, 'buildPageTagList', 'TagsComponent');
           let tempTag = this.getTagById(id);
-          this.log.debug(`Following entry created`);
+          this.log.debug(`Following entry created`, 'buildPageTagList', 'TagsComponent');
           this.log.debug(tempTag);
           if (tempTag) {
             tempList.push(tempTag);
@@ -103,9 +107,9 @@ export class TagsComponent implements OnInit, AfterViewInit {
       }
       temp.set(page.name, tempList);
     }
-    this.log.debug(`following object will be retured`);
+    this.log.debug(`following object will be retured`, 'buildPageTagList', 'TagsComponent');
     this.log.debug(temp);
-    this.log.info(`building tags dictionary :: finishing`);
+    this.log.info(`finishing`, 'buildPageTagList', 'TagsComponent');
     return temp;
   }
 
@@ -119,7 +123,8 @@ export class TagsComponent implements OnInit, AfterViewInit {
   }
 
   selectTags(event: any, id: number) {
-    this.log.info(`following passed in id ${id}`);
+    this.log.info(`Starting`, 'selectTags', 'TagsComponent');
+    this.log.info(`following passed in id ${id}`, 'selectTags', 'TagsComponent');
     let list: Map<string, number[]> = new Map<string, number[]>();
 
     list = this.collectIds(id);
@@ -132,27 +137,34 @@ export class TagsComponent implements OnInit, AfterViewInit {
     } else {
       this.animationState = DEFAULT;
     }
+    this.log.info(`finishing`, 'selectTags', 'TagsComponent');
   }
 
   selectCard(cardId: string) {
+    this.log.info(`Starting`, 'selectCard', 'TagsComponent');
     let queryString = `#${cardId.replace(/\s/g, '')}`;
     let card = this.elementRef.nativeElement.querySelector(queryString);
     this.log.debug(
       `queryString is set to ${queryString} and the card is set to the following:`
+      , 'selectCard', 'TagsComponent'
     );
     this.log.debug(card);
     this.switchCard(card);
+    this.log.info(`finishing`, 'selectCard', 'TagsComponent');
   }
 
   private switchCard(element: ElementRef) {
+    this.log.info(`Starting`, 'switchCard', 'TagsComponent');
     if (this.previousCard) {
       this.renderer.setAttribute(this.previousCard, 'hidden', 'true');
     }
     this.renderer.removeAttribute(element, 'hidden');
     this.previousCard = element;
+    this.log.info(`finishing`, 'switchCard', 'TagsComponent');
   }
 
   private collectIds(id: number) {
+    this.log.info(`Starting`, 'collectIds', 'TagsComponent');
     let tempMap: Map<string, number[]> = new Map<string, number[]>();
     let key: string = '';
     let tempList: number[] = [];
@@ -178,7 +190,7 @@ export class TagsComponent implements OnInit, AfterViewInit {
 
       tempMap.set(key, tempList);
     }
-
+    this.log.info(`finishing`, 'collectIds', 'TagsComponent');
     return tempMap;
   }
 

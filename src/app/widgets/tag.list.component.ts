@@ -82,7 +82,7 @@ export class TagListComponent implements OnInit, AfterViewInit {
     // this.icons.set(PLACE, 'https://img.icons8.com/ios-glyphs/15/F1B620/castle.png')
     // this.icons.set(ITEM, 'https://img.icons8.com/ios-glyphs/15/016936/armored-breastplate.png')
     // this.icons.set(MISC, 'https://img.icons8.com/ios-glyphs/15/952B60/magical-scroll.png')
-    this.buildHighlightedTagMap();
+    
     this.active = false;
     this.isNewButton = false;
     this.log.info(`finished`, 'OnInit', 'TagListComponent');
@@ -90,11 +90,12 @@ export class TagListComponent implements OnInit, AfterViewInit {
 
   buildHighlightedTagMap() {
     this.log.info(`starting`, 'buildHighlightedTagMap', 'TagListComponent');
-    let childmap: Map<string, HighlightedTag> = new Map();
+    // let childmap: Map<string, HighlightedTag> = new Map();
 
     for (let [key, value] of Object.entries(
       this.pages[this.selectedTab].tags
     )) {
+      let childmap: Map<string, HighlightedTag> = new Map();
       this.log.debug(
         `running loop for key ${key} and value (next line)`,
         'buildHighlightedTagMap',
@@ -113,7 +114,7 @@ export class TagListComponent implements OnInit, AfterViewInit {
           state: this.active,
           change: false,
         };
-        childmap.set(value.metaData.buttonIndex.toString(), tempHighlightedTag);
+        childmap.set(tag.metaData.buttonIndex.toString(), tempHighlightedTag);
       }
       this.highlightedTagMap.set(key, childmap);
     }
@@ -137,6 +138,9 @@ export class TagListComponent implements OnInit, AfterViewInit {
       'TagListComponent'
     );
     // this.pages[this.selectedTab].
+    this.buildHighlightedTagMap();
+    this.log.debug("displaying highlighedTagMap on mext log line", 'ngAfterViewInit', 'TagListComponent' )
+    this.log.debug(this.highlightedTagMap);
 
     this.menuService.personWidgetEvent.subscribe((flag) => {
       this.openCloseWidget(PERSON);
@@ -289,76 +293,19 @@ export class TagListComponent implements OnInit, AfterViewInit {
 
     if (this.previousButton != undefined) {
       if (this.previousButton != buttonId) {
-        this.updateHighlightedTagMap(
-          this.previousButton,
-          this.previousID.toString(),
-          this.previousType,
-          true
-        );
+        if(this.previousState){
+          this.updateHighlightedTagMap(this.previousButton, this.previousID.toString(), this.previousType, true)
+        }
       }
     }
-    this.updateHighlightedTagMap(buttonId, index.toString(), type, true);
+    this.previousState = this.updateHighlightedTagMap(buttonId, index.toString(), type, true);
 
     this.updateClassList();
-
-    // this.log.debug(
-    //   `highlight tag called, index:${index} & type:${type} passed. This is in tag list component`,
-    //   'goToTagInPage',
-    //   'TagListComponent'
-    // );
-
-    // this.log.debug(type + index, 'goToTagInPage', 'TagListComponent');
-
-    // this.log.debug(
-    //   `This is a ${
-    //     this.previousButton != buttonId ? 'new button' : 'previous button'
-    //   }`,
-    //   'goToTagInPage',
-    //   'TagListComponent'
-    // );
-
-    // if (this.previousButton != undefined) {
-    //   if (this.previousButton != buttonId) {
-    //     this.log.info(
-    //       `tag button toggle present, switching highlights`,
-    //       'goToTagInPage',
-    //       'TagListComponent'
-    //     );
-    //     this.previousState = !this.previousState;
-    //     this.previousButton = this.updateClassList(
-    //       this.previousButton,
-    //       this.previousType,
-    //       this.previousState
-    //     );
-    //     this.highlightTagService.sendHighlightTag(
-    //       [this.previousID],
-    //       this.previousType,
-    //       this.previousState
-    //     );
-    //     this.isNewButton = false;
-    //     this.log.info(
-    //       `tag button toggle present, highlights switched`,
-    //       'goToTagInPage',
-    //       'TagListComponent'
-    //     );
-    //   } else {
-    //     this.active = !this.active;
-    //   }
-    // } else {
-    //   this.active = !this.active;
-    // }
-
-    // this.updateClassList(buttonId, type, this.active);
-    // this.highlightTagService.sendHighlightTag([index], type, this.active);
-    // this.log.info(
-    //   `new tag button entries highlighted`,
-    //   'goToTagInPage',
-    //   'TagListComponent'
-    // );
 
     this.previousButton = buttonId;
     this.previousID = index;
     this.previousType = type;
+    
 
     this.log.info(`Finished`, 'goToTagInPage', 'TagListComponent');
   }
@@ -370,14 +317,21 @@ export class TagListComponent implements OnInit, AfterViewInit {
     change: boolean
   ) {
     this.log.info(`Starting`, 'updateHighlightedTagMap', 'TagListComponent');
+    this.log.info(`Values passed in are buttonID = ${buttonId}, index=${index}, type=${type} and change=${change}`, 'updateHighlightedTagMap', 'TagListComponent');
+
+    let tempState: boolean = false;
     let tempHighlightedMap = this.highlightedTagMap.get(type);
+    this.log.debug("displaying tempHighlightedMap on mext log line", 'updateHighlightedTagMap', 'TagListComponent' )
+    this.log.debug(tempHighlightedMap);
 
     if (tempHighlightedMap) {
       let tempTagMap = tempHighlightedMap.get(index);
+      this.log.debug("displaying tempTagMap on mext log line", 'updateHighlightedTagMap', 'TagListComponent' )
+      this.log.debug(tempTagMap);
       if (tempTagMap) {
         if (tempTagMap.buttonID == buttonId) {
-          tempTagMap.change = true;
-          tempTagMap.state = !tempTagMap.state;
+          tempTagMap.change = change;
+          tempTagMap.state = tempState = change? !tempTagMap.state : tempTagMap.state;
           tempHighlightedMap.set(index, tempTagMap);
           this.highlightedTagMap.set(type, tempHighlightedMap);
         } else {
@@ -403,45 +357,9 @@ export class TagListComponent implements OnInit, AfterViewInit {
     }
 
     this.log.info(`Finished`, 'updateHighlightedTagMap', 'TagListComponent');
+    return tempState;
   }
 
-  // private findButtonElement(path: any) {
-  //   this.log.info(`Started`, 'findButtonElement', 'TagListComponent');
-  //   let index = 0;
-  //   for (let element of path) {
-  //     if (element.nodeName == 'BUTTON') {
-  //       if (this.previousButton) {
-  //         this.log.debug(
-  //           `The previous element: ${
-  //             this.previousButton[this.previousIndex].id
-  //           }`,
-  //           'findButtonElement',
-  //           'TagListComponent'
-  //         );
-  //         this.log.debug(
-  //           `new element to be checked: ${element.id}`,
-  //           'findButtonElement',
-  //           'TagListComponent'
-  //         );
-  //         if (this.previousButton[this.previousIndex].id != element.id) {
-  //           if (this.previousState) {
-  //             this.log.debug(
-  //               `changing the is new button to true`,
-  //               'findButtonElement',
-  //               'TagListComponent'
-  //             );
-  //             this.isNewButton = true;
-  //           }
-  //         }
-  //       }
-  //       break;
-  //     } else {
-  //       index++;
-  //     }
-  //   }
-  //   this.log.info(`Finished`, 'findButtonElement', 'TagListComponent');
-  //   return index;
-  // }
 
   private updateClassList() {
     this.log.info(`starting`, 'updateClassList', 'TagListComponent');
@@ -450,7 +368,8 @@ export class TagListComponent implements OnInit, AfterViewInit {
       tagMap.forEach((tag, index) => {
         if (tag.change) {
           this.toggleClass(tag.buttonID, tag.state, type);
-          this.updateHighlightedTagMap(tag.buttonID, index, type, false);
+          this.highlightTagService.sendHighlightTag([parseInt(index)], type, tag.state)
+          this.updateHighlightedTagMap(tag.buttonID, index, type, !tag.change);
         }
       });
     });
@@ -459,34 +378,40 @@ export class TagListComponent implements OnInit, AfterViewInit {
   }
 
   private toggleClass(buttonID: string, state: boolean, type: string) {
+    this.log.info(`starting`, 'toggleClass', 'TagListComponent');
+    this.log.info(`Values passed in are buttonID = ${buttonID}, state=${state} and type=${type}`, 'toggleClass', 'TagListComponent');
+
     let button = this.elementRef.nativeElement.querySelector(`#${buttonID}`);
+    this.log.debug('next line is the button object')
+    this.log.debug(button)
+
     this.log.debug(
       `altering class list`,
-      'updateClassList',
+      'toggleClass',
       'TagListComponent'
     );
-    this.log.debug(button);
     let index = 0;
 
     if (state) {
       try {
         this.renderer.removeClass(button, type + POST_FIX);
         this.renderer.addClass(button, type + POST_FIX_ACTIVE);
-        // (type + POST_FIX, type + POST_FIX_ACTIVE);
+        
+        
         this.log.info(
           `${type} tag button active`,
-          'updateClassList',
+          'toggleClass',
           'TagListComponent'
         );
         this.log.debug(
           `class list changed`,
-          'updateClassList',
+          'toggleClass',
           'TagListComponent'
         );
       } catch (error) {
         this.log.error(
           `issue in changing activer class for tag button, please review below`,
-          'updateClassList',
+          'toggleClass',
           'TagListComponent'
         );
         this.log.error(error);
@@ -497,96 +422,26 @@ export class TagListComponent implements OnInit, AfterViewInit {
         this.renderer.addClass(button, type + POST_FIX);
         this.log.info(
           `${type} tag button de-active`,
-          'updateClassList',
+          'toggleClass',
           'TagListComponent'
         );
         this.log.debug(
           `class list changed`,
-          'updateClassList',
+          'toggleClass',
           'TagListComponent'
         );
         // this.log.debug(classList);
       } catch (error) {
         this.log.error(
           `issue in changing activer class for tag button, please review below`,
-          'updateClassList',
+          'toggleClass',
           'TagListComponent'
         );
         this.log.error(error);
       }
     }
+    this.log.info(`Finished`, 'toggleClass', 'TagListComponent');
   }
 
-  // private updateClassList(id: string, type: string, active: boolean) {
-  //   this.log.info(`starting`, 'updateClassList', 'TagListComponent');
-  //   this.log.info(
-  //     `updating ${type} tag button status to active: ${active}`,
-  //     'updateClassList',
-  //     'TagListComponent'
-  //   );
-  //   let button = this.elementRef.nativeElement.querySelector(`#${id}`);
-  //   this.log.debug(
-  //     `altering class list`,
-  //     'updateClassList',
-  //     'TagListComponent'
-  //   );
-  //   this.log.debug(button);
-  //   let index = 0;
 
-  //   if (active) {
-  //     try {
-  //       this.renderer.removeClass(button, type + POST_FIX);
-  //       this.renderer.addClass(button, type + POST_FIX_ACTIVE);
-  //       // (type + POST_FIX, type + POST_FIX_ACTIVE);
-  //       this.log.info(
-  //         `${type} tag button active`,
-  //         'updateClassList',
-  //         'TagListComponent'
-  //       );
-  //       this.log.debug(
-  //         `class list changed`,
-  //         'updateClassList',
-  //         'TagListComponent'
-  //       );
-  //       // this.log.debug(classList);
-  //     } catch (error) {
-  //       this.log.error(
-  //         `issue in changing activer class for tag button, please review below`,
-  //         'updateClassList',
-  //         'TagListComponent'
-  //       );
-  //       this.log.error(error);
-  //     }
-  //   } else {
-  //     try {
-  //       // classList.replace(type + POST_FIX_ACTIVE, type + POST_FIX);
-  //       this.renderer.removeClass(button, type + POST_FIX_ACTIVE);
-  //       this.renderer.addClass(button, type + POST_FIX);
-  //       this.log.info(
-  //         `${type} tag button de-active`,
-  //         'updateClassList',
-  //         'TagListComponent'
-  //       );
-  //       this.log.debug(
-  //         `class list changed`,
-  //         'updateClassList',
-  //         'TagListComponent'
-  //       );
-  //       // this.log.debug(classList);
-  //     } catch (error) {
-  //       this.log.error(
-  //         `issue in changing activer class for tag button, please review below`,
-  //         'updateClassList',
-  //         'TagListComponent'
-  //       );
-  //       this.log.error(error);
-  //     }
-  //   }
-  //   this.log.info(`Finished`, 'updateClassList', 'TagListComponent');
-  //   return id;
-  // }
-
-  // getImgSrc(imgtype: string){
-  //   return this.icons.get(imgtype);
-  // }
 }
