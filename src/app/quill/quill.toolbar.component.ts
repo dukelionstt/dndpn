@@ -118,8 +118,13 @@ export class QuillToolbarComponent implements OnInit {
     this.pageId = parseInt(this.passingPageId);
     console.debug(this.pageId);
 
-    this.highlightTagService.highLightTag.subscribe((tags) =>
-      this.highlightTag(tags.ids, tags.type, tags.active)
+    this.highlightTagService.highLightTag.subscribe((tags) => {
+      if(tags.pageId == this.pageId){
+        this.highlightTag(tags.ids, tags.type, tags.active)
+      }
+      
+    }
+      
     );
     // this.menuService.getPasteQuill.subscribe(clipbaord => this.pasteClipboard(clipbaord))
 

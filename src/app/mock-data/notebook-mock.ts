@@ -4,7 +4,7 @@ import { PAGE_2 } from './page2-mock';
 
 export const NOTEBOOK: NoteBook = {
   id: 1,
-  name: 'teseting Notebook',
+  name: 'testing Notebook',
   date: new Date().getDate().toString(),
   type: 'DND',
   pages: [PAGE, PAGE_2],
