@@ -68,6 +68,7 @@ export class QuillToolbarComponent implements OnInit {
   toolId!: number;
   pageId!: number;
   lastCursorPosition!: number;
+  maxExtractLength!: number;
 
   personTag: string = PERSON;
   placeTag: string = PLACE;
@@ -78,7 +79,6 @@ export class QuillToolbarComponent implements OnInit {
 
   icons = new IconService();
   buttonEvents = new Map();
-  
 
   htmlDecoder = new HttpUrlEncodingCodec();
   htmlEncoder = new HttpUrlEncodingCodec();
@@ -103,10 +103,7 @@ export class QuillToolbarComponent implements OnInit {
     this.buttonEvents.set(ITEM, 0);
     this.buttonEvents.set(MISC, 0);
 
-    
-    
-    
-    
+    this.maxExtractLength = 150;
 
     this.tagEntry = this.setupOrClearTagEntry();
 
@@ -119,13 +116,10 @@ export class QuillToolbarComponent implements OnInit {
     console.debug(this.pageId);
 
     this.highlightTagService.highLightTag.subscribe((tags) => {
-      if(tags.pageId == this.pageId){
-        this.highlightTag(tags.ids, tags.type, tags.active)
+      if (tags.pageId == this.pageId) {
+        this.highlightTag(tags.ids, tags.type, tags.active);
       }
-      
-    }
-      
-    );
+    });
     // this.menuService.getPasteQuill.subscribe(clipbaord => this.pasteClipboard(clipbaord))
 
     this.log.info(`initilising variables for puill tool bar:: finished`);
@@ -267,23 +261,29 @@ export class QuillToolbarComponent implements OnInit {
       'loadPageContent',
       'QuillToolbarComponent'
     );
+    this.getTagEntryExtract('0', PERSON);
     this.log.info('starting', 'loadPageContent', 'QuillToolbarComponent');
   }
 
   private updateButtons(tagSet: any, tagtype: string) {
     this.log.info(`starting`, 'updateButtons', 'QuillToolbarComponent');
-    
+
     for (let tag of tagSet) {
-      this.log.debug(`Attacking click of ${tag.name}`, 'updateButtons', 'QuillToolbarComponent');
+      this.log.debug(
+        `Attacking click of ${tag.name}`,
+        'updateButtons',
+        'QuillToolbarComponent'
+      );
       this.attachClickEvent(tagtype, tag.metaData.buttonIndex);
     }
 
     this.buttonEvents.set(tagtype, tagSet.length);
     this.log.info(
-      `buttonevent tracker updated for ${tagtype} to ${tagSet.length}`
-      , 'updateButtons', 'QuillToolbarComponent'
+      `buttonevent tracker updated for ${tagtype} to ${tagSet.length}`,
+      'updateButtons',
+      'QuillToolbarComponent'
     );
-    
+
     this.log.info(`finish`, 'updateButtons', 'QuillToolbarComponent');
   }
 
@@ -308,23 +308,6 @@ export class QuillToolbarComponent implements OnInit {
       this.pages[this.pageId].saveUpToDate = true;
     }
     this.log.info(`finish`, 'changeOccured', 'QuillToolbarComponent');
-  }
-
-  // trackFocus(element: string){
-  //   this.log.info("focus change event recieved.");
-  //   this.menuService.sendFocusEvent(element);
-  // }
-
-  // trackCursor(){
-  //   if(this.quill.hasFocus()){
-  //     this.lastCursorPosition = this.quill.getSelection();
-  //   }
-  // }
-
-  private pasteClipboard(clipboard: ClipboardItems) {
-    for (let item of clipboard) {
-      let contents = item.getType('blob');
-    }
   }
 
   //values passed in by the opening button.
@@ -593,7 +576,7 @@ export class QuillToolbarComponent implements OnInit {
       //store the increment
       this.buttonEvents.set(buttonClass, count);
       let tempMap: Map<string, ElementRef> = new Map();
-      
+
       this.log.debug(
         `button set ${buttonClass} has been updated to ${count}`,
         'attachClickEvent',
@@ -725,33 +708,57 @@ export class QuillToolbarComponent implements OnInit {
     this.open();
   }
 
-  // ngOnChanges(changes: {[propKey: string]: SimpleChange}){
-  //   for(let propName in changes){
-  //     // this.log.debug(`changed detected ${propName}`)
-  //     if(propName == "sending"){
-  //       this.log.debug(`change in ${propName} detected`)
-  //       if(this.sending){
-  //         this.log.debug(`Recieved new message, highlighting tags`)
-  //         this.log.debug(`highlighting complete`)
-  //         this.highlightMessageRecieved.emit(true)
-  //       } else {
-  //         this.log.debug(`Message acknowledgement ignoring`)
-  //       }
-  //       // let change = changes[propName]
-  //       // if(change.isFirstChange()){
-  //       //   this.log.debug(`First time highlightedMap is set with `)
-  //       // } else {
-  //       //   this.log.debug(`acting on change, iterating map`)
-  //       //     this.highlightConfig.map.forEach((tags: Map<string, number[]>, active:boolean) => {
-  //       //       this.log.debug(`Working through active: ${active} buttons first`)
-  //       //       tags.forEach((ids: number[], type: string) => {
-  //       //         this.highlightTag(ids, type, active)
-  //       //       })
-  //       //     })
-  //       // }
-  //     }
-  //   }
-  // }
+  getTagEntryExtract(tagId: string, tagType: string) {
+    this.log.info('Starting', 'getTagEntryString', 'QuillToolbarComponent');
+    let tagEntries = Object.getOwnPropertyDescriptor(
+      this.pages[this.pageId].tags,
+      tagType
+    );
+    let range: number = -1;
+    let length: number = 0;
+    let extract: string = '';
+
+    if (tagEntries) {
+      for (let tagEntry of tagEntries.value) {
+        if (tagEntry.id.toString() == tagId) {
+          range = tagEntry.metaData.range;
+          length = tagEntry.metaData.lenght;
+        }
+      }
+    } else {
+      this.log.error(
+        `Issue retrieving the tag entery from page`,
+        'getTagEntryString',
+        'QuillToolbarComponent'
+      );
+    }
+    if (range != -1) {
+      if (range <= 150 + length) {
+        if (this.quill.getlength() > 150 + length) {
+          extract = this.quill.getText(0, 150);
+        } else {
+          extract = this.quill.getText(0, this.quill.getLength());
+        }
+      } else {
+        extract = this.quill.getText(range - 75, 150);
+      }
+    }
+    let firstSpaceIndex = extract.indexOf(' ');
+    let lastSpaceIndex = extract.lastIndexOf(' ');
+    extract = extract
+      .substring(
+        firstSpaceIndex,
+        extract.length - (firstSpaceIndex + lastSpaceIndex)
+      )
+      .trim();
+
+    this.log.debug(
+      `Extract based on word is ${extract}`,
+      'getTagEntryString',
+      'QuillToolbarComponent'
+    );
+    this.log.info('finishing', 'getTagEntryString', 'QuillToolbarComponent');
+  }
 
   highlightTag(ids: number[], type: string, active: boolean) {
     this.log.info('Starting', 'highlightTag', 'QuillToolbarComponent');
