@@ -20,7 +20,7 @@ import { Tags } from '../model/tags-model';
 import { IconService } from '../service/icon.service';
 import { MenuService } from '../service/menu.service';
 import { HiglightEditorTagsService } from '../widgets/higlight.editor.tags.service';
-import { Delta } from 'quill';
+import { Delta, Quill } from 'quill';
 
 @Component({
   selector: 'toolbar',
@@ -37,7 +37,7 @@ export class QuillToolbarComponent implements OnInit {
   tagEntry!: TagEntry;
 
   @Input()
-  quill!: any;
+  quill!: Quill;
 
   @Input()
   sending!: boolean;
@@ -116,7 +116,7 @@ export class QuillToolbarComponent implements OnInit {
     console.debug(this.pageId);
 
     this.highlightTagService.highLightTag.subscribe((tags) => {
-      if (tags.pageId == this.pageId) {
+      if (tags.pageId+1 == this.pageId) {
         this.highlightTag(tags.ids, tags.type, tags.active);
       }
     });
@@ -173,6 +173,7 @@ export class QuillToolbarComponent implements OnInit {
     this.quill.on(
       'text-change',
       (delta: Delta, oldDelta: Delta, source: string) => {
+        
         this.log.info(
           `text change from ${source}`,
           'editorCreated',
@@ -211,6 +212,7 @@ export class QuillToolbarComponent implements OnInit {
       'editorCreated',
       'QuillToolbarComponent'
     );
+    // this.getTagEntryExtract('0', PERSON);
     // this.log.debug(
     //   `just about to change editor fill flag to false`,
     //   'editorCreated',
@@ -228,7 +230,7 @@ export class QuillToolbarComponent implements OnInit {
       'loadPageContent',
       'QuillToolbarComponent'
     );
-    // this.quill.setContents(this.pages[0].page)
+    // this.quill.setContents(this.pages[0].page) 
     this.quill.root.innerHTML = this.htmlDecoder.decodeValue(
       this.pages[this.pageId - 1].page
     );
@@ -261,8 +263,8 @@ export class QuillToolbarComponent implements OnInit {
       'loadPageContent',
       'QuillToolbarComponent'
     );
-    this.getTagEntryExtract('0', PERSON);
-    this.log.info('starting', 'loadPageContent', 'QuillToolbarComponent');
+    
+    this.log.info('finishing', 'loadPageContent', 'QuillToolbarComponent');
   }
 
   private updateButtons(tagSet: any, tagtype: string) {
@@ -716,13 +718,20 @@ export class QuillToolbarComponent implements OnInit {
     );
     let range: number = -1;
     let length: number = 0;
+    let name: string = '';
     let extract: string = '';
 
+    this.log.debug('next line showing tag entries object:', 'getTagEntryString', 'QuillToolbarComponent')
     if (tagEntries) {
+      this.log.debug(tagEntries.value)
       for (let tagEntry of tagEntries.value) {
         if (tagEntry.id.toString() == tagId) {
+          this.log.debug(`getting extract for id: ${tagEntry.id}`, 'getTagEntryString', 'QuillToolbarComponent')
           range = tagEntry.metaData.range;
-          length = tagEntry.metaData.lenght;
+          length = tagEntry.metaData.length;
+          name = tagEntry.name;
+
+          this.log.debug(`the range and lengths extracted are ${range} and ${length}`, 'getTagEntryString', 'QuillToolbarComponent')
         }
       }
     } else {
@@ -733,31 +742,80 @@ export class QuillToolbarComponent implements OnInit {
       );
     }
     if (range != -1) {
-      if (range <= 150 + length) {
-        if (this.quill.getlength() > 150 + length) {
-          extract = this.quill.getText(0, 150);
-        } else {
-          extract = this.quill.getText(0, this.quill.getLength());
-        }
+      this.log.debug(`range is valid`, 'getTagEntryString', 'QuillToolbarComponent')
+      let indexPreviousTag = parseInt(tagId) > 0 ? this.pages[this.pageId].tags.person[parseInt(tagId)-1].metaData.range : -1;
+      let indexNextTag = tagEntries? parseInt(tagId)+1 != tagEntries.value.length ? this.pages[this.pageId].tags.person[parseInt(tagId)+1].metaData.range : -1 : -1;
+      
+      this.log.debug(`previous index and next index :: ${indexPreviousTag}, ${indexNextTag}`, 'getTagEntryString', 'QuillToolbarComponent')
+
+      extract = this.formatExtract(
+        this.getTextFromEditor(
+          indexPreviousTag != -1? indexPreviousTag : 0,
+          indexNextTag != -1? 
+            indexNextTag : this.quill.getLength() > 150? 
+              this.findFinishIndex(range) : this.quill.getLength()
+        ),
+        name,
+        indexPreviousTag != -1? range - indexPreviousTag : range,
+        tagType
+      )
+
+      
+      if(indexPreviousTag != -1){
+        extract = extract.substring(indexPreviousTag, range-1) +'<button class="' +tagType + ' highlight ' + tagType + 'Glow">' + name +'</button>' + extract.substring(range-1);
       } else {
-        extract = this.quill.getText(range - 75, 150);
+        extract = extract.substring(0, range) +'<button class="' +tagType + ' highlight ' + tagType + 'Glow">' + name +'</button>' + extract.substring(range);
       }
     }
-    let firstSpaceIndex = extract.indexOf(' ');
-    let lastSpaceIndex = extract.lastIndexOf(' ');
-    extract = extract
-      .substring(
-        firstSpaceIndex,
-        extract.length - (firstSpaceIndex + lastSpaceIndex)
-      )
-      .trim();
 
-    this.log.debug(
-      `Extract based on word is ${extract}`,
-      'getTagEntryString',
-      'QuillToolbarComponent'
-    );
+    this.log.debug(`extract :: ${extract}`, 'getTagEntryString', 'QuillToolbarComponent')
     this.log.info('finishing', 'getTagEntryString', 'QuillToolbarComponent');
+  }
+
+  private findIndexNextTag(name: string) : number{
+
+    this.log.info('Starting', 'findFinishIndex', 'QuillToolbarComponent');
+    this.log.info('Finishing', 'findFinishIndex', 'QuillToolbarComponent');
+    return -1
+  }
+  
+  
+  private findFinishIndex(range: number) : number {
+    this.log.info('Starting', 'findFinishIndex', 'QuillToolbarComponent');
+      let tempString: string = '';
+      this.quill.getText(range, 150).split(/\s/).forEach((value,index) => {
+        if(index < 10){
+          tempString += value +' '
+         }else {
+          return
+         }   
+      })
+      this.log.info('Finishing', 'findFinishIndex', 'QuillToolbarComponent');
+      return tempString.trimEnd.length
+  }
+
+  private getTextFromEditor(startIndex: number, finishIndex: number) : string {
+    this.log.info('Starting', 'getTextFromEditor', 'QuillToolbarComponent');
+    this.log.debug(`The passed in params are startIndex=${startIndex} and finishIndex=${finishIndex}`, 'getTextFromEditor', 'QuillToolbarComponent');
+    this.log.info('Finishing', 'getTextFromEditor', 'QuillToolbarComponent');
+    return this.quill.getText(startIndex, finishIndex - startIndex);
+}
+  
+  private formatExtract(rawExtract: string, name: string, range: number, nameType: string) : string{
+    this.log.info('Starting', 'formatExtract', 'QuillToolbarComponent');
+    this.log.debug(`The passed in params are range :: ${range}`, 'formatExtract', 'QuillToolbarComponent');
+    let beforeName: string = rawExtract.substring(0, range);
+    let afterName: string = rawExtract.substring(range);
+    this.log.info('Finishing', 'formatExtract', 'QuillToolbarComponent');
+
+    return beforeName + this.wrapName(name, nameType) + afterName;
+  }
+
+  private wrapName(name: string, nameType: string) : string {
+    this.log.info('Starting', 'wrapName', 'QuillToolbarComponent');
+    
+    this.log.info('Finishing', 'wrapName', 'QuillToolbarComponent');
+    return ` <span class="${nameType} highlight ${nameType}Glow">${name}</span> `
   }
 
   highlightTag(ids: number[], type: string, active: boolean) {
@@ -784,7 +842,7 @@ export class QuillToolbarComponent implements OnInit {
       'QuillToolbarComponent'
     );
     if (active) {
-      this.log.debug(`hughlighting`, 'applyHighlight', 'QuillToolbarComponent');
+      this.log.debug(`highlighting`, 'applyHighlight', 'QuillToolbarComponent');
       this.renderer.removeClass(button, 'reference');
       this.renderer.addClass(button, 'highlight');
       this.renderer.addClass(button, type + 'Glow');

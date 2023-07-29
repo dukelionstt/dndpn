@@ -21,8 +21,8 @@ export class HiglightEditorTagsService {
 
   constructor(private log: LoggerService) {}
 
-  sendHighlightTag(ids: number[], type: string, active: boolean) {
-    this.highLightTag.emit({ ids: ids, type: type, active: active });
+  sendHighlightTag(ids: number[], type: string, active: boolean, pageId: number) {
+    this.highLightTag.emit({ ids: ids, type: type, active: active, pageId: pageId });
   }
 
   highlightProcess(
@@ -176,7 +176,7 @@ export class HiglightEditorTagsService {
       this.log.debug(
         `about to toggle the following: ids -> ${ids.toString()} type -> ${type} state -> ${state}`
       );
-      this.sendHighlightTag(ids, type, state);
+      // this.sendHighlightTag(ids, type, state);
     });
   }
   private displayMap(map: Map<any, any>) {

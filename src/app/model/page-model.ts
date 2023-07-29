@@ -9,8 +9,8 @@ export interface Page {
   date: string;
   tags: Tags;
   page: any;
-  tagReference?: number[];
-  tagMap?: TagMap[];
+  tagRanges?: number[];
+  tagMap?: Map<string, TagMap>;
   isOpen: boolean;
   lastSaved: string;
   saveUpToDate: boolean;

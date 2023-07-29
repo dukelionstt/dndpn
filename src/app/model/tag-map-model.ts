@@ -1,6 +1,8 @@
 import { TagLocation } from './tag-locations';
 
 export interface TagMap {
-  id: number;
-  locations: TagLocation[];
+  name: string;
+  type: string;
+  referenceId: number;
+  
 }

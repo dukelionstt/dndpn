@@ -8,7 +8,7 @@ import { Tags } from '../model/tags-model';
 import { TAG_LIST } from '../mock-data/tag-mock';
 import { HttpClient } from '@angular/common/http';
 import { FileService } from './file.service';
-import { TAG_MAPS } from '../mock-data/tag-map-mock';
+import { TAG_MAP } from '../mock-data/tag-map.mock';
 
 @Injectable({
   providedIn: 'root',
@@ -23,7 +23,7 @@ export class TagsService {
 
   getTagMap() {
     // return this.file.getFile();
-    return TAG_MAPS;
+    return TAG_MAP;
   }
 
   getListFromTags(listType: string, tags: Tags) {

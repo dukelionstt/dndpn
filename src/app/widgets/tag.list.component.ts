@@ -368,7 +368,7 @@ export class TagListComponent implements OnInit, AfterViewInit {
       tagMap.forEach((tag, index) => {
         if (tag.change) {
           this.toggleClass(tag.buttonID, tag.state, type);
-          this.highlightTagService.sendHighlightTag([parseInt(index)], type, tag.state)
+          this.highlightTagService.sendHighlightTag([parseInt(index)], type, tag.state, this.selectedTab)
           this.updateHighlightedTagMap(tag.buttonID, index, type, !tag.change);
         }
       });
