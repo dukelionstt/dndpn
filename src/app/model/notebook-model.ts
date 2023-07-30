@@ -1,4 +1,5 @@
 import { Page } from './page-model'
+import { Tag } from './tag-model'
 
 export interface NoteBook {
   id:number,
@@ -7,4 +8,5 @@ export interface NoteBook {
   date: string,
   pages: Page[],
   saveLocation: string
+  tagList: Tag[]
 }

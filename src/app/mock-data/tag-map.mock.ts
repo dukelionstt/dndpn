@@ -34,7 +34,7 @@ export const TAG_MAP: Map<string, TagMap> = new Map<string, TagMap>([
     }],
     ["110", {
         name: 'more stuff',
-        type: MISC,
+        type: PLACE,
         referenceId: 1
     }]
 ])

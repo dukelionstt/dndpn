@@ -710,73 +710,36 @@ export class QuillToolbarComponent implements OnInit {
     this.open();
   }
 
-  getTagEntryExtract(tagId: string, tagType: string) {
+  getTagEntryExtract(rangeString: string, name: string, tagType: string){
     this.log.info('Starting', 'getTagEntryString', 'QuillToolbarComponent');
-    let tagEntries = Object.getOwnPropertyDescriptor(
-      this.pages[this.pageId].tags,
-      tagType
-    );
-    let range: number = -1;
-    let length: number = 0;
-    let name: string = '';
+    let range = parseInt(rangeString);
+    this.log.debug(`the params are rangeString, name, tagType :: ${rangeString}, ${name}, ${tagType}`, 'getTagEntryExtract', 'QuillToolbarComponent')
+    this.log.debug(`range is number :: ${range}`, 'getTagEntryExtract', 'QuillToolbarComponent')
+
+    this.log.debug(`next lind is tag ranges ::`, 'getTagEntryExtract', 'QuillToolbarComponent')
+    this.log.debug(this.pages[this.pageId-1].tagRanges)
+    this.log.debug(` next index  values that are equal :: ${this.pages[this.pageId-1].tagRanges.indexOf(range)+1}, ${this.pages[this.pageId-1].tagRanges.length}`, 'getTagEntryString', 'QuillToolbarComponent')
+    this.log.debug(`previous index valuse that are greater than the other :: ${this.pages[this.pageId-1].tagRanges.indexOf(range)}, ${0}`, 'getTagEntryString', 'QuillToolbarComponent')
+
+
+    let indexNextTag: number = this.pages[this.pageId-1].tagRanges.indexOf(range)+1 == this.pages[this.pageId-1].tagRanges.length ? -1 : this.pages[this.pageId-1].tagRanges[this.pages[this.pageId-1].tagRanges.indexOf(range)+1];
+    let indexPreviousTag: number = this.pages[this.pageId-1].tagRanges.indexOf(range) > 0 ? this.pages[this.pageId-1].tagRanges[this.pages[this.pageId-1].tagRanges.indexOf(range)-1] : -1; 
     let extract: string = '';
-
-    this.log.debug('next line showing tag entries object:', 'getTagEntryString', 'QuillToolbarComponent')
-    if (tagEntries) {
-      this.log.debug(tagEntries.value)
-      for (let tagEntry of tagEntries.value) {
-        if (tagEntry.id.toString() == tagId) {
-          this.log.debug(`getting extract for id: ${tagEntry.id}`, 'getTagEntryString', 'QuillToolbarComponent')
-          range = tagEntry.metaData.range;
-          length = tagEntry.metaData.length;
-          name = tagEntry.name;
-
-          this.log.debug(`the range and lengths extracted are ${range} and ${length}`, 'getTagEntryString', 'QuillToolbarComponent')
-        }
-      }
-    } else {
-      this.log.error(
-        `Issue retrieving the tag entery from page`,
-        'getTagEntryString',
-        'QuillToolbarComponent'
-      );
-    }
-    if (range != -1) {
-      this.log.debug(`range is valid`, 'getTagEntryString', 'QuillToolbarComponent')
-      let indexPreviousTag = parseInt(tagId) > 0 ? this.pages[this.pageId].tags.person[parseInt(tagId)-1].metaData.range : -1;
-      let indexNextTag = tagEntries? parseInt(tagId)+1 != tagEntries.value.length ? this.pages[this.pageId].tags.person[parseInt(tagId)+1].metaData.range : -1 : -1;
-      
-      this.log.debug(`previous index and next index :: ${indexPreviousTag}, ${indexNextTag}`, 'getTagEntryString', 'QuillToolbarComponent')
-
-      extract = this.formatExtract(
-        this.getTextFromEditor(
-          indexPreviousTag != -1? indexPreviousTag : 0,
-          indexNextTag != -1? 
-            indexNextTag : this.quill.getLength() > 150? 
-              this.findFinishIndex(range) : this.quill.getLength()
-        ),
-        name,
-        indexPreviousTag != -1? range - indexPreviousTag : range,
-        tagType
-      )
-
-      
-      if(indexPreviousTag != -1){
-        extract = extract.substring(indexPreviousTag, range-1) +'<button class="' +tagType + ' highlight ' + tagType + 'Glow">' + name +'</button>' + extract.substring(range-1);
-      } else {
-        extract = extract.substring(0, range) +'<button class="' +tagType + ' highlight ' + tagType + 'Glow">' + name +'</button>' + extract.substring(range);
-      }
-    }
-
+    this.log.debug(`previous index and next index :: ${indexPreviousTag}, ${indexNextTag}`, 'getTagEntryString', 'QuillToolbarComponent')
+    extract = this.formatExtract(
+      this.getTextFromEditor(
+        indexPreviousTag != -1? indexPreviousTag : 0,
+        indexNextTag != -1? 
+          indexNextTag : this.quill.getLength() > 150? 
+            this.findFinishIndex(range) : this.quill.getLength()
+      ),
+      name,
+      indexPreviousTag != -1? range - indexPreviousTag : range,
+      tagType
+    )
     this.log.debug(`extract :: ${extract}`, 'getTagEntryString', 'QuillToolbarComponent')
     this.log.info('finishing', 'getTagEntryString', 'QuillToolbarComponent');
-  }
-
-  private findIndexNextTag(name: string) : number{
-
-    this.log.info('Starting', 'findFinishIndex', 'QuillToolbarComponent');
-    this.log.info('Finishing', 'findFinishIndex', 'QuillToolbarComponent');
-    return -1
+    return extract;
   }
   
   
@@ -804,8 +767,8 @@ export class QuillToolbarComponent implements OnInit {
   private formatExtract(rawExtract: string, name: string, range: number, nameType: string) : string{
     this.log.info('Starting', 'formatExtract', 'QuillToolbarComponent');
     this.log.debug(`The passed in params are range :: ${range}`, 'formatExtract', 'QuillToolbarComponent');
-    let beforeName: string = rawExtract.substring(0, range);
-    let afterName: string = rawExtract.substring(range);
+    let beforeName: string = rawExtract.substring(0, range-1).trim();
+    let afterName: string = rawExtract.substring(range-1).trim();
     this.log.info('Finishing', 'formatExtract', 'QuillToolbarComponent');
 
     return beforeName + this.wrapName(name, nameType) + afterName;

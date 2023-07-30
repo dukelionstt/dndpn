@@ -1,7 +1,7 @@
 import { PLACE } from '../constants'
 import {Tag} from '../model/tag-model'
 
-export const PLACE_DROPDOWN: Tag[]=[
+export const PLACE_DROPDOWN =[
   {id: 13, name: PLACE, type: 'category'}
 
 ]

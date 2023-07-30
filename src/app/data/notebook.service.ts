@@ -51,6 +51,7 @@ export class NotebookService {
       type: obj.type,
       pages: this.getPages(obj.saveLocation),
       saveLocation: obj.saveLocation,
+      tagList: []
     };
     this.log.debug(`Current state of notebook:`);
     this.log.debug(notebook);
@@ -85,6 +86,8 @@ export class NotebookService {
       isOpen: true,
       lastSaved: obj.date,
       saveUpToDate: true,
+      tagMap: new Map(),
+      tagRanges: []
     };
 
     // this.log.debug(`checking the tags situation: ${page.tags.get('person')[0].id}`)

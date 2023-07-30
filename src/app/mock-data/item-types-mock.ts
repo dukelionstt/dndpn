@@ -1,7 +1,7 @@
 
 import { Tag } from "../model/tag-model";
 
-export const ITEMTYPES: Tag[] = [
+export const ITEMTYPES = [
   {id: 4,name: 'Adventuring gear', type:'itemType'},
   {id: 5,name: 'Armor', type:'itemType'},
   {id: 6,name: 'Wondrous', type:'itemType'},

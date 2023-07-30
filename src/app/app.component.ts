@@ -307,6 +307,8 @@ export class AppComponent implements OnInit, AfterViewInit {
         isOpen: true,
         lastSaved: this.newPageEntry.date,
         saveUpToDate: true,
+        tagMap: new Map(),
+        tagRanges: []
       });
       console.debug(this.noteBook);
       newTabindex = this.pageNameList.size + 1;
