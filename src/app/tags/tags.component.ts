@@ -23,6 +23,7 @@ import { Tags } from '../model/tags-model';
 import { IconService } from '../service/icon.service';
 import { HiglightEditorTagsService } from '../widgets/higlight.editor.tags.service';
 import { TagListComponent } from '../widgets/tag.list.component';
+import { Location } from '../model/location.model';
 
 const DEFAULT = 'default';
 const ROTATE = 'rotated';
@@ -142,7 +143,11 @@ export class TagsComponent implements OnInit, AfterViewInit {
     return null;
   }
 
-  selectTags(id: number) {
+  selectTags(id: number, tagType: string, tagLocations: Location[]) {
+    let range: number = -1;
+    tagLocations.forEach(location => {
+      
+    })
     // this.pages.forEach((page) => {
     //   if (page.tagReference?.indexOf(id) != -1) {
     //     this.tagStrings += `Found entry in page ${

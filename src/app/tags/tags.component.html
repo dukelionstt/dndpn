@@ -11,7 +11,7 @@
                   id="{{tag.id}}"
                   nzTooltipTitle="{{tag.type}}"m
                   nzTooltipPosition="left"
-                  (click)="selectTags( tag.id)"
+                  (click)="selectTags( tag.id, tag.type, tag.locations)"
                   nz-tooltip>
                 <img [src]="icons.getSrc('tag')"/>{{tag.name}}
           </button>

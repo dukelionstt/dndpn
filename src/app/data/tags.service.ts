@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Output, EventEmitter } from '@angular/core';
 import { ITEM, MISC, PERSON, PLACE } from '../constants';
 import { Person } from '../model/person-model';
 import { Place } from '../model/place-model';
@@ -9,12 +9,19 @@ import { TAG_LIST } from '../mock-data/tag-mock';
 import { HttpClient } from '@angular/common/http';
 import { FileService } from './file.service';
 import { TAG_MAP } from '../mock-data/tag-map.mock';
-
 @Injectable({
   providedIn: 'root',
 })
 export class TagsService {
+
+  @Output() triggerExtractEvent: EventEmitter<any> = new EventEmitter(); 
+  @Output() getExtractEvent: EventEmitter<any> = new EventEmitter();  
+
   constructor(private http: HttpClient, private file: FileService) {}
+
+  triggerExtract(range: string, name: string, tagType: string){
+    this.triggerExtractEvent.emit({range: range,name: name,tagType: tagType});
+  }
 
   getTags() {
     // return this.file.getFile("E:\\backup\\dndpn\\src\\app\\mock-data\\tag-mock.json")
