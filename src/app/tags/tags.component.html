@@ -11,14 +11,17 @@
                   id="{{tag.id}}"
                   nzTooltipTitle="{{tag.type}}"m
                   nzTooltipPosition="left"
-                  (click)="selectTags( tag.id, tag.type, tag.locations)"
+                  (click)="selectTags(tag.type, tag.name, tag.locations)"
                   nz-tooltip>
                 <img [src]="icons.getSrc('tag')"/>{{tag.name}}
           </button>
       </nz-card>
     </nz-sider>
     <nz-content>
-      {{tagStrings}}
+      <nz-list [nzDataSource]="extractResults" *ngIf="!isExtractViewLoading && isResults">
+        <li nz-list-item *ngFor="let extract of extractResults">{{extract}}</li>
+      </nz-list>
+      <nz-spin nzSimple [nzSize]="'large'" *ngIf="isExtractViewLoading"></nz-spin>
       <!-- <ul nz-menu [nzMode]="'vertical'">
         <li nz-menu-item *ngFor="let tags of pageTagList | keyvalue">
           <button class="tabMarker" (click)="selectCard(tags.key +'Card')">{{tags.key}}</button>
@@ -28,4 +31,6 @@
   </nz-layout>
   <nz-footer></nz-footer>
 </nz-layout>
+
+<
   

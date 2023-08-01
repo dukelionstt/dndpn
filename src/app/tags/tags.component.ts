@@ -24,6 +24,9 @@ import { IconService } from '../service/icon.service';
 import { HiglightEditorTagsService } from '../widgets/higlight.editor.tags.service';
 import { TagListComponent } from '../widgets/tag.list.component';
 import { Location } from '../model/location.model';
+import { flush } from '@angular/core/testing';
+import Quill from 'quill';
+import { HttpUrlEncodingCodec } from '@angular/common/http';
 
 const DEFAULT = 'default';
 const ROTATE = 'rotated';
@@ -48,9 +51,16 @@ export class TagsComponent implements OnInit, AfterViewInit {
   tagMap!: TagMap[];
   tagMapHashed!: Map<number, TagLocation[]>;
   pageTagList!: Map<string, Tag[]>;
+  quill!: Quill;
   icons = new IconService();
   previousCard!: ElementRef;
   tagStrings!: string;
+  extractResults!: string[];
+  isExtractViewLoading!: boolean;
+  isResults!: boolean;
+
+  htmlDecoder = new HttpUrlEncodingCodec();
+  htmlEncoder = new HttpUrlEncodingCodec();
 
   @Input()
   pages!: Page[];
@@ -73,6 +83,12 @@ export class TagsComponent implements OnInit, AfterViewInit {
     // );
     this.animationState = DEFAULT;
     this.tagStrings = '';
+    this.extractResults = [];
+    this.isExtractViewLoading = false;
+    this.isResults = false;
+    this.tagService.getExtractEvent.subscribe((value) =>
+      this.extractResults.push(value)
+    );
     this.log.info(`finishing`, 'ngOnInit', 'TagsComponent');
   }
 
@@ -84,8 +100,6 @@ export class TagsComponent implements OnInit, AfterViewInit {
     );
     this.log.info(`finishing`, 'ngAfterViewInit', 'TagsComponent');
   }
-
-
 
   // private buildPageTagList() {
   //   this.log.info(`Starting`, 'buildPageTagList', 'TagsComponent');
@@ -143,11 +157,42 @@ export class TagsComponent implements OnInit, AfterViewInit {
     return null;
   }
 
-  selectTags(id: number, tagType: string, tagLocations: Location[]) {
-    let range: number = -1;
-    tagLocations.forEach(location => {
-      
-    })
+  selectTags(tagType: string, name: string, tagLocations: Location[]) {
+    this.isExtractViewLoading = true;
+
+    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms * 1000));
+
+    tagLocations.forEach((location) => {
+      this.tagService.triggerExtract(
+        location.referenceId,
+        name,
+        tagType,
+        location.pageId
+      );
+    });
+
+    let expectRestultsValid = false;
+    for (let index = 0; index < 4; index++) {
+      expectRestultsValid = this.extractResults.length == tagLocations.length;
+      if (expectRestultsValid) {
+        break;
+      }
+      sleep(5);
+    }
+
+    if (!expectRestultsValid) {
+      if (this.extractResults.length > 0) {
+        this.extractResults.push(
+          'Some results did not show, please try again.'
+        );
+      } else {
+        this.extractResults.push('Search Failed, please try again.');
+      }
+    }
+
+    this.isResults = true;
+    this.isExtractViewLoading = false;
+
     // this.pages.forEach((page) => {
     //   if (page.tagReference?.indexOf(id) != -1) {
     //     this.tagStrings += `Found entry in page ${
@@ -159,27 +204,151 @@ export class TagsComponent implements OnInit, AfterViewInit {
     // });
   }
 
-  // selectTags(event: any, id: number) {
-  //   this.log.info(`Starting`, 'selectTags', 'TagsComponent');
-  //   this.log.info(
-  //     `following passed in id ${id}`,
-  //     'selectTags',
-  //     'TagsComponent'
-  //   );
-  //   let list: Map<string, number[]> = new Map<string, number[]>();
+  getTagEntryExtract(
+    id: number,
+    name: string,
+    tagType: string,
+    pageId: number
+  ) {
+    this.log.info('Starting', 'getTagEntryString', 'QuillToolbarComponent');
+    let range =
+      this.pages[pageId - 1].tags[tagType as keyof Tags][id].metaData.range;
+    this.log.debug(
+      `the params are id, name, tagType :: ${id}, ${name}, ${tagType}`,
+      'getTagEntryExtract',
+      'QuillToolbarComponent'
+    );
+    this.log.debug(
+      `range is number :: ${range}`,
+      'getTagEntryExtract',
+      'QuillToolbarComponent'
+    );
 
-  //   list = this.collectIds(id);
+    this.log.debug(
+      `next lind is tag ranges ::`,
+      'getTagEntryExtract',
+      'QuillToolbarComponent'
+    );
+    this.log.debug(this.pages[pageId - 1].tagRanges);
+    this.log.debug(
+      ` next index  values that are equal :: ${
+        this.pages[pageId - 1].tagRanges.indexOf(range) + 1
+      }, ${this.pages[pageId - 1].tagRanges.length}`,
+      'getTagEntryString',
+      'QuillToolbarComponent'
+    );
+    this.log.debug(
+      `previous index valuse that are greater than the other :: ${this.pages[
+        pageId - 1
+      ].tagRanges.indexOf(range)}, ${0}`,
+      'getTagEntryString',
+      'QuillToolbarComponent'
+    );
 
-  //   this.log.debug(list);
+    this.quill = this.getQuillinstance(pageId);
 
-  //   this.highlightService.highlightProcess(event, list, 'global', id);
-  //   if (this.highlightService.active) {
-  //     this.animationState = ROTATE;
-  //   } else {
-  //     this.animationState = DEFAULT;
-  //   }
-  //   this.log.info(`finishing`, 'selectTags', 'TagsComponent');
-  // }
+    let indexNextTag: number =
+      this.pages[pageId - 1].tagRanges.indexOf(range) + 1 ==
+      this.pages[pageId - 1].tagRanges.length
+        ? -1
+        : this.pages[pageId - 1].tagRanges[
+            this.pages[pageId - 1].tagRanges.indexOf(range) + 1
+          ];
+    let indexPreviousTag: number =
+      this.pages[pageId - 1].tagRanges.indexOf(range) > 0
+        ? this.pages[pageId - 1].tagRanges[
+            this.pages[pageId - 1].tagRanges.indexOf(range) - 1
+          ]
+        : -1;
+    let extract: string = '';
+    this.log.debug(
+      `previous index and next index :: ${indexPreviousTag}, ${indexNextTag}`,
+      'getTagEntryString',
+      'QuillToolbarComponent'
+    );
+    extract = this.formatExtract(
+      this.getTextFromEditor(
+        indexPreviousTag != -1 ? indexPreviousTag : 0,
+        indexNextTag != -1
+          ? indexNextTag
+          : this.quill.getLength() > 150
+          ? this.findFinishIndex(range)
+          : this.quill.getLength()
+      ),
+      name,
+      indexPreviousTag != -1 ? range - indexPreviousTag : range,
+      tagType
+    );
+    this.log.debug(
+      `extract :: ${extract}`,
+      'getTagEntryString',
+      'QuillToolbarComponent'
+    );
+    this.log.info('finishing', 'getTagEntryString', 'QuillToolbarComponent');
+    return extract;
+  }
+
+  private findFinishIndex(range: number): number {
+    this.log.info('Starting', 'findFinishIndex', 'QuillToolbarComponent');
+    let tempString: string = '';
+    this.quill
+      .getText(range, 150)
+      .split(/\s/)
+      .forEach((value, index) => {
+        if (index < 10) {
+          tempString += value + ' ';
+        } else {
+          return;
+        }
+      });
+    this.log.info('Finishing', 'findFinishIndex', 'QuillToolbarComponent');
+    return tempString.trimEnd.length;
+  }
+
+  private getQuillinstance(pageId: number) {
+    let tempQuill = new Quill('#editor');
+    tempQuill.root.innerHTML = this.htmlDecoder.decodeValue(
+      this.pages[pageId - 1].page
+    );
+    return tempQuill;
+  }
+
+  private getTextFromEditor(startIndex: number, finishIndex: number): string {
+    this.log.info('Starting', 'getTextFromEditor', 'QuillToolbarComponent');
+    this.log.debug(
+      `The passed in params are startIndex=${startIndex} and finishIndex=${finishIndex}`,
+      'getTextFromEditor',
+      'QuillToolbarComponent'
+    );
+    this.log.info('Finishing', 'getTextFromEditor', 'QuillToolbarComponent');
+    return this.quill.getText(startIndex, finishIndex - startIndex);
+  }
+
+  private formatExtract(
+    rawExtract: string,
+    name: string,
+    range: number,
+    nameType: string
+  ): string {
+    this.log.info('Starting', 'formatExtract', 'QuillToolbarComponent');
+    this.log.debug(
+      `The passed in params are range :: ${range}`,
+      'formatExtract',
+      'QuillToolbarComponent'
+    );
+    let beforeName: string = rawExtract.substring(0, range - 1).trim();
+    let afterName: string = rawExtract.substring(range - 1).trim();
+    this.log.info('Finishing', 'formatExtract', 'QuillToolbarComponent');
+
+    return beforeName + this.wrapName(name, nameType) + afterName;
+  }
+
+  private wrapName(name: string, nameType: string): string {
+    this.log.info('Starting', 'wrapName', 'QuillToolbarComponent');
+
+    this.log.info('Finishing', 'wrapName', 'QuillToolbarComponent');
+    return ` <span class="${nameType} highlight ${nameType}Glow">${name}</span> `;
+  }
 
   selectCard(cardId: string) {
     this.log.info(`Starting`, 'selectCard', 'TagsComponent');

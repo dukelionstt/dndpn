@@ -10,7 +10,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TagsComponent } from './tags/tags.component';
 import { UnsavedComponent } from './modal/unsaved/unsaved.component';
 
-
 import { NZ_I18N } from 'ng-zorro-antd/i18n';
 import { en_US } from 'ng-zorro-antd/i18n';
 import { registerLocaleData } from '@angular/common';
@@ -41,6 +40,7 @@ import { NzMessageModule } from 'ng-zorro-antd/message';
 import { OpenMenuComponent } from './modal/open-menu/open-menu.component';
 import { OpenPageFilter } from './pipe/open-page-filter.pipe';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 registerLocaleData(en);
 
@@ -83,7 +83,7 @@ registerLocaleData(en);
     NzTabsModule,
     NzListModule,
     NzMessageModule,
-
+    NzSpinModule,
   ],
   providers: [{ provide: NZ_I18N, useValue: en_US }],
   bootstrap: [AppComponent],

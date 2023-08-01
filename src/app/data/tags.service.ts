@@ -13,14 +13,13 @@ import { TAG_MAP } from '../mock-data/tag-map.mock';
   providedIn: 'root',
 })
 export class TagsService {
-
-  @Output() triggerExtractEvent: EventEmitter<any> = new EventEmitter(); 
-  @Output() getExtractEvent: EventEmitter<any> = new EventEmitter();  
+  @Output() triggerExtractEvent: EventEmitter<any> = new EventEmitter();
+  @Output() getExtractEvent: EventEmitter<any> = new EventEmitter();
 
   constructor(private http: HttpClient, private file: FileService) {}
 
-  triggerExtract(range: string, name: string, tagType: string){
-    this.triggerExtractEvent.emit({range: range,name: name,tagType: tagType});
+  triggerExtract(id: number, name: string, tagType: string, pageId: number) {
+    this.triggerExtractEvent.emit({ id: id, name: name, tagType: tagType, pageId: pageId});
   }
 
   getTags() {
