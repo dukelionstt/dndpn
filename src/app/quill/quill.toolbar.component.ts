@@ -22,6 +22,7 @@ import { MenuService } from '../service/menu.service';
 import { HiglightEditorTagsService } from '../widgets/higlight.editor.tags.service';
 import { Delta, Quill } from 'quill';
 import { TagsService } from '../data/tags.service';
+import { Word } from '../model/word.model';
 
 @Component({
   selector: 'toolbar',
@@ -64,12 +65,14 @@ export class QuillToolbarComponent implements OnInit {
   updateIndicator!: boolean;
   changeIndicator!: boolean;
   loadingContent!: boolean;
+  newWord!: boolean;
   updateType!: string;
   toolType!: string;
   toolId!: number;
   pageId!: number;
   lastCursorPosition!: number;
   maxExtractLength!: number;
+  wordMap!: Word[];
 
   personTag: string = PERSON;
   placeTag: string = PLACE;
@@ -113,6 +116,7 @@ export class QuillToolbarComponent implements OnInit {
     this.updateIndicator = false;
     this.changeIndicator = false;
     this.loadingContent = false;
+    this.newWord = false;
 
     this.pageId = parseInt(this.passingPageId);
     console.debug(this.pageId);
@@ -123,7 +127,20 @@ export class QuillToolbarComponent implements OnInit {
       }
     });
 
-    this.tagService.triggerExtractEvent.subscribe(extractData => extractData.pageId == this.pageId? this.getTagEntryExtract(extractData.id, extractData.name, extractData.tagType, extractData.pageId) : this.log.debug("extract not for this page",'ngOnInit', 'QuillToolbarComponent'))
+    this.tagService.triggerExtractEvent.subscribe((extractData) =>
+      extractData.pageId == this.pageId
+        ? this.getTagEntryExtract(
+            extractData.id,
+            extractData.name,
+            extractData.tagType,
+            extractData.pageId
+          )
+        : this.log.debug(
+            'extract not for this page',
+            'ngOnInit',
+            'QuillToolbarComponent'
+          )
+    );
     // this.menuService.getPasteQuill.subscribe(clipbaord => this.pasteClipboard(clipbaord))
 
     this.log.info(`initilising variables for puill tool bar:: finished`);
@@ -160,7 +177,13 @@ export class QuillToolbarComponent implements OnInit {
     this.log.info(`Setting content for the page:: Started`);
     this.loadingContent = true;
     try {
-      this.loadPageContent();
+      if (this.pages[this.pageId - 1].page.length > 0) {
+        this.loadPageContent();
+        this.wordMap = this.pages[this.pageId - 1].wordMap;
+      } else {
+        this.log.info(`new page`, 'editorCreated', 'QuillToolbarComponent');
+        this.wordMap = [];
+      }
       editorJustFilled = true;
     } catch (error) {
       this.log.error(`issue loading content`);
@@ -182,6 +205,13 @@ export class QuillToolbarComponent implements OnInit {
           'editorCreated',
           'QuillToolbarComponent'
         );
+        this.log.debug(
+          `next two lines are delta, oldDelta`,
+          'editorCreated',
+          'QuillToolbarComponent'
+        );
+        this.log.debug(delta);
+
         this.log.info(
           `before checking flag it is ${editorJustFilled}`,
           'editorCreated',
@@ -190,6 +220,27 @@ export class QuillToolbarComponent implements OnInit {
         if (editorJustFilled) {
           editorJustFilled = false;
         } else {
+          if (delta.ops) {
+            if (delta.ops[1].insert && delta.ops[0].retain) {
+              if (!delta.ops[1].insert.matches(/\s/)) {
+                if (this.newWord) {
+                  this.wordMap.push({
+                    word: delta.ops[1].insert,
+                    metaData: {
+                      index: delta.ops[0].retain,
+                      length: delta.ops[1].insert.lenght,
+                      linked: -1,
+                      type: 'word',
+                    },
+                  });
+                } else {
+                  this.wordMap[this.wordMap.length - 1].word +=
+                    delta.ops[1].insert;
+                }
+              } else {
+              }
+            }
+          }
           if (delta != oldDelta) {
             this.log.debug(
               `difference in detected, marking as not update`,
@@ -713,11 +764,15 @@ export class QuillToolbarComponent implements OnInit {
     this.open();
   }
 
-  getTagEntryExtract(id: number, name: string, tagType: string, pageId: number) {
+  getTagEntryExtract(
+    id: number,
+    name: string,
+    tagType: string,
+    pageId: number
+  ) {
     this.log.info('Starting', 'getTagEntryString', 'QuillToolbarComponent');
     let range =
-      this.pages[pageId - 1].tags[tagType as keyof Tags][id].metaData
-        .range;
+      this.pages[pageId - 1].tags[tagType as keyof Tags][id].metaData.range;
     this.log.debug(
       `the params are id, name, tagType :: ${id}, ${name}, ${tagType}`,
       'getTagEntryExtract',
