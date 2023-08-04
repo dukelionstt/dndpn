@@ -24,6 +24,9 @@ import { Delta, Quill } from 'quill';
 import { TagsService } from '../data/tags.service';
 import { Word } from '../model/word.model';
 
+const INSERT: string = 'insert';
+const DELTE: string = 'delete';
+
 @Component({
   selector: 'toolbar',
   templateUrl: './quill.toolbar.component.html',
@@ -222,23 +225,18 @@ export class QuillToolbarComponent implements OnInit {
         } else {
           if (delta.ops) {
             if (delta.ops[1].insert && delta.ops[0].retain) {
-              if (!delta.ops[1].insert.matches(/\s/)) {
-                if (this.newWord) {
-                  this.wordMap.push({
-                    word: delta.ops[1].insert,
-                    metaData: {
-                      index: delta.ops[0].retain,
-                      length: delta.ops[1].insert.lenght,
-                      linked: -1,
-                      type: 'word',
-                    },
-                  });
-                } else {
-                  this.wordMap[this.wordMap.length - 1].word +=
-                    delta.ops[1].insert;
-                }
-              } else {
-              }
+              this.log.debug(
+                `inserting to map`,
+                'editorCreated',
+                'QuillToolbarComponent'
+              );
+              // this.updateWordMap(delta.ops[1].insert, delta.ops[0].retain, INSERT)
+            } else if (delta.ops[1].delete && delta.ops[0].retain) {
+              this.log.debug(
+                `deleting from map`,
+                'editorCreated',
+                'QuillToolbarComponent'
+              );
             }
           }
           if (delta != oldDelta) {
@@ -276,6 +274,44 @@ export class QuillToolbarComponent implements OnInit {
     // this.log.debug(`flag now changed`, 'editorCreated', 'QuillToolbarComponent');
     this.log.info(`finish`, 'editorCreated', 'QuillToolbarComponent');
   }
+
+  private updateWordMap(input: string, index: number, insertDelete: string) {
+    switch (insertDelete) {
+      case INSERT:
+        this.insertWordMap(input, index);
+        break;
+      case DELTE:
+        this.deleteWordMap(parseInt(input), index);
+        break;
+
+      default:
+        break;
+    }
+    // if (!delta.ops[1].insert.matches(/\s/)) {
+    //   if (this.newWord) {
+    //     this.wordMap.push({
+    //       word: delta.ops[1].insert,
+    //       metaData: {
+    //         index: delta.ops[0].retain,
+    //         length: delta.ops[1].insert.lenght,
+    //         linked: -1,
+    //         type: 'word',
+    //       },
+    //     });
+    //   } else {
+    //     this.wordMap[this.wordMap.length - 1].word += delta.ops[1].insert;
+    //   }
+    // } else {
+    // }
+  }
+
+  private insertWordMap(input: string, index: number) {
+    if (input.match(/(?<!\w+)\s(?!\w+)/)) {
+    } else if (input.length > 0) {
+    }
+  }
+
+  private deleteWordMap(wordLength: number, index: number) {}
 
   private loadPageContent() {
     this.log.info('starting', 'loadPageContent', 'QuillToolbarComponent');
