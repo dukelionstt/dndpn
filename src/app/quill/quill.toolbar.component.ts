@@ -399,7 +399,7 @@ export class QuillToolbarComponent implements OnInit {
 
         let entry = -1;
         this.wordMap.map(wordEntry => wordEntry.metaData).forEach((i,k) => {
-          if(index >= i.index || index <= i.index+i.length-1){
+          if(index >= i.index && index <= i.index+i.length-1){
             entry = k
           }
         });
@@ -420,27 +420,122 @@ export class QuillToolbarComponent implements OnInit {
            * inner flow for input containing space(s)
            * This flow will add the words to the array
           */
-
-          //TODO: work out a paste from a new space and middle of a word.
           let entry = -1;
           this.wordMap.map(wordEntry => wordEntry.metaData).forEach((i,k) => {
-            if(index >= i.index || index <= i.index+i.length-1){
+            if(index >= i.index && index <= i.index+i.length-1){
               entry = k
             }
           });
 
+          let words = input.split(/\s/);
+
+          let tempArrayA: Word[] = []
+          let tempArrayB: Word[] = []
+
           if(entry == -1){
+            /**
+             * subFlow if the index is inbetween current stuff
+             */
             this.wordMap.map(wordEntry => wordEntry.metaData).forEach((i,k) => {
-              if(index-1 >= i.index || index-1 <= i.index+i.length-1){
+              if(index-1 >= i.index && index-1 <= i.index+i.length-1){
                 entry = k
               }
             });
+            tempArrayA = this.wordMap.slice(0,entry);
+            tempArrayB = this.wordMap.slice(entry+1);
+
+            words.forEach(word => {
+                tempArrayA.push({
+                  word: word,
+                  metaData: {
+                    index: tempArrayA[tempArrayA.length-1].metaData.index + word.length + 1,
+                    length: word.length,
+                    linked: -1,
+                    type: word
+                  } 
+                })
+            });
+            
+          } else {
+            tempArrayA = this.wordMap.slice(0,entry);
+            tempArrayB = this.wordMap.slice(entry+1);
+
+            if(index > tempArrayA[tempArrayA.length-1].metaData.index && index < tempArrayA[tempArrayA.length-1].metaData.index+tempArrayA[tempArrayA.length-1].metaData.length-1){
+              let tempWordA = this.wordMap[entry].word.substring(0, index-this.wordMap[entry].metaData.index);
+              let tempWordB = this.wordMap[entry].word.substring(index-this.wordMap[entry].metaData.index+1);
+
+              words.forEach((word, i) => {
+                if(i == 0){
+                  tempArrayA[tempArrayA.length-1].word = tempWordA + word
+                  tempArrayA[tempArrayA.length-1].metaData.length = (tempWordA + word).length
+                } else {
+                  tempArrayA.push({
+                    word: word,
+                    metaData: {
+                      index: tempArrayA[tempArrayA.length-1].metaData.index + word.length + 1,
+                      length: word.length,
+                      linked: -1,
+                      type: word
+                    } 
+                  })
+                }
+              });
+
+              tempArrayA[tempArrayA.length-1].word += tempWordB
+              tempArrayA[tempArrayA.length-1].metaData.length += tempWordB.length
+
+            } else {
+              words.forEach(word => {
+                  tempArrayA.push({
+                    word: word,
+                    metaData: {
+                      index: tempArrayA[tempArrayA.length-1].metaData.index + word.length + 1,
+                      length: word.length,
+                      linked: -1,
+                      type: word
+                    } 
+                  })
+              });
+            }
+
+            this.wordMap = tempArrayA.concat(tempArrayB);
           }
+          
+        } else {
+          let entry = -1;
+          this.wordMap.map(wordEntry => wordEntry.metaData).forEach((i,k) => {
+            if(index >= i.index && index <= i.index+i.length-1){
+              entry = k
+            }
+          });
 
           let tempArrayA = this.wordMap.slice(0,entry);
           let tempArrayB = this.wordMap.slice(entry+1);
-  
-          
+
+          if(entry == -1){
+            this.wordMap.map(wordEntry => wordEntry.metaData).forEach((i,k) => {
+              if(index-1 >= i.index && index-1 <= i.index+i.length-1){
+                entry = k
+              }
+            });
+
+            tempArrayA.push({
+              word: input,
+              metaData: {
+                index: tempArrayA[tempArrayA.length-1].metaData.index + tempArrayA[tempArrayA.length-1].metaData.length + 1,
+                length: input.length,
+                linked: -1,
+                type: 'word'
+              }
+            })
+          } else {
+            let tempWordA = this.wordMap[entry].word.substring(0, index-this.wordMap[entry].metaData.index);
+            let tempWordB = this.wordMap[entry].word.substring(index-this.wordMap[entry].metaData.index+1);
+
+            tempArrayA[tempArrayA.length-1].word = tempWordA + input + tempWordB
+          }
+
+          this.wordMap = tempArrayA.concat(tempArrayB);
         }
       }
     }
