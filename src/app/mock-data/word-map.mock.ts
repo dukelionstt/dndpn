@@ -94,7 +94,7 @@ export const WORD_MAP: Word[] = [
   {
     word: 'going',
     metaData: {
-      index: 46,
+      index: 45,
       length: 5,
       type: 'word',
       linked: -1,
@@ -103,7 +103,7 @@ export const WORD_MAP: Word[] = [
   {
     word: 'to',
     metaData: {
-      index: 52,
+      index: 51,
       length: 2,
       type: 'word',
       linked: -1,
@@ -112,7 +112,7 @@ export const WORD_MAP: Word[] = [
   {
     word: 'ad',
     metaData: {
-      index: 55,
+      index: 54,
       length: 2,
       type: 'word',
       linked: -1,
@@ -121,7 +121,7 @@ export const WORD_MAP: Word[] = [
   {
     word: 'a',
     metaData: {
-      index: 58,
+      index: 57,
       length: 1,
       type: 'word',
       linked: -1,
@@ -130,7 +130,7 @@ export const WORD_MAP: Word[] = [
   {
     word: 'few',
     metaData: {
-      index: 60,
+      index: 59,
       length: 3,
       type: 'word',
       linked: -1,
