@@ -314,20 +314,133 @@ export class QuillToolbarComponent implements OnInit {
   }
 
   private insertWordMap(input: string, index: number) {
+    this.log.info(`finish`, 'insertWordMap', 'QuillToolbarComponent');
     /**
      * main flow checks this checks if this is appened to the end or alteration in the middle.
      * This is splint two flows:
      */
-    if(index >= this.wordMap[this.wordMap.length-1].metaData.index){
+    this.log.debug(`main if ${index} >= ${this.wordMap[this.wordMap.length-1].metaData.index+(this.wordMap[this.wordMap.length-1].metaData.length != 0? this.wordMap[this.wordMap.length-1].metaData.length-1 : this.wordMap[this.wordMap.length-1].metaData.length)} :: ${index >= this.wordMap[this.wordMap.length-1].metaData.index+(this.wordMap[this.wordMap.length-1].metaData.length != 0? this.wordMap[this.wordMap.length-1].metaData.length-1 : this.wordMap[this.wordMap.length-1].metaData.length)}`, 'insertWordMap', 'QuillToolbarComponent');
+    if(index >= this.wordMap[this.wordMap.length-1].metaData.index+(this.wordMap[this.wordMap.length-1].metaData.length != 0? this.wordMap[this.wordMap.length-1].metaData.type != 'tag'? this.wordMap[this.wordMap.length-1].metaData.length-1 : 0 : this.wordMap[this.wordMap.length-1].metaData.length)){
+      this.log.debug(`running at the end logic`, 'insertWordMap', 'QuillToolbarComponent');
       /**
        * the flow checks the new index is higher or equal to the current index
        * this flow follow the below scenarios:
        */
+        
+      if (input.match(/(?<!\w+)\s(?!\w+)/)) {
+        /**
+         * flow 1 input is just a single space ' ' and not a space(s) in words. 
+         * This flow triggers the start of a new word entry into the map
+         */
+        this.wordMap.push({
+          word: '',
+          metaData: {
+            index: index+1,
+            length: 0,
+            linked: -1,
+            type: 'word'
+          }
+        })
+
+      } else if (input.length == 1) {
+        /**
+         * flow 2 is if the input is a single character that is not a space.
+         * This flow updates the last entry in the map.
+         */
+        let tempWord = this.wordMap[this.wordMap.length-1]
+        tempWord.word += input
+        tempWord.metaData.length++
+        this.wordMap[this.wordMap.length-1] = tempWord
+      } else {
+        /**
+         * flow 3 is when the input is not a single character of any kind.
+         * This flow seperates into several inner flows
+         */
+        if(input.match(/\s/)){
+          /**
+           * Inner flow is for input that has a space(s) in it 'some word'
+           * This flow will split this into array of words and update map based on below
+           */
+          let words = input.split(/\s/)
+          words.forEach((newWord, i) => {
+            if(i == 0 && this.wordMap[this.wordMap.length-1].metaData.length == 0){
+              /**
+               * sub flow checks that this is the first word in the array and that there is an entry waiting
+               * to updated from a previous run ie ' ' run.
+               * This flow will update the last entry in the map.
+               */
+                let tempWord = this.wordMap[this.wordMap.length-1]
+                tempWord.word = newWord
+                tempWord.metaData.length = newWord.length 
+                this.wordMap[this.wordMap.length-1] = tempWord  
+              } else if(i == 0 && this.wordMap[this.wordMap.length-1].metaData.length > 0){
+                /**
+                 * sub flow checks it is the first word in the array and there isnt an entry ready for it.
+                 * This flow adds a new entry onto the end of the map
+                 */
+                this.wordMap.push({
+                  word: newWord,
+                  metaData: {
+                    index: index,
+                    length: newWord.length,
+                    linked: -1,
+                    type: 'word'
+                  }
+                })
+              } else {
+                /**
+                 * sub flow for any other word after the first entry in arry.
+                 * This flow adds a new word to the end of the map
+                 */
+                this.wordMap.push({
+                  word: newWord,
+                  metaData: {
+                    index: this.wordMap[this.wordMap.length-1].metaData.index + this.wordMap[this.wordMap.length-1].metaData.length + 1,
+                    length: newWord.length,
+                    linked: -1,
+                    type: 'word'
+                  }
+                });
+              }
+          });
+        } else {
+          /**
+           * Inner flow 2 is for input that has no spaces.
+           * This fwo is split into two sub flows
+           */
+          if(this.wordMap[this.wordMap.length-1].metaData.length == 0){
+            /**
+             * sub flow checks that there is an entry waiting
+             * to updated from a previous run ie ' ' run.
+             * This flow will update the last entry in the map.
+             */
+              let tempWord = this.wordMap[this.wordMap.length-1]
+              tempWord.word = input
+              tempWord.metaData.length = input.length 
+              this.wordMap[this.wordMap.length-1] = tempWord  
+          } else if(this.wordMap[this.wordMap.length-1].metaData.length > 0){
+            /**
+             * sub flow checks if there isnt an entry ready for it.
+             * This flow adds a new entry onto the end of the map
+             */
+            this.wordMap.push({
+              word: input,
+              metaData: {
+                index: index,
+                length: input.length,
+                linked: -1,
+                type: 'word'
+              }
+            });
+          } 
+        }
+      }
     } else{
       /**
        * the flow is for indexs that are not larger or equal to the last index recorded
        */
       if (input.match(/(?<!\w+)\s(?!\w+)/)){
+        this.log.debug(`runing single space before end`, 'insertWordMap', 'QuillToolbarComponent');
         /**
          * flow A if the input is a space by its self
          * this flow finds the entry matching the index range and splits those words
@@ -339,12 +452,20 @@ export class QuillToolbarComponent implements OnInit {
           }
         });
 
-        if(entry != -1){
+        this.log.debug(` text at this point is a ${this.quill.getText(this.wordMap[entry].metaData.index, 1)} and is this a space :: ${this.quill.getText(this.wordMap[entry].metaData.index, 1).match(/(?<!\w+)\s(?!\w+)/)? 'true' : 'false'}`, 'insertWordMap', 'QuillToolbarComponent');
+        if(!this.quill.getText(this.wordMap[entry].metaData.index, 1).match(/(?<!\w+)\s(?!\w+)/)){
+          this.log.debug(`entry is not -1 it is :: ${entry}`, 'insertWordMap', 'QuillToolbarComponent');
           let tempArrayA = this.wordMap.slice(0,entry);
           let tempArrayB = this.wordMap.slice(entry+1);
 
+          this.log.debug(`next lines are array a and b`, 'insertWordMap', 'QuillToolbarComponent');
+          this.log.debug(tempArrayA);
+          this.log.debug(tempArrayB);
+
           let tempWordA = this.wordMap[entry].word.substring(0, index-this.wordMap[entry].metaData.index);
-          let tempWordB = this.wordMap[entry].word.substring(index-this.wordMap[entry].metaData.index+1);
+          let tempWordB = this.wordMap[entry].word.substring(index-this.wordMap[entry].metaData.index);
+
+          this.log.debug(`two word extracted are :: ${tempWordA}, ${tempWordB}`, 'insertWordMap', 'QuillToolbarComponent');
 
           tempArrayA[tempArrayA.length-1].word = tempWordA;
           tempArrayA[tempArrayA.length-1].metaData.length = tempWordA.length;
@@ -365,15 +486,24 @@ export class QuillToolbarComponent implements OnInit {
           
           this.wordMap = tempArrayA.concat(tempArrayB) 
         } else {
-          let entry = -1;
-          this.wordMap.map(wordEntry => wordEntry.metaData).forEach((i,k) => {
-            if(index-1 >= i.index && index-1 <= i.index+i.length-1){
-              entry = k
-            }
-          });
+          this.log.debug(`this is a space flow`, 'insertWordMap', 'QuillToolbarComponent');
+          // this.wordMap.map(wordEntry => wordEntry.metaData).forEach((i,k) => {
+          //   if(index-1 >= i.index && index-1 <= i.index+i.length-1){
+          //     entry = k
+          //   }
+          // });
+          this.log.debug(`entry will be :: ${entry}`, 'insertWordMap', 'QuillToolbarComponent');
 
-          let tempArrayA = this.wordMap.slice(0,entry);
-          let tempArrayB = this.wordMap.slice(entry+1);
+          this.log.debug(`entry ${entry} == ${this.wordMap.length-1} :: ${entry == this.wordMap.length-1? 'true' : 'false'}`, 'insertWordMap', 'QuillToolbarComponent');
+
+          // entry = entry == this.wordMap.length-1? entry-1 : entry;
+          let tempArrayA = this.wordMap.slice(0,entry == this.wordMap.length-1? this.wordMap.length-1 : entry);
+          let tempArrayB = this.wordMap.slice((entry == this.wordMap.length-1? entry-1 : entry)+1);
+
+          this.log.debug(`next lines are array a and b`, 'insertWordMap', 'QuillToolbarComponent');
+          this.log.debug(tempArrayA);
+          this.log.debug(tempArrayB);
+
           tempArrayA.push({
             word: '',
             metaData: {
@@ -392,6 +522,7 @@ export class QuillToolbarComponent implements OnInit {
         }
 
       } else if(input.length == 1){
+        this.log.debug(`adding a letter to a word flow`, 'insertWordMap', 'QuillToolbarComponent');
         /**
          * flow B is if the length of input is 1
          * This flow will update an existing entry with input and adjust the ranges 
@@ -404,22 +535,28 @@ export class QuillToolbarComponent implements OnInit {
           }
         });
 
-        this.wordMap[entry].word = this.wordMap[entry].word.substring(0,index-this.wordMap[entry].metaData.index) + this.wordMap[entry].word.substring(index-this.wordMap[entry].metaData.index+1)
+        this.log.debug(`word made out of these three sections :: ${this.wordMap[entry].word.substring(0,index-this.wordMap[entry].metaData.index)}, ${input},${this.wordMap[entry].word.substring(index-this.wordMap[entry].metaData.index)}`, 'insertWordMap', 'QuillToolbarComponent');
+        
+        this.wordMap[entry].word = this.wordMap[entry].word.substring(0,index-this.wordMap[entry].metaData.index) + input + this.wordMap[entry].word.substring(index-this.wordMap[entry].metaData.index)
+        this.wordMap[entry].metaData.length += 1;
 
-        for (let i = entry; i < this.wordMap.length; i++) {
+        for (let i = entry; i < this.wordMap.length-1; i++) {
           this.wordMap[i].metaData.index += 1 ;  
         }
 
       } else {
+        this.log.debug(`entry mid doc is longer than 1`, 'insertWordMap', 'QuillToolbarComponent');
         /**
          * flow C if the input is longer that 1
          * This flow has a few inner flows:
          */
         if(input.match(/\s/)){
+          this.log.debug(`input contains spaces`, 'insertWordMap', 'QuillToolbarComponent');
           /** 
            * inner flow for input containing space(s)
            * This flow will add the words to the array
           */
+         //TODO: review entry logic as the metadata for this is failing in check for space below
           let entry = -1;
           this.wordMap.map(wordEntry => wordEntry.metaData).forEach((i,k) => {
             if(index >= i.index && index <= i.index+i.length-1){
@@ -432,15 +569,15 @@ export class QuillToolbarComponent implements OnInit {
           let tempArrayA: Word[] = []
           let tempArrayB: Word[] = []
 
-          if(entry == -1){
+          if(!this.quill.getText(this.wordMap[entry].metaData.index, 1).match(/(?<!\w+)\s(?!\w+)/)){
             /**
              * subFlow if the index is inbetween current stuff
              */
-            this.wordMap.map(wordEntry => wordEntry.metaData).forEach((i,k) => {
-              if(index-1 >= i.index && index-1 <= i.index+i.length-1){
-                entry = k
-              }
-            });
+            // this.wordMap.map(wordEntry => wordEntry.metaData).forEach((i,k) => {
+            //   if(index-1 >= i.index && index-1 <= i.index+i.length-1){
+            //     entry = k
+            //   }
+            // });
             tempArrayA = this.wordMap.slice(0,entry);
             tempArrayB = this.wordMap.slice(entry+1);
 
@@ -502,151 +639,57 @@ export class QuillToolbarComponent implements OnInit {
           }
           
         } else {
+          this.log.debug(`input is a single word`, 'insertWordMap', 'QuillToolbarComponent');
           let entry = -1;
           this.wordMap.map(wordEntry => wordEntry.metaData).forEach((i,k) => {
-            if(index >= i.index && index <= i.index+i.length-1){
+            if(index >= i.index && index <= i.index+(i.length == 0? i.length : i.length-1)){
               entry = k
             }
           });
 
-          let tempArrayA = this.wordMap.slice(0,entry);
-          let tempArrayB = this.wordMap.slice(entry+1);
+          // let tempArrayA = this.wordMap.slice(0,entry);
+          // let tempArrayB = this.wordMap.slice(entry+1);
+          this.log.debug(`entry will be ${entry}`, 'insertWordMap', 'QuillToolbarComponent');
+          if(this.wordMap[entry].metaData.length == 0 ){
+            this.log.debug(`single word is adding to an empty space`, 'insertWordMap', 'QuillToolbarComponent');
 
-          if(entry == -1){
-            this.wordMap.map(wordEntry => wordEntry.metaData).forEach((i,k) => {
-              if(index-1 >= i.index && index-1 <= i.index+i.length-1){
-                entry = k
-              }
-            });
+            // this.wordMap.map(wordEntry => wordEntry.metaData).forEach((i,k) => {
+            //   if(index-1 >= i.index && index-1 <= i.index+i.length-1){
+            //     entry = k
+            //   }
+            // });
+            this.wordMap[entry].word = input;
+            this.wordMap[entry].metaData.length = input.length;
 
-            tempArrayA.push({
-              word: input,
-              metaData: {
-                index: tempArrayA[tempArrayA.length-1].metaData.index + tempArrayA[tempArrayA.length-1].metaData.length + 1,
-                length: input.length,
-                linked: -1,
-                type: 'word'
-              }
-            })
+            // tempArrayA.push({
+            //   word: input,
+            //   metaData: {
+            //     index: tempArrayA[tempArrayA.length-1].metaData.index + tempArrayA[tempArrayA.length-1].metaData.length + 1,
+            //     length: input.length,
+            //     linked: -1,
+            //     type: 'word'
+            //   }
+            // })
           } else {
-            let tempWordA = this.wordMap[entry].word.substring(0, index-this.wordMap[entry].metaData.index);
-            let tempWordB = this.wordMap[entry].word.substring(index-this.wordMap[entry].metaData.index+1);
+            this.log.debug(`single word is adding to an existing word`, 'insertWordMap', 'QuillToolbarComponent');
+            this.wordMap[entry].word += input;
+            this.wordMap[entry].metaData.length += input.length;
+            // let tempWordA = this.wordMap[entry].word.substring(0, index-this.wordMap[entry].metaData.index);
+            // let tempWordB = this.wordMap[entry].word.substring(index-this.wordMap[entry].metaData.index);
 
-            tempArrayA[tempArrayA.length-1].word = tempWordA + input + tempWordB
+            // this.log.debug(`three parts making the word are :: ${tempWordA}, ${input}, ${tempWordB}`, 'insertWordMap', 'QuillToolbarComponent');
+
+            // tempArrayA[tempArrayA.length-1].word = tempWordA + input + tempWordB
+          }
+          for (let i = entry; i < this.wordMap.length-1; i++) {
+            this.wordMap[i].metaData.index += input.length ;  
           }
 
-          this.wordMap = tempArrayA.concat(tempArrayB);
+          // this.wordMap = tempArrayA.concat(tempArrayB);
         }
       }
     }
-    /**
-     * flow 1 input is just a single space ' ' and not a space(s) in words. 
-     * This flow triggers the start of a new word entry into the map
-     */
-    if (input.match(/(?<!\w+)\s(?!\w+)/)) {
-      this.wordMap.push({
-        word: '',
-        metaData: {
-          index: index+1,
-          length: 0,
-          linked: -1,
-          type: 'word'
-        }
-      })
-
-    } else if (input.length == 1) {
-      /**
-       * flow 2 is if the input is a single character that is not a space.
-       * This flow updates the last entry in the map.
-       */
-      let tempWord = this.wordMap[this.wordMap.length-1]
-      tempWord.word += input
-      tempWord.metaData.length++
-      this.wordMap[this.wordMap.length-1] = tempWord
-    } else {
-      /**
-       * flow 3 is when the input is not a single character of any kind.
-       * This flow seperates into several inner flows
-       */
-      if(input.match(/\s/)){
-        /**
-         * Inner flow is for input that has a space(s) in it 'some word'
-         * This flow will split this into array of words and update map based on below
-         */
-        let words = input.split(/\s/)
-        words.forEach((newWord, i) => {
-          if(i == 0 && this.wordMap[this.wordMap.length-1].metaData.length == 0){
-            /**
-             * sub flow checks that this is the first word in the array and that there is an entry waiting
-             * to updated from a previous run ie ' ' run.
-             * This flow will update the last entry in the map.
-             */
-              let tempWord = this.wordMap[this.wordMap.length-1]
-              tempWord.word = newWord
-              tempWord.metaData.length = newWord.length 
-              this.wordMap[this.wordMap.length-1] = tempWord  
-            } else if(i == 0 && this.wordMap[this.wordMap.length-1].metaData.length > 0){
-              /**
-               * sub flow checks it is the first word in the array and there isnt an entry ready for it.
-               * This flow adds a new entry onto the end of the map
-               */
-              this.wordMap.push({
-                word: newWord,
-                metaData: {
-                  index: index,
-                  length: newWord.length,
-                  linked: -1,
-                  type: 'word'
-                }
-              })
-            } else {
-              /**
-               * sub flow for any other word after the first entry in arry.
-               * This flow adds a new word to the end of the map
-               */
-              this.wordMap.push({
-                word: newWord,
-                metaData: {
-                  index: this.wordMap[this.wordMap.length-1].metaData.index + this.wordMap[this.wordMap.length-1].metaData.length + 1,
-                  length: newWord.length,
-                  linked: -1,
-                  type: 'word'
-                }
-              });
-            }
-        });
-      } else {
-        /**
-         * Inner flow 2 is for input that has no spaces.
-         * This fwo is split into two sub flows
-         */
-        if(this.wordMap[this.wordMap.length-1].metaData.length == 0){
-          /**
-           * sub flow checks that there is an entry waiting
-           * to updated from a previous run ie ' ' run.
-           * This flow will update the last entry in the map.
-           */
-            let tempWord = this.wordMap[this.wordMap.length-1]
-            tempWord.word = input
-            tempWord.metaData.length = input.length 
-            this.wordMap[this.wordMap.length-1] = tempWord  
-        } else if(this.wordMap[this.wordMap.length-1].metaData.length > 0){
-          /**
-           * sub flow checks if there isnt an entry ready for it.
-           * This flow adds a new entry onto the end of the map
-           */
-          this.wordMap.push({
-            word: input,
-            metaData: {
-              index: index,
-              length: input.length,
-              linked: -1,
-              type: 'word'
-            }
-          });
-        } 
-      }
-    }
+    
   }
 
   private deleteWordMap(wordLength: number, index: number) {}
