@@ -557,7 +557,6 @@ export class QuillToolbarComponent implements OnInit {
            * inner flow for input containing space(s)
            * This flow will add the words to the array
           */
-         //TODO: review entry logic as the metadata for this is failing in check for space below
           let entry = -1;
           this.wordMap.map(wordEntry => wordEntry.metaData).forEach((i,k) => {
             if(index >= i.index && index <= i.index+(i.length != 0? i.length-1:i.length)){
@@ -604,7 +603,7 @@ export class QuillToolbarComponent implements OnInit {
             let tempWordA = this.wordMap[entry].word.substring(0, index-this.wordMap[entry].metaData.index);
             let tempWordB = this.wordMap[entry].word.substring(index-this.wordMap[entry].metaData.index);
 
-            this.log.debug(`entry and wordMap less are :: ${entry}, ${this.wordMap.length-1}`, 'insertWordMap', 'QuillToolbarComponent');
+            this.log.debug(`entry and wordMap less 1 are :: ${entry}, ${this.wordMap.length-1}`, 'insertWordMap', 'QuillToolbarComponent');
             if(entry == this.wordMap.length-1){
               this.log.debug(`entry is similar to length of the word map less 1`, 'insertWordMap', 'QuillToolbarComponent');
               words.forEach((word, i) => {
@@ -616,7 +615,7 @@ export class QuillToolbarComponent implements OnInit {
                   this.wordMap.push({
                     word: word,
                     metaData: {
-                      index: this.wordMap[this.wordMap.length-1].metaData.index + word.length + 1,
+                      index: this.wordMap[this.wordMap.length-1].metaData.index + this.wordMap[this.wordMap.length-1].metaData.length + 1,
                       length: word.length,
                       linked: -1,
                       type: 'word'
@@ -627,7 +626,7 @@ export class QuillToolbarComponent implements OnInit {
                   this.wordMap.push({
                     word: word + tempWordB,
                     metaData: {
-                      index: this.wordMap[this.wordMap.length-1].metaData.index + word.length + 1,
+                      index: this.wordMap[this.wordMap.length-1].metaData.index + this.wordMap[this.wordMap.length-1].metaData.length + 1,
                       length: (word + tempWordB).length,
                       linked: -1,
                       type: 'word'
@@ -639,56 +638,58 @@ export class QuillToolbarComponent implements OnInit {
               this.log.debug(`Offset will be :: ${offset}`, 'insertWordMap', 'QuillToolbarComponent');
             } else {
               this.log.debug(`not the end of the work map`, 'insertWordMap', 'QuillToolbarComponent');
-              tempArrayA = this.wordMap.slice(0,entry);
+              tempArrayA = this.wordMap.slice(0,entry+1);
               tempArrayB = this.wordMap.slice(entry+1);
   
               this.log.debug(`next lines are array a and b`, 'insertWordMap', 'QuillToolbarComponent');
               this.log.debug(tempArrayA);
               this.log.debug(tempArrayB);
   
-              // if(index > tempArrayA[tempArrayA.length-1].metaData.index && index < tempArrayA[tempArrayA.length-1].metaData.index+tempArrayA[tempArrayA.length-1].metaData.length-1){
-                //  tempWordA = this.wordMap[entry].word.substring(0, index-this.wordMap[entry].metaData.index);
-                //  tempWordB = this.wordMap[entry].word.substring(index-this.wordMap[entry].metaData.index);
-  
-                this.log.debug(`next is part 1 & 2 of the word :: ${tempWordA},${tempWordB}`, 'insertWordMap', 'QuillToolbarComponent');
-  
-                words.forEach((word, i) => {
-                  if(i == 0){
-                    tempArrayA[tempArrayA.length-1].word = tempWordA + word
-                    tempArrayA[tempArrayA.length-1].metaData.length = (tempWordA + word).length
-                    offset += (tempWordA + word).length +1
-                  } else if(i != words.length-1){
-                    tempArrayA.push({
-                      word: word,
-                      metaData: {
-                        index: tempArrayA[tempArrayA.length-1].metaData.index + word.length + 1,
-                        length: word.length,
-                        linked: -1,
-                        type: 'word'
-                      } 
-                    });
-                    offset += word.length + 1
-                  } else {
-                    tempArrayA.push({
-                      word: word + tempWordB,
-                      metaData: {
-                        index: tempArrayA[tempArrayA.length-1].metaData.index + word.length + 1,
-                        length: (word + tempWordB).length,
-                        linked: -1,
-                        type: 'word'
-                      } 
-                    });
-                    offset += (word + tempWordB).length+1
-                  }
-                });
-            }
+              this.log.debug(`next is part 1 & 2 of the word :: ${tempWordA},${tempWordB}`, 'insertWordMap', 'QuillToolbarComponent');
 
-           //todo: issue around here with offset
+              words.forEach((word, i) => {
+                if(i == 0){
+                  tempArrayA[tempArrayA.length-1].word = tempWordA + word
+                  tempArrayA[tempArrayA.length-1].metaData.length = (tempWordA + word).length
+                } else if(i != words.length-1){
+                  tempArrayA.push({
+                    word: word,
+                    metaData: {
+                      index: tempArrayA[tempArrayA.length-1].metaData.index + tempArrayA[tempArrayA.length-1].metaData.length + 1,
+                      length: word.length,
+                      linked: -1,
+                      type: 'word'
+                    } 
+                  });
+                } else {
+                  tempArrayA.push({
+                    word: word + tempWordB,
+                    metaData: {
+                      index: tempArrayA[tempArrayA.length-1].metaData.index + tempArrayA[tempArrayA.length-1].metaData.length + 1,
+                      length: (word + tempWordB).length,
+                      linked: -1,
+                      type: 'word'
+                    } 
+                  });
+                }
+              });
+
+              this.log.debug(`update off set remaining section`, 'insertWordMap', 'QuillToolbarComponent');
+              tempArrayB.forEach((word, i) => {
+                if(i === 0){
+                  tempArrayB[i].metaData.index = tempArrayA[tempArrayA.length-1].metaData.index + tempArrayA[tempArrayA.length-1].metaData.length + 1;
+                } else {
+                  tempArrayB[i].metaData.index = tempArrayB[i-1].metaData.index + tempArrayB[i-1].metaData.length + 1;
+                }
+
+              });
+  
+            }
 
             // }
           }
-          this.log.debug(`update off set`, 'insertWordMap', 'QuillToolbarComponent');
-          // this.wordMap = tempArrayA.concat(tempArrayB);
+          this.log.debug(`updating wordMap`, 'insertWordMap', 'QuillToolbarComponent');
+          this.wordMap = tempArrayA.concat(tempArrayB);
             
           // for (let i = entry; i < this.wordMap.length-1; i++) {
           //   this.wordMap[i].metaData.index += offset;  
