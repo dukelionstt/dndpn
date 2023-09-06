@@ -25,7 +25,7 @@ import { TagsService } from '../data/tags.service';
 import { Word } from '../model/word.model';
 
 const INSERT: string = 'insert';
-const DELTE: string = 'delete';
+const DELETE: string = 'delete';
 
 @Component({
   selector: 'toolbar',
@@ -133,10 +133,9 @@ export class QuillToolbarComponent implements OnInit {
     this.tagService.triggerExtractEvent.subscribe((extractData) =>
       extractData.pageId == this.pageId
         ? this.getTagEntryExtract(
-            extractData.id,
             extractData.name,
-            extractData.tagType,
-            extractData.pageId
+            extractData.referenceId,
+            extractData.tagType
           )
         : this.log.debug(
             'extract not for this page',
@@ -280,7 +279,7 @@ export class QuillToolbarComponent implements OnInit {
       case INSERT:
         this.insertWordMap(input, index);
         break;
-      case DELTE:
+      case DELETE:
         this.deleteWordMap(parseInt(input), index);
         break;
 
@@ -1238,87 +1237,130 @@ export class QuillToolbarComponent implements OnInit {
     this.open();
   }
 
-  getTagEntryExtract(
-    id: number,
-    name: string,
-    tagType: string,
-    pageId: number
-  ) {
-    this.log.info('Starting', 'getTagEntryString', 'QuillToolbarComponent');
-    let range =
-      this.pages[pageId - 1].tags[tagType as keyof Tags][id].metaData.range;
-    this.log.debug(
-      `the params are id, name, tagType :: ${id}, ${name}, ${tagType}`,
-      'getTagEntryExtract',
-      'QuillToolbarComponent'
-    );
-    this.log.debug(
-      `range is number :: ${range}`,
-      'getTagEntryExtract',
-      'QuillToolbarComponent'
-    );
+  getTagEntryExtract(name: string, referenceId?: number, tagType?:string){
 
-    this.log.debug(
-      `next lind is tag ranges ::`,
-      'getTagEntryExtract',
-      'QuillToolbarComponent'
-    );
-    this.log.debug(this.pages[pageId - 1].tagRanges);
-    this.log.debug(
-      ` next index  values that are equal :: ${
-        this.pages[pageId - 1].tagRanges.indexOf(range) + 1
-      }, ${this.pages[pageId - 1].tagRanges.length}`,
-      'getTagEntryString',
-      'QuillToolbarComponent'
-    );
-    this.log.debug(
-      `previous index valuse that are greater than the other :: ${this.pages[
-        pageId - 1
-      ].tagRanges.indexOf(range)}, ${0}`,
-      'getTagEntryString',
-      'QuillToolbarComponent'
-    );
+      // let indexs: number[] = this.getIndexs(name)
+      // let rows: string[] = indexs.map(index => {
+      //   let start = index - 5 > 0? index-5 : 0
+      //   let finish = (index + 5) < this.wordMap.length -1 ? index + 5 : this.wordMap.length -1
+      //   let row = ''
+      //   for(let i=start; i<finish+1; i++){
+      //     row += this.wordMap[i].word
+      //   }
+      //   return row
+      // });
+      if(tagType){
 
-    let indexNextTag: number =
-      this.pages[pageId - 1].tagRanges.indexOf(range) + 1 ==
-      this.pages[pageId - 1].tagRanges.length
-        ? -1
-        : this.pages[pageId - 1].tagRanges[
-            this.pages[pageId - 1].tagRanges.indexOf(range) + 1
-          ];
-    let indexPreviousTag: number =
-      this.pages[pageId - 1].tagRanges.indexOf(range) > 0
-        ? this.pages[pageId - 1].tagRanges[
-            this.pages[pageId - 1].tagRanges.indexOf(range) - 1
-          ]
-        : -1;
-    let extract: string = '';
-    this.log.debug(
-      `previous index and next index :: ${indexPreviousTag}, ${indexNextTag}`,
-      'getTagEntryString',
-      'QuillToolbarComponent'
-    );
-    extract = this.formatExtract(
-      this.getTextFromEditor(
-        indexPreviousTag != -1 ? indexPreviousTag : 0,
-        indexNextTag != -1
-          ? indexNextTag
-          : this.quill.getLength() > 150
-          ? this.findFinishIndex(range)
-          : this.quill.getLength()
-      ),
-      name,
-      indexPreviousTag != -1 ? range - indexPreviousTag : range,
-      tagType
-    );
-    this.log.debug(
-      `extract :: ${extract}`,
-      'getTagEntryString',
-      'QuillToolbarComponent'
-    );
-    this.log.info('finishing', 'getTagEntryString', 'QuillToolbarComponent');
-    return extract;
+      }
+
+      this.tagService.getExtractEvent.emit(JSON.stringify(rows))
   }
+
+  getSentance(name: string){
+    let indexs: number[] = this.getIndexs(name)
+      let rows: string[] = indexs.map(index => {
+        let start = index - 5 > 0? index-5 : 0
+        let finish = (index + 5) < this.wordMap.length -1 ? index + 5 : this.wordMap.length -1
+        let row = ''
+        for(let i=start; i<finish+1; i++){
+          row += this.wordMap[i].word
+        }
+        return row
+      });
+  }
+
+  getIndexs(name: string): number[]{
+    let temp: number[] = []
+    
+    this.wordMap.forEach((word, i) => {
+      if(word.word == name){
+        temp.push(i)
+      }
+    });
+     this.log.debug(`index found are ${temp.toString()}`, 'getIndexs', 'QuillToolbarComponent');
+     return temp
+  }
+  // getTagEntryExtract(
+  //   id: number,
+  //   name: string,
+  //   tagType: string,
+  //   pageId: number
+  // ) {
+  //   this.log.info('Starting', 'getTagEntryString', 'QuillToolbarComponent');
+  //   let range =
+  //     this.pages[pageId - 1].tags[tagType as keyof Tags][id].metaData.range;
+  //   this.log.debug(
+  //     `the params are id, name, tagType :: ${id}, ${name}, ${tagType}`,
+  //     'getTagEntryExtract',
+  //     'QuillToolbarComponent'
+  //   );
+  //   this.log.debug(
+  //     `range is number :: ${range}`,
+  //     'getTagEntryExtract',
+  //     'QuillToolbarComponent'
+  //   );
+
+  //   this.log.debug(
+  //     `next lind is tag ranges ::`,
+  //     'getTagEntryExtract',
+  //     'QuillToolbarComponent'
+  //   );
+  //   this.log.debug(this.pages[pageId - 1].tagRanges);
+  //   this.log.debug(
+  //     ` next index  values that are equal :: ${
+  //       this.pages[pageId - 1].tagRanges.indexOf(range) + 1
+  //     }, ${this.pages[pageId - 1].tagRanges.length}`,
+  //     'getTagEntryString',
+  //     'QuillToolbarComponent'
+  //   );
+  //   this.log.debug(
+  //     `previous index valuse that are greater than the other :: ${this.pages[
+  //       pageId - 1
+  //     ].tagRanges.indexOf(range)}, ${0}`,
+  //     'getTagEntryString',
+  //     'QuillToolbarComponent'
+  //   );
+
+  //   let indexNextTag: number =
+  //     this.pages[pageId - 1].tagRanges.indexOf(range) + 1 ==
+  //     this.pages[pageId - 1].tagRanges.length
+  //       ? -1
+  //       : this.pages[pageId - 1].tagRanges[
+  //           this.pages[pageId - 1].tagRanges.indexOf(range) + 1
+  //         ];
+  //   let indexPreviousTag: number =
+  //     this.pages[pageId - 1].tagRanges.indexOf(range) > 0
+  //       ? this.pages[pageId - 1].tagRanges[
+  //           this.pages[pageId - 1].tagRanges.indexOf(range) - 1
+  //         ]
+  //       : -1;
+  //   let extract: string = '';
+  //   this.log.debug(
+  //     `previous index and next index :: ${indexPreviousTag}, ${indexNextTag}`,
+  //     'getTagEntryString',
+  //     'QuillToolbarComponent'
+  //   );
+  //   extract = this.formatExtract(
+  //     this.getTextFromEditor(
+  //       indexPreviousTag != -1 ? indexPreviousTag : 0,
+  //       indexNextTag != -1
+  //         ? indexNextTag
+  //         : this.quill.getLength() > 150
+  //         ? this.findFinishIndex(range)
+  //         : this.quill.getLength()
+  //     ),
+  //     name,
+  //     indexPreviousTag != -1 ? range - indexPreviousTag : range,
+  //     tagType
+  //   );
+  //   this.log.debug(
+  //     `extract :: ${extract}`,
+  //     'getTagEntryString',
+  //     'QuillToolbarComponent'
+  //   );
+  //   this.log.info('finishing', 'getTagEntryString', 'QuillToolbarComponent');
+  //   return extract;
+  // }
 
   private findFinishIndex(range: number): number {
     this.log.info('Starting', 'findFinishIndex', 'QuillToolbarComponent');

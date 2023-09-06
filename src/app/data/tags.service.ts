@@ -18,8 +18,8 @@ export class TagsService {
 
   constructor(private http: HttpClient, private file: FileService) {}
 
-  triggerExtract(id: number, name: string, tagType: string, pageId: number) {
-    this.triggerExtractEvent.emit({ id: id, name: name, tagType: tagType, pageId: pageId});
+  triggerExtract(name: string, pageId: number) {
+      this.triggerExtractEvent.emit({ name: name, pageId: pageId});
   }
 
   getTags() {

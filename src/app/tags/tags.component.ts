@@ -27,6 +27,7 @@ import { Location } from '../model/location.model';
 import { flush } from '@angular/core/testing';
 import Quill from 'quill';
 import { HttpUrlEncodingCodec } from '@angular/common/http';
+import { REFERENCE } from '../constants';
 
 const DEFAULT = 'default';
 const ROTATE = 'rotated';
@@ -58,6 +59,7 @@ export class TagsComponent implements OnInit, AfterViewInit {
   extractResults!: string[];
   isExtractViewLoading!: boolean;
   isResults!: boolean;
+  expectRows!: number;
 
   htmlDecoder = new HttpUrlEncodingCodec();
   htmlEncoder = new HttpUrlEncodingCodec();
@@ -98,6 +100,7 @@ export class TagsComponent implements OnInit, AfterViewInit {
     this.switchCard(
       this.elementRef.nativeElement.querySelector('#NotebookCard')
     );
+    this.expectRows = 0
     this.log.info(`finishing`, 'ngAfterViewInit', 'TagsComponent');
   }
 
@@ -159,23 +162,51 @@ export class TagsComponent implements OnInit, AfterViewInit {
 
   selectTags(tagType: string, name: string, tagLocations: Location[]) {
     this.isExtractViewLoading = true;
+    this.expectRows = 0
+    this.extractResults = [];
 
-    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms * 1000));
+    const sleep = (sec: number) => new Promise((r) => setTimeout(r, sec * 1000));
 
-    tagLocations.forEach((location) => {
-      this.tagService.triggerExtract(
-        location.referenceId,
-        name,
-        tagType,
-        location.pageId
-      );
-    });
+    let wordPages = [...new Set(tagLocations.map(tagLocation => tagLocation.pageId))]
+
+
+
+    if(tagType == REFERENCE){
+      let tagWords = this.tags.filter(tag => tag.type == tagType).map(tag => tag.name)
+      if(wordPages.length > 1){
+        wordPages.forEach(wordPage => {
+          tagWords.forEach(word => this.tagService.triggerExtract(word, wordPage));
+        })
+        this.expectRows = wordPages.length * tagWords.length 
+      } else {
+        tagWords.forEach(word => this.tagService.triggerExtract(word, wordPages[0]));
+        this.expectRows = tagWords.length
+      }
+    } else {
+      if(wordPages.length > 1){
+        wordPages.forEach(wordPage => this.tagService.triggerExtract(name, wordPage))
+        this.expectRows = wordPages.length
+      } else {
+        this.tagService.triggerExtract(name, wordPages[0]);
+        this.expectRows = 1
+      }
+    }
 
     let expectRestultsValid = false;
-    for (let index = 0; index < 4; index++) {
-      expectRestultsValid = this.extractResults.length == tagLocations.length;
+    let previousResultsCount = 0
+    for (let i = 0; i < 4; i++) {
+      expectRestultsValid = this.extractResults.length == this.expectRows;
       if (expectRestultsValid) {
         break;
+      } else {
+        if(previousResultsCount == 0){
+          previousResultsCount = this.extractResults.length
+        } else {
+          if(previousResultsCount < this.extractResults.length){
+            previousResultsCount = this.extractResults.length
+            i = 0
+          }
+        }
       }
       sleep(5);
     }
