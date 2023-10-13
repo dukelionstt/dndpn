@@ -72,7 +72,7 @@ export class TagsComponent implements OnInit, AfterViewInit {
     private log: LoggerService,
     private highlightService: HiglightEditorTagsService,
     private renderer: Renderer2,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
   ) {}
 
   ngOnInit(): void {
@@ -89,7 +89,7 @@ export class TagsComponent implements OnInit, AfterViewInit {
     this.isExtractViewLoading = false;
     this.isResults = false;
     this.tagService.getExtractEvent.subscribe((value) =>
-      this.extractResults.push(value)
+      this.extractResults.push(value),
     );
     this.log.info(`finishing`, 'ngOnInit', 'TagsComponent');
   }
@@ -98,9 +98,9 @@ export class TagsComponent implements OnInit, AfterViewInit {
     this.log.info(`Starting`, 'ngAfterViewInit', 'TagsComponent');
     this.log.debug('running change ');
     this.switchCard(
-      this.elementRef.nativeElement.querySelector('#NotebookCard')
+      this.elementRef.nativeElement.querySelector('#NotebookCard'),
     );
-    this.expectRows = 0
+    this.expectRows = 0;
     this.log.info(`finishing`, 'ngAfterViewInit', 'TagsComponent');
   }
 
@@ -162,49 +162,69 @@ export class TagsComponent implements OnInit, AfterViewInit {
 
   selectTags(tagType: string, name: string, tagLocations: Location[]) {
     this.isExtractViewLoading = true;
-    this.expectRows = 0
+    this.expectRows = 0;
     this.extractResults = [];
 
-    const sleep = (sec: number) => new Promise((r) => setTimeout(r, sec * 1000));
+    const sleep = (sec: number) =>
+      new Promise((r) => setTimeout(r, sec * 1000));
 
-    let wordPages = [...new Set(tagLocations.map(tagLocation => tagLocation.pageId))]
+    let wordPages = [
+      ...new Set(tagLocations.map((tagLocation) => tagLocation.pageId)),
+    ];
 
+    /*
+      thought: global search only:
+        select tag
+        if this page
+          emit
+        else 
+          get from storage
 
+        display options
+    */
 
-    if(tagType == REFERENCE){
-      let tagWords = this.tags.filter(tag => tag.type == tagType).map(tag => tag.name)
-      if(wordPages.length > 1){
-        wordPages.forEach(wordPage => {
-          tagWords.forEach(word => this.tagService.triggerExtract(word, wordPage));
-        })
-        this.expectRows = wordPages.length * tagWords.length 
+    if (tagType == REFERENCE) {
+      let tagWords = this.tags
+        .filter((tag) => tag.type == tagType)
+        .map((tag) => tag.name);
+      if (wordPages.length > 1) {
+        wordPages.forEach((wordPage) => {
+          tagWords.forEach((word) =>
+            this.tagService.triggerExtract(word, wordPage),
+          );
+        });
+        this.expectRows = wordPages.length * tagWords.length;
       } else {
-        tagWords.forEach(word => this.tagService.triggerExtract(word, wordPages[0]));
-        this.expectRows = tagWords.length
+        tagWords.forEach((word) =>
+          this.tagService.triggerExtract(word, wordPages[0]),
+        );
+        this.expectRows = tagWords.length;
       }
     } else {
-      if(wordPages.length > 1){
-        wordPages.forEach(wordPage => this.tagService.triggerExtract(name, wordPage))
-        this.expectRows = wordPages.length
+      if (wordPages.length > 1) {
+        wordPages.forEach((wordPage) =>
+          this.tagService.triggerExtract(name, wordPage),
+        );
+        this.expectRows = wordPages.length;
       } else {
         this.tagService.triggerExtract(name, wordPages[0]);
-        this.expectRows = 1
+        this.expectRows = 1;
       }
     }
 
     let expectRestultsValid = false;
-    let previousResultsCount = 0
+    let previousResultsCount = 0;
     for (let i = 0; i < 4; i++) {
       expectRestultsValid = this.extractResults.length == this.expectRows;
       if (expectRestultsValid) {
         break;
       } else {
-        if(previousResultsCount == 0){
-          previousResultsCount = this.extractResults.length
+        if (previousResultsCount == 0) {
+          previousResultsCount = this.extractResults.length;
         } else {
-          if(previousResultsCount < this.extractResults.length){
-            previousResultsCount = this.extractResults.length
-            i = 0
+          if (previousResultsCount < this.extractResults.length) {
+            previousResultsCount = this.extractResults.length;
+            i = 0;
           }
         }
       }
@@ -214,7 +234,7 @@ export class TagsComponent implements OnInit, AfterViewInit {
     if (!expectRestultsValid) {
       if (this.extractResults.length > 0) {
         this.extractResults.push(
-          'Some results did not show, please try again.'
+          'Some results did not show, please try again.',
         );
       } else {
         this.extractResults.push('Search Failed, please try again.');
@@ -239,7 +259,7 @@ export class TagsComponent implements OnInit, AfterViewInit {
     id: number,
     name: string,
     tagType: string,
-    pageId: number
+    pageId: number,
   ) {
     this.log.info('Starting', 'getTagEntryString', 'QuillToolbarComponent');
     let range =
@@ -247,18 +267,18 @@ export class TagsComponent implements OnInit, AfterViewInit {
     this.log.debug(
       `the params are id, name, tagType :: ${id}, ${name}, ${tagType}`,
       'getTagEntryExtract',
-      'QuillToolbarComponent'
+      'QuillToolbarComponent',
     );
     this.log.debug(
       `range is number :: ${range}`,
       'getTagEntryExtract',
-      'QuillToolbarComponent'
+      'QuillToolbarComponent',
     );
 
     this.log.debug(
       `next lind is tag ranges ::`,
       'getTagEntryExtract',
-      'QuillToolbarComponent'
+      'QuillToolbarComponent',
     );
     this.log.debug(this.pages[pageId - 1].tagRanges);
     this.log.debug(
@@ -266,14 +286,14 @@ export class TagsComponent implements OnInit, AfterViewInit {
         this.pages[pageId - 1].tagRanges.indexOf(range) + 1
       }, ${this.pages[pageId - 1].tagRanges.length}`,
       'getTagEntryString',
-      'QuillToolbarComponent'
+      'QuillToolbarComponent',
     );
     this.log.debug(
       `previous index valuse that are greater than the other :: ${this.pages[
         pageId - 1
       ].tagRanges.indexOf(range)}, ${0}`,
       'getTagEntryString',
-      'QuillToolbarComponent'
+      'QuillToolbarComponent',
     );
 
     this.quill = this.getQuillinstance(pageId);
@@ -295,7 +315,7 @@ export class TagsComponent implements OnInit, AfterViewInit {
     this.log.debug(
       `previous index and next index :: ${indexPreviousTag}, ${indexNextTag}`,
       'getTagEntryString',
-      'QuillToolbarComponent'
+      'QuillToolbarComponent',
     );
     extract = this.formatExtract(
       this.getTextFromEditor(
@@ -304,16 +324,16 @@ export class TagsComponent implements OnInit, AfterViewInit {
           ? indexNextTag
           : this.quill.getLength() > 150
           ? this.findFinishIndex(range)
-          : this.quill.getLength()
+          : this.quill.getLength(),
       ),
       name,
       indexPreviousTag != -1 ? range - indexPreviousTag : range,
-      tagType
+      tagType,
     );
     this.log.debug(
       `extract :: ${extract}`,
       'getTagEntryString',
-      'QuillToolbarComponent'
+      'QuillToolbarComponent',
     );
     this.log.info('finishing', 'getTagEntryString', 'QuillToolbarComponent');
     return extract;
@@ -339,7 +359,7 @@ export class TagsComponent implements OnInit, AfterViewInit {
   private getQuillinstance(pageId: number) {
     let tempQuill = new Quill('#editor');
     tempQuill.root.innerHTML = this.htmlDecoder.decodeValue(
-      this.pages[pageId - 1].page
+      this.pages[pageId - 1].page,
     );
     return tempQuill;
   }
@@ -349,7 +369,7 @@ export class TagsComponent implements OnInit, AfterViewInit {
     this.log.debug(
       `The passed in params are startIndex=${startIndex} and finishIndex=${finishIndex}`,
       'getTextFromEditor',
-      'QuillToolbarComponent'
+      'QuillToolbarComponent',
     );
     this.log.info('Finishing', 'getTextFromEditor', 'QuillToolbarComponent');
     return this.quill.getText(startIndex, finishIndex - startIndex);
@@ -359,13 +379,13 @@ export class TagsComponent implements OnInit, AfterViewInit {
     rawExtract: string,
     name: string,
     range: number,
-    nameType: string
+    nameType: string,
   ): string {
     this.log.info('Starting', 'formatExtract', 'QuillToolbarComponent');
     this.log.debug(
       `The passed in params are range :: ${range}`,
       'formatExtract',
-      'QuillToolbarComponent'
+      'QuillToolbarComponent',
     );
     let beforeName: string = rawExtract.substring(0, range - 1).trim();
     let afterName: string = rawExtract.substring(range - 1).trim();
@@ -388,7 +408,7 @@ export class TagsComponent implements OnInit, AfterViewInit {
     this.log.debug(
       `queryString is set to ${queryString} and the card is set to the following:`,
       'selectCard',
-      'TagsComponent'
+      'TagsComponent',
     );
     this.log.debug(card);
     this.switchCard(card);

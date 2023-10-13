@@ -96,14 +96,14 @@ export class QuillToolbarComponent implements OnInit {
     private log: LoggerService,
     private highlightTagService: HiglightEditorTagsService,
     private menuService: MenuService,
-    private tagService: TagsService
+    private tagService: TagsService,
   ) {}
 
   ngOnInit(): void {
     this.log.info(
       `initilising variables for puill tool bar:: Started`,
       this.ngOnInit.name,
-      QuillToolbarComponent.name
+      QuillToolbarComponent.name,
     );
 
     this.buttonEvents.set(PERSON, 0);
@@ -135,13 +135,13 @@ export class QuillToolbarComponent implements OnInit {
         ? this.getTagEntryExtract(
             extractData.name,
             extractData.referenceId,
-            extractData.tagType
+            extractData.tagType,
           )
         : this.log.debug(
             'extract not for this page',
             'ngOnInit',
-            'QuillToolbarComponent'
-          )
+            'QuillToolbarComponent',
+          ),
     );
     // this.menuService.getPasteQuill.subscribe(clipbaord => this.pasteClipboard(clipbaord))
 
@@ -197,7 +197,7 @@ export class QuillToolbarComponent implements OnInit {
     this.log.debug(
       `before setting on change editor just filled is ${editorJustFilled}`,
       'editorCreated',
-      'QuillToolbarComponent'
+      'QuillToolbarComponent',
     );
     this.quill.on(
       'text-change',
@@ -205,19 +205,19 @@ export class QuillToolbarComponent implements OnInit {
         this.log.info(
           `text change from ${source}`,
           'editorCreated',
-          'QuillToolbarComponent'
+          'QuillToolbarComponent',
         );
         this.log.debug(
           `next two lines are delta, oldDelta`,
           'editorCreated',
-          'QuillToolbarComponent'
+          'QuillToolbarComponent',
         );
         this.log.debug(delta);
 
         this.log.info(
           `before checking flag it is ${editorJustFilled}`,
           'editorCreated',
-          'QuillToolbarComponent'
+          'QuillToolbarComponent',
         );
         if (editorJustFilled) {
           editorJustFilled = false;
@@ -227,14 +227,18 @@ export class QuillToolbarComponent implements OnInit {
               this.log.debug(
                 `inserting to map`,
                 'editorCreated',
-                'QuillToolbarComponent'
+                'QuillToolbarComponent',
               );
-              this.updateWordMap(delta.ops[1].insert, delta.ops[0].retain, INSERT)
+              this.updateWordMap(
+                delta.ops[1].insert,
+                delta.ops[0].retain,
+                INSERT,
+              );
             } else if (delta.ops[1].delete && delta.ops[0].retain) {
               this.log.debug(
                 `deleting from map`,
                 'editorCreated',
-                'QuillToolbarComponent'
+                'QuillToolbarComponent',
               );
             }
           }
@@ -242,26 +246,26 @@ export class QuillToolbarComponent implements OnInit {
             this.log.debug(
               `difference in detected, marking as not update`,
               'editorCreated',
-              'QuillToolbarComponent'
+              'QuillToolbarComponent',
             );
             this.pages[this.pageId - 1].saveUpToDate = false;
           } else {
             this.log.debug(
               `no difference update`,
               'editorCreated',
-              'QuillToolbarComponent'
+              'QuillToolbarComponent',
             );
             this.pages[this.pageId - 1].saveUpToDate = true;
           }
         }
-      }
+      },
     );
 
     this.quill.focus();
     this.log.debug(
       `focus brought to the editor`,
       'editorCreated',
-      'QuillToolbarComponent'
+      'QuillToolbarComponent',
     );
     // this.getTagEntryExtract('0', PERSON);
     // this.log.debug(
@@ -304,12 +308,15 @@ export class QuillToolbarComponent implements OnInit {
     // }
   }
 
-  showMap(){ //testing only
-    this.log.debug(this.wordMap)
+  showMap() {
+    //testing only
+    this.log.debug(this.wordMap);
   }
 
-  verifyWord(index: string, range: string){
-    this.log.debug(`the word is '${this.quill.getText(parseInt(index), parseInt(range))}'`)
+  verifyWord(index: string, range: string) {
+    this.log.debug(
+      `the word is '${this.quill.getText(parseInt(index), parseInt(range))}'`,
+    );
   }
 
   private insertWordMap(input: string, index: number) {
@@ -318,106 +325,143 @@ export class QuillToolbarComponent implements OnInit {
      * main flow checks this checks if this is appened to the end or alteration in the middle.
      * This is splint two flows:
      */
-    this.log.debug(`main if ${index} >= ${this.wordMap[this.wordMap.length-1].metaData.index+(this.wordMap[this.wordMap.length-1].metaData.length != 0? this.wordMap[this.wordMap.length-1].metaData.length-1 : this.wordMap[this.wordMap.length-1].metaData.length)} :: ${index >= this.wordMap[this.wordMap.length-1].metaData.index+(this.wordMap[this.wordMap.length-1].metaData.length != 0? this.wordMap[this.wordMap.length-1].metaData.length-1 : this.wordMap[this.wordMap.length-1].metaData.length)}`, 'insertWordMap', 'QuillToolbarComponent');
-    if(index >= this.wordMap[this.wordMap.length-1].metaData.index+(this.wordMap[this.wordMap.length-1].metaData.length != 0? this.wordMap[this.wordMap.length-1].metaData.type != 'tag'? this.wordMap[this.wordMap.length-1].metaData.length-1 : 0 : this.wordMap[this.wordMap.length-1].metaData.length)){
-      this.log.debug(`running at the end logic`, 'insertWordMap', 'QuillToolbarComponent');
+    this.log.debug(
+      `main if ${index} >= ${
+        this.wordMap[this.wordMap.length - 1].metaData.index +
+        (this.wordMap[this.wordMap.length - 1].metaData.length != 0
+          ? this.wordMap[this.wordMap.length - 1].metaData.length - 1
+          : this.wordMap[this.wordMap.length - 1].metaData.length)
+      } :: ${
+        index >=
+        this.wordMap[this.wordMap.length - 1].metaData.index +
+          (this.wordMap[this.wordMap.length - 1].metaData.length != 0
+            ? this.wordMap[this.wordMap.length - 1].metaData.length - 1
+            : this.wordMap[this.wordMap.length - 1].metaData.length)
+      }`,
+      'insertWordMap',
+      'QuillToolbarComponent',
+    );
+    if (
+      index >=
+      this.wordMap[this.wordMap.length - 1].metaData.index +
+        (this.wordMap[this.wordMap.length - 1].metaData.length != 0
+          ? this.wordMap[this.wordMap.length - 1].metaData.type != 'tag'
+            ? this.wordMap[this.wordMap.length - 1].metaData.length - 1
+            : 0
+          : this.wordMap[this.wordMap.length - 1].metaData.length)
+    ) {
+      this.log.debug(
+        `running at the end logic`,
+        'insertWordMap',
+        'QuillToolbarComponent',
+      );
       /**
        * the flow checks the new index is higher or equal to the current index
        * this flow follow the below scenarios:
        */
-        
+
       if (input.match(/(?<!\w+)\s(?!\w+)/)) {
         /**
-         * flow 1 input is just a single space ' ' and not a space(s) in words. 
+         * flow 1 input is just a single space ' ' and not a space(s) in words.
          * This flow triggers the start of a new word entry into the map
          */
         this.wordMap.push({
           word: '',
           metaData: {
-            index: index+1,
+            index: index + 1,
             length: 0,
             linked: -1,
-            type: 'word'
-          }
-        })
-
+            type: 'word',
+          },
+        });
       } else if (input.length == 1) {
         /**
          * flow 2 is if the input is a single character that is not a space.
          * This flow updates the last entry in the map.
          */
-        let tempWord = this.wordMap[this.wordMap.length-1]
-        tempWord.word += input
-        tempWord.metaData.length++
-        this.wordMap[this.wordMap.length-1] = tempWord
+        let tempWord = this.wordMap[this.wordMap.length - 1];
+        tempWord.word += input;
+        tempWord.metaData.length++;
+        this.wordMap[this.wordMap.length - 1] = tempWord;
       } else {
         /**
          * flow 3 is when the input is not a single character of any kind.
          * This flow seperates into several inner flows
          */
-        if(input.match(/\s/)){
+        if (input.match(/\s/)) {
           /**
            * Inner flow is for input that has a space(s) in it 'some word'
            * This flow will split this into array of words and update map based on below
            */
-          let words = input.split(/\s/)
+          let words = input.split(/\s/);
           words.forEach((newWord, i) => {
-            if(i == 0 && this.wordMap[this.wordMap.length-1].metaData.length == 0){
+            if (
+              i == 0 &&
+              this.wordMap[this.wordMap.length - 1].metaData.length == 0
+            ) {
               /**
                * sub flow checks that this is the first word in the array and that there is an entry waiting
                * to updated from a previous run ie ' ' run.
                * This flow will update the last entry in the map.
                */
-                let tempWord = this.wordMap[this.wordMap.length-1]
-                tempWord.word = newWord
-                tempWord.metaData.length = newWord.length 
-                this.wordMap[this.wordMap.length-1] = tempWord  
-              } else if(i == 0 && this.wordMap[this.wordMap.length-1].metaData.length > 0){
-                /**
-                 * sub flow checks it is the first word in the array and there isnt an entry ready for it.
-                 * This flow adds a new entry onto the end of the map
-                 */
-                this.wordMap.push({
-                  word: newWord,
-                  metaData: {
-                    index: index,
-                    length: newWord.length,
-                    linked: -1,
-                    type: 'word'
-                  }
-                })
-              } else {
-                /**
-                 * sub flow for any other word after the first entry in arry.
-                 * This flow adds a new word to the end of the map
-                 */
-                this.wordMap.push({
-                  word: newWord,
-                  metaData: {
-                    index: this.wordMap[this.wordMap.length-1].metaData.index + this.wordMap[this.wordMap.length-1].metaData.length + 1,
-                    length: newWord.length,
-                    linked: -1,
-                    type: 'word'
-                  }
-                });
-              }
+              let tempWord = this.wordMap[this.wordMap.length - 1];
+              tempWord.word = newWord;
+              tempWord.metaData.length = newWord.length;
+              this.wordMap[this.wordMap.length - 1] = tempWord;
+            } else if (
+              i == 0 &&
+              this.wordMap[this.wordMap.length - 1].metaData.length > 0
+            ) {
+              /**
+               * sub flow checks it is the first word in the array and there isnt an entry ready for it.
+               * This flow adds a new entry onto the end of the map
+               */
+              this.wordMap.push({
+                word: newWord,
+                metaData: {
+                  index: index,
+                  length: newWord.length,
+                  linked: -1,
+                  type: 'word',
+                },
+              });
+            } else {
+              /**
+               * sub flow for any other word after the first entry in arry.
+               * This flow adds a new word to the end of the map
+               */
+              this.wordMap.push({
+                word: newWord,
+                metaData: {
+                  index:
+                    this.wordMap[this.wordMap.length - 1].metaData.index +
+                    this.wordMap[this.wordMap.length - 1].metaData.length +
+                    1,
+                  length: newWord.length,
+                  linked: -1,
+                  type: 'word',
+                },
+              });
+            }
           });
         } else {
           /**
            * Inner flow 2 is for input that has no spaces.
            * This fwo is split into two sub flows
            */
-          if(this.wordMap[this.wordMap.length-1].metaData.length == 0){
+          if (this.wordMap[this.wordMap.length - 1].metaData.length == 0) {
             /**
              * sub flow checks that there is an entry waiting
              * to updated from a previous run ie ' ' run.
              * This flow will update the last entry in the map.
              */
-              let tempWord = this.wordMap[this.wordMap.length-1]
-              tempWord.word = input
-              tempWord.metaData.length = input.length 
-              this.wordMap[this.wordMap.length-1] = tempWord  
-          } else if(this.wordMap[this.wordMap.length-1].metaData.length > 0){
+            let tempWord = this.wordMap[this.wordMap.length - 1];
+            tempWord.word = input;
+            tempWord.metaData.length = input.length;
+            this.wordMap[this.wordMap.length - 1] = tempWord;
+          } else if (
+            this.wordMap[this.wordMap.length - 1].metaData.length > 0
+          ) {
             /**
              * sub flow checks if there isnt an entry ready for it.
              * This flow adds a new entry onto the end of the map
@@ -428,79 +472,142 @@ export class QuillToolbarComponent implements OnInit {
                 index: index,
                 length: input.length,
                 linked: -1,
-                type: 'word'
-              }
+                type: 'word',
+              },
             });
-          } 
+          }
         }
       }
-    } else{
+    } else {
       /**
        * the flow is for indexs that are not larger or equal to the last index recorded
        */
       let offset = 0;
-      if (input.match(/(?<!\w+)\s(?!\w+)/)){
-        this.log.debug(`runing single space before end`, 'insertWordMap', 'QuillToolbarComponent');
+      if (input.match(/(?<!\w+)\s(?!\w+)/)) {
+        this.log.debug(
+          `runing single space before end`,
+          'insertWordMap',
+          'QuillToolbarComponent',
+        );
         /**
          * flow A if the input is a space by its self
          * this flow finds the entry matching the index range and splits those words
          */
         let entry = -1;
-        this.wordMap.map(wordEntry => wordEntry.metaData).forEach((i,k) => {
-          if(index >= i.index && index <= i.index+i.length-1){
-            entry = k
-          }
-        });
+        this.wordMap
+          .map((wordEntry) => wordEntry.metaData)
+          .forEach((i, k) => {
+            if (index >= i.index && index <= i.index + i.length - 1) {
+              entry = k;
+            }
+          });
         //TODO: review adding a space to last word in the list
-        this.log.debug(` text at this point is a ${this.quill.getText(this.wordMap[entry].metaData.index, 1)} and is this a space :: ${this.quill.getText(this.wordMap[entry].metaData.index, 1).match(/(?<!\w+)\s(?!\w+)/)? 'true' : 'false'}`, 'insertWordMap', 'QuillToolbarComponent');
-        if(!this.quill.getText(this.wordMap[entry].metaData.index, 1).match(/(?<!\w+)\s(?!\w+)/)){
-          this.log.debug(`entry is not -1 it is :: ${entry}`, 'insertWordMap', 'QuillToolbarComponent');
-          let tempArrayA = this.wordMap.slice(0,entry);
-          let tempArrayB = this.wordMap.slice(entry+1);
+        this.log.debug(
+          ` text at this point is a ${this.quill.getText(
+            this.wordMap[entry].metaData.index,
+            1,
+          )} and is this a space :: ${
+            this.quill
+              .getText(this.wordMap[entry].metaData.index, 1)
+              .match(/(?<!\w+)\s(?!\w+)/)
+              ? 'true'
+              : 'false'
+          }`,
+          'insertWordMap',
+          'QuillToolbarComponent',
+        );
+        if (
+          !this.quill
+            .getText(this.wordMap[entry].metaData.index, 1)
+            .match(/(?<!\w+)\s(?!\w+)/)
+        ) {
+          this.log.debug(
+            `entry is not -1 it is :: ${entry}`,
+            'insertWordMap',
+            'QuillToolbarComponent',
+          );
+          let tempArrayA = this.wordMap.slice(0, entry);
+          let tempArrayB = this.wordMap.slice(entry + 1);
 
-          this.log.debug(`next lines are array a and b`, 'insertWordMap', 'QuillToolbarComponent');
+          this.log.debug(
+            `next lines are array a and b`,
+            'insertWordMap',
+            'QuillToolbarComponent',
+          );
           this.log.debug(tempArrayA);
           this.log.debug(tempArrayB);
 
-          let tempWordA = this.wordMap[entry].word.substring(0, index-this.wordMap[entry].metaData.index);
-          let tempWordB = this.wordMap[entry].word.substring(index-this.wordMap[entry].metaData.index);
+          let tempWordA = this.wordMap[entry].word.substring(
+            0,
+            index - this.wordMap[entry].metaData.index,
+          );
+          let tempWordB = this.wordMap[entry].word.substring(
+            index - this.wordMap[entry].metaData.index,
+          );
 
-          this.log.debug(`two word extracted are :: ${tempWordA}, ${tempWordB}`, 'insertWordMap', 'QuillToolbarComponent');
+          this.log.debug(
+            `two word extracted are :: ${tempWordA}, ${tempWordB}`,
+            'insertWordMap',
+            'QuillToolbarComponent',
+          );
 
-          tempArrayA[tempArrayA.length-1].word = tempWordA;
-          tempArrayA[tempArrayA.length-1].metaData.length = tempWordA.length;
+          tempArrayA[tempArrayA.length - 1].word = tempWordA;
+          tempArrayA[tempArrayA.length - 1].metaData.length = tempWordA.length;
 
           tempArrayA.push({
             word: tempWordB,
             metaData: {
-              index: tempArrayA[tempArrayA.length-1].metaData.index+1,
+              index: tempArrayA[tempArrayA.length - 1].metaData.index + 1,
               length: tempWordB.length,
               linked: -1,
-              type: 'word'
-            }
+              type: 'word',
+            },
           });
 
           for (let i = 0; i < tempArrayB.length; i++) {
-            tempArrayB[i].metaData.index += 1 ;  
+            tempArrayB[i].metaData.index += 1;
           }
-          
-          this.wordMap = tempArrayA.concat(tempArrayB) 
+
+          this.wordMap = tempArrayA.concat(tempArrayB);
         } else {
-          this.log.debug(`this is a space flow`, 'insertWordMap', 'QuillToolbarComponent');
+          this.log.debug(
+            `this is a space flow`,
+            'insertWordMap',
+            'QuillToolbarComponent',
+          );
           // this.wordMap.map(wordEntry => wordEntry.metaData).forEach((i,k) => {
           //   if(index-1 >= i.index && index-1 <= i.index+i.length-1){
           //     entry = k
           //   }
           // });
-          this.log.debug(`entry will be :: ${entry}`, 'insertWordMap', 'QuillToolbarComponent');
+          this.log.debug(
+            `entry will be :: ${entry}`,
+            'insertWordMap',
+            'QuillToolbarComponent',
+          );
 
-          this.log.debug(`entry ${entry} == ${this.wordMap.length-1} :: ${entry == this.wordMap.length-1? 'true' : 'false'}`, 'insertWordMap', 'QuillToolbarComponent');
+          this.log.debug(
+            `entry ${entry} == ${this.wordMap.length - 1} :: ${
+              entry == this.wordMap.length - 1 ? 'true' : 'false'
+            }`,
+            'insertWordMap',
+            'QuillToolbarComponent',
+          );
 
           // entry = entry == this.wordMap.length-1? entry-1 : entry;
-          let tempArrayA = this.wordMap.slice(0,entry == this.wordMap.length-1? this.wordMap.length-1 : entry);
-          let tempArrayB = this.wordMap.slice((entry == this.wordMap.length-1? entry-1 : entry)+1);
+          let tempArrayA = this.wordMap.slice(
+            0,
+            entry == this.wordMap.length - 1 ? this.wordMap.length - 1 : entry,
+          );
+          let tempArrayB = this.wordMap.slice(
+            (entry == this.wordMap.length - 1 ? entry - 1 : entry) + 1,
+          );
 
-          this.log.debug(`next lines are array a and b`, 'insertWordMap', 'QuillToolbarComponent');
+          this.log.debug(
+            `next lines are array a and b`,
+            'insertWordMap',
+            'QuillToolbarComponent',
+          );
           this.log.debug(tempArrayA);
           this.log.debug(tempArrayB);
 
@@ -510,204 +617,331 @@ export class QuillToolbarComponent implements OnInit {
               index: index,
               length: 0,
               linked: -1,
-              type: 'word'
-            }
-          })
+              type: 'word',
+            },
+          });
 
           for (let i = 0; i < tempArrayB.length; i++) {
-            tempArrayB[i].metaData.index += 1 ;  
+            tempArrayB[i].metaData.index += 1;
           }
-          
-          this.wordMap = tempArrayA.concat(tempArrayB) 
-        }
 
-      } else if(input.length == 1){
-        this.log.debug(`adding a letter to a word flow`, 'insertWordMap', 'QuillToolbarComponent');
+          this.wordMap = tempArrayA.concat(tempArrayB);
+        }
+      } else if (input.length == 1) {
+        this.log.debug(
+          `adding a letter to a word flow`,
+          'insertWordMap',
+          'QuillToolbarComponent',
+        );
         /**
          * flow B is if the length of input is 1
-         * This flow will update an existing entry with input and adjust the ranges 
+         * This flow will update an existing entry with input and adjust the ranges
          */
 
         let entry = -1;
-        this.wordMap.map(wordEntry => wordEntry.metaData).forEach((i,k) => {
-          if(index >= i.index && index <= i.index+i.length-1){
-            entry = k
-          }
-        });
+        this.wordMap
+          .map((wordEntry) => wordEntry.metaData)
+          .forEach((i, k) => {
+            if (index >= i.index && index <= i.index + i.length - 1) {
+              entry = k;
+            }
+          });
 
-        this.log.debug(`word made out of these three sections :: ${this.wordMap[entry].word.substring(0,index-this.wordMap[entry].metaData.index)}, ${input},${this.wordMap[entry].word.substring(index-this.wordMap[entry].metaData.index)}`, 'insertWordMap', 'QuillToolbarComponent');
-        
-        this.wordMap[entry].word = this.wordMap[entry].word.substring(0,index-this.wordMap[entry].metaData.index) + input + this.wordMap[entry].word.substring(index-this.wordMap[entry].metaData.index)
+        this.log.debug(
+          `word made out of these three sections :: ${this.wordMap[
+            entry
+          ].word.substring(
+            0,
+            index - this.wordMap[entry].metaData.index,
+          )}, ${input},${this.wordMap[entry].word.substring(
+            index - this.wordMap[entry].metaData.index,
+          )}`,
+          'insertWordMap',
+          'QuillToolbarComponent',
+        );
+
+        this.wordMap[entry].word =
+          this.wordMap[entry].word.substring(
+            0,
+            index - this.wordMap[entry].metaData.index,
+          ) +
+          input +
+          this.wordMap[entry].word.substring(
+            index - this.wordMap[entry].metaData.index,
+          );
         this.wordMap[entry].metaData.length += 1;
 
-        for (let i = entry; i < this.wordMap.length-1; i++) {
-          this.wordMap[i].metaData.index += 1 ;  
+        for (let i = entry; i < this.wordMap.length - 1; i++) {
+          this.wordMap[i].metaData.index += 1;
         }
-
       } else {
-        this.log.debug(`entry mid doc is longer than 1`, 'insertWordMap', 'QuillToolbarComponent');
+        this.log.debug(
+          `entry mid doc is longer than 1`,
+          'insertWordMap',
+          'QuillToolbarComponent',
+        );
         /**
          * flow C if the input is longer that 1
          * This flow has a few inner flows:
          */
-        if(input.match(/\s/)){
-          this.log.debug(`input contains spaces`, 'insertWordMap', 'QuillToolbarComponent');
-          /** 
+        if (input.match(/\s/)) {
+          this.log.debug(
+            `input contains spaces`,
+            'insertWordMap',
+            'QuillToolbarComponent',
+          );
+          /**
            * inner flow for input containing space(s)
            * This flow will add the words to the array
-          */
+           */
           let entry = -1;
-          this.wordMap.map(wordEntry => wordEntry.metaData).forEach((i,k) => {
-            if(index >= i.index && index <= i.index+(i.length != 0? i.length-1:i.length)){
-              entry = k
-            }
-          });
+          this.wordMap
+            .map((wordEntry) => wordEntry.metaData)
+            .forEach((i, k) => {
+              if (
+                index >= i.index &&
+                index <= i.index + (i.length != 0 ? i.length - 1 : i.length)
+              ) {
+                entry = k;
+              }
+            });
 
           let words = input.split(/\s/);
-          
 
-          let tempArrayA: Word[] = []
-          let tempArrayB: Word[] = []
-          this.log.debug(`entry will be ${entry}`, 'insertWordMap', 'QuillToolbarComponent');
-          if(this.quill.getText(this.wordMap[entry].metaData.index, 1).match(/(?<!\w+)\s(?!\w+)/)){
-            this.log.debug(`the returned text is a single space`, 'insertWordMap', 'QuillToolbarComponent');
+          let tempArrayA: Word[] = [];
+          let tempArrayB: Word[] = [];
+          this.log.debug(
+            `entry will be ${entry}`,
+            'insertWordMap',
+            'QuillToolbarComponent',
+          );
+          if (
+            this.quill
+              .getText(this.wordMap[entry].metaData.index, 1)
+              .match(/(?<!\w+)\s(?!\w+)/)
+          ) {
+            this.log.debug(
+              `the returned text is a single space`,
+              'insertWordMap',
+              'QuillToolbarComponent',
+            );
             /**
              * subFlow if the index is inbetween current stuff
              */
-            tempArrayA = this.wordMap.slice(0,entry);
-            tempArrayB = this.wordMap.slice(entry+1);
+            tempArrayA = this.wordMap.slice(0, entry);
+            tempArrayB = this.wordMap.slice(entry + 1);
 
             words.forEach((word, i) => {
-                if(i == 0){
-                  tempArrayA[tempArrayA.length-1].word = word
-                  tempArrayA[tempArrayA.length-1].metaData.length = word.length
-                  offset += word.length+1
-
-                } else {
-                  tempArrayA.push({
-                    word: word,
-                    metaData: {
-                      index: tempArrayA[tempArrayA.length-1].metaData.index + tempArrayA[tempArrayA.length-1].word.length + 1,
-                      length: word.length,
-                      linked: -1,
-                      type: 'word'
-                    } 
-                  });
-                  offset += word.length+1;
-                }
+              if (i == 0) {
+                tempArrayA[tempArrayA.length - 1].word = word;
+                tempArrayA[tempArrayA.length - 1].metaData.length = word.length;
+                offset += word.length + 1;
+              } else {
+                tempArrayA.push({
+                  word: word,
+                  metaData: {
+                    index:
+                      tempArrayA[tempArrayA.length - 1].metaData.index +
+                      tempArrayA[tempArrayA.length - 1].word.length +
+                      1,
+                    length: word.length,
+                    linked: -1,
+                    type: 'word',
+                  },
+                });
+                offset += word.length + 1;
+              }
             });
-            
           } else {
-            this.log.debug(`the returned text is not a single space`, 'insertWordMap', 'QuillToolbarComponent');
-            let tempWordA = this.wordMap[entry].word.substring(0, index-this.wordMap[entry].metaData.index);
-            let tempWordB = this.wordMap[entry].word.substring(index-this.wordMap[entry].metaData.index);
+            this.log.debug(
+              `the returned text is not a single space`,
+              'insertWordMap',
+              'QuillToolbarComponent',
+            );
+            let tempWordA = this.wordMap[entry].word.substring(
+              0,
+              index - this.wordMap[entry].metaData.index,
+            );
+            let tempWordB = this.wordMap[entry].word.substring(
+              index - this.wordMap[entry].metaData.index,
+            );
 
-            this.log.debug(`entry and wordMap less 1 are :: ${entry}, ${this.wordMap.length-1}`, 'insertWordMap', 'QuillToolbarComponent');
-            if(entry == this.wordMap.length-1){
-              this.log.debug(`entry is similar to length of the word map less 1`, 'insertWordMap', 'QuillToolbarComponent');
+            this.log.debug(
+              `entry and wordMap less 1 are :: ${entry}, ${
+                this.wordMap.length - 1
+              }`,
+              'insertWordMap',
+              'QuillToolbarComponent',
+            );
+            if (entry == this.wordMap.length - 1) {
+              this.log.debug(
+                `entry is similar to length of the word map less 1`,
+                'insertWordMap',
+                'QuillToolbarComponent',
+              );
               words.forEach((word, i) => {
-                if(i == 0){
-                  this.wordMap[this.wordMap.length-1].word = tempWordA + word
-                  this.wordMap[this.wordMap.length-1].metaData.length = (tempWordA + word).length
-                  offset += (tempWordA + word).length
-                } else if(i != words.length-1){
+                if (i == 0) {
+                  this.wordMap[this.wordMap.length - 1].word = tempWordA + word;
+                  this.wordMap[this.wordMap.length - 1].metaData.length = (
+                    tempWordA + word
+                  ).length;
+                  offset += (tempWordA + word).length;
+                } else if (i != words.length - 1) {
                   this.wordMap.push({
                     word: word,
                     metaData: {
-                      index: this.wordMap[this.wordMap.length-1].metaData.index + this.wordMap[this.wordMap.length-1].metaData.length + 1,
+                      index:
+                        this.wordMap[this.wordMap.length - 1].metaData.index +
+                        this.wordMap[this.wordMap.length - 1].metaData.length +
+                        1,
                       length: word.length,
                       linked: -1,
-                      type: 'word'
-                    } 
+                      type: 'word',
+                    },
                   });
-                  offset += word.length + 1
+                  offset += word.length + 1;
                 } else {
                   this.wordMap.push({
                     word: word + tempWordB,
                     metaData: {
-                      index: this.wordMap[this.wordMap.length-1].metaData.index + this.wordMap[this.wordMap.length-1].metaData.length + 1,
+                      index:
+                        this.wordMap[this.wordMap.length - 1].metaData.index +
+                        this.wordMap[this.wordMap.length - 1].metaData.length +
+                        1,
                       length: (word + tempWordB).length,
                       linked: -1,
-                      type: 'word'
-                    } 
+                      type: 'word',
+                    },
                   });
                 }
-                offset += word.length + 1
+                offset += word.length + 1;
               });
-              this.log.debug(`Offset will be :: ${offset}`, 'insertWordMap', 'QuillToolbarComponent');
+              this.log.debug(
+                `Offset will be :: ${offset}`,
+                'insertWordMap',
+                'QuillToolbarComponent',
+              );
             } else {
-              this.log.debug(`not the end of the work map`, 'insertWordMap', 'QuillToolbarComponent');
-              tempArrayA = this.wordMap.slice(0,entry+1);
-              tempArrayB = this.wordMap.slice(entry+1);
-  
-              this.log.debug(`next lines are array a and b`, 'insertWordMap', 'QuillToolbarComponent');
+              this.log.debug(
+                `not the end of the work map`,
+                'insertWordMap',
+                'QuillToolbarComponent',
+              );
+              tempArrayA = this.wordMap.slice(0, entry + 1);
+              tempArrayB = this.wordMap.slice(entry + 1);
+
+              this.log.debug(
+                `next lines are array a and b`,
+                'insertWordMap',
+                'QuillToolbarComponent',
+              );
               this.log.debug(tempArrayA);
               this.log.debug(tempArrayB);
-  
-              this.log.debug(`next is part 1 & 2 of the word :: ${tempWordA},${tempWordB}`, 'insertWordMap', 'QuillToolbarComponent');
+
+              this.log.debug(
+                `next is part 1 & 2 of the word :: ${tempWordA},${tempWordB}`,
+                'insertWordMap',
+                'QuillToolbarComponent',
+              );
 
               words.forEach((word, i) => {
-                if(i == 0){
-                  tempArrayA[tempArrayA.length-1].word = tempWordA + word
-                  tempArrayA[tempArrayA.length-1].metaData.length = (tempWordA + word).length
-                } else if(i != words.length-1){
+                if (i == 0) {
+                  tempArrayA[tempArrayA.length - 1].word = tempWordA + word;
+                  tempArrayA[tempArrayA.length - 1].metaData.length = (
+                    tempWordA + word
+                  ).length;
+                } else if (i != words.length - 1) {
                   tempArrayA.push({
                     word: word,
                     metaData: {
-                      index: tempArrayA[tempArrayA.length-1].metaData.index + tempArrayA[tempArrayA.length-1].metaData.length + 1,
+                      index:
+                        tempArrayA[tempArrayA.length - 1].metaData.index +
+                        tempArrayA[tempArrayA.length - 1].metaData.length +
+                        1,
                       length: word.length,
                       linked: -1,
-                      type: 'word'
-                    } 
+                      type: 'word',
+                    },
                   });
                 } else {
                   tempArrayA.push({
                     word: word + tempWordB,
                     metaData: {
-                      index: tempArrayA[tempArrayA.length-1].metaData.index + tempArrayA[tempArrayA.length-1].metaData.length + 1,
+                      index:
+                        tempArrayA[tempArrayA.length - 1].metaData.index +
+                        tempArrayA[tempArrayA.length - 1].metaData.length +
+                        1,
                       length: (word + tempWordB).length,
                       linked: -1,
-                      type: 'word'
-                    } 
+                      type: 'word',
+                    },
                   });
                 }
               });
 
-              this.log.debug(`update off set remaining section`, 'insertWordMap', 'QuillToolbarComponent');
+              this.log.debug(
+                `update off set remaining section`,
+                'insertWordMap',
+                'QuillToolbarComponent',
+              );
               tempArrayB.forEach((word, i) => {
-                if(i === 0){
-                  tempArrayB[i].metaData.index = tempArrayA[tempArrayA.length-1].metaData.index + tempArrayA[tempArrayA.length-1].metaData.length + 1;
+                if (i === 0) {
+                  tempArrayB[i].metaData.index =
+                    tempArrayA[tempArrayA.length - 1].metaData.index +
+                    tempArrayA[tempArrayA.length - 1].metaData.length +
+                    1;
                 } else {
-                  tempArrayB[i].metaData.index = tempArrayB[i-1].metaData.index + tempArrayB[i-1].metaData.length + 1;
+                  tempArrayB[i].metaData.index =
+                    tempArrayB[i - 1].metaData.index +
+                    tempArrayB[i - 1].metaData.length +
+                    1;
                 }
-
               });
-  
             }
 
             // }
           }
-          this.log.debug(`updating wordMap`, 'insertWordMap', 'QuillToolbarComponent');
+          this.log.debug(
+            `updating wordMap`,
+            'insertWordMap',
+            'QuillToolbarComponent',
+          );
           this.wordMap = tempArrayA.concat(tempArrayB);
-            
+
           // for (let i = entry; i < this.wordMap.length-1; i++) {
-          //   this.wordMap[i].metaData.index += offset;  
+          //   this.wordMap[i].metaData.index += offset;
           // }
-          
         } else {
-          this.log.debug(`input is a single word`, 'insertWordMap', 'QuillToolbarComponent');
+          this.log.debug(
+            `input is a single word`,
+            'insertWordMap',
+            'QuillToolbarComponent',
+          );
           let entry = -1;
-          this.wordMap.map(wordEntry => wordEntry.metaData).forEach((i,k) => {
-            if(index >= i.index && index <= i.index+(i.length == 0? i.length : i.length-1)){
-              entry = k
-            }
-          });
+          this.wordMap
+            .map((wordEntry) => wordEntry.metaData)
+            .forEach((i, k) => {
+              if (
+                index >= i.index &&
+                index <= i.index + (i.length == 0 ? i.length : i.length - 1)
+              ) {
+                entry = k;
+              }
+            });
 
           // let tempArrayA = this.wordMap.slice(0,entry);
           // let tempArrayB = this.wordMap.slice(entry+1);
-          this.log.debug(`entry will be ${entry}`, 'insertWordMap', 'QuillToolbarComponent');
-          if(this.wordMap[entry].metaData.length == 0 ){
-            this.log.debug(`single word is adding to an empty space`, 'insertWordMap', 'QuillToolbarComponent');
+          this.log.debug(
+            `entry will be ${entry}`,
+            'insertWordMap',
+            'QuillToolbarComponent',
+          );
+          if (this.wordMap[entry].metaData.length == 0) {
+            this.log.debug(
+              `single word is adding to an empty space`,
+              'insertWordMap',
+              'QuillToolbarComponent',
+            );
 
             // this.wordMap.map(wordEntry => wordEntry.metaData).forEach((i,k) => {
             //   if(index-1 >= i.index && index-1 <= i.index+i.length-1){
@@ -727,7 +961,11 @@ export class QuillToolbarComponent implements OnInit {
             //   }
             // })
           } else {
-            this.log.debug(`single word is adding to an existing word`, 'insertWordMap', 'QuillToolbarComponent');
+            this.log.debug(
+              `single word is adding to an existing word`,
+              'insertWordMap',
+              'QuillToolbarComponent',
+            );
             this.wordMap[entry].word += input;
             this.wordMap[entry].metaData.length += input.length;
             // let tempWordA = this.wordMap[entry].word.substring(0, index-this.wordMap[entry].metaData.index);
@@ -737,15 +975,14 @@ export class QuillToolbarComponent implements OnInit {
 
             // tempArrayA[tempArrayA.length-1].word = tempWordA + input + tempWordB
           }
-          for (let i = entry; i < this.wordMap.length-1; i++) {
-            this.wordMap[i].metaData.index += input.length ;  
+          for (let i = entry; i < this.wordMap.length - 1; i++) {
+            this.wordMap[i].metaData.index += input.length;
           }
 
           // this.wordMap = tempArrayA.concat(tempArrayB);
         }
       }
     }
-    
   }
 
   private deleteWordMap(wordLength: number, index: number) {}
@@ -755,40 +992,40 @@ export class QuillToolbarComponent implements OnInit {
     this.log.info(
       `setting text content :: Started`,
       'loadPageContent',
-      'QuillToolbarComponent'
+      'QuillToolbarComponent',
     );
     // this.quill.setContents(this.pages[0].page)
     this.quill.root.innerHTML = this.htmlDecoder.decodeValue(
-      this.pages[this.pageId - 1].page
+      this.pages[this.pageId - 1].page,
     );
     this.log.info(
       `setting text content :: Finished`,
       'loadPageContent',
-      'QuillToolbarComponent'
+      'QuillToolbarComponent',
     );
 
     this.log.info(
       `Applying event handlers to taged words :: Started`,
       'loadPageContent',
-      'QuillToolbarComponent'
+      'QuillToolbarComponent',
     );
     for (let [key, value] of Object.entries(this.pages[this.pageId - 1].tags)) {
       this.log.info(
         `Working through ${key} set:: Started`,
         'loadPageContent',
-        'QuillToolbarComponent'
+        'QuillToolbarComponent',
       );
       this.updateButtons(value, key);
       this.log.info(
         `Working through ${key} set:: Finished`,
         'loadPageContent',
-        'QuillToolbarComponent'
+        'QuillToolbarComponent',
       );
     }
     this.log.info(
       `Applying event handlers to taged words :: Finished`,
       'loadPageContent',
-      'QuillToolbarComponent'
+      'QuillToolbarComponent',
     );
 
     this.log.info('finishing', 'loadPageContent', 'QuillToolbarComponent');
@@ -801,7 +1038,7 @@ export class QuillToolbarComponent implements OnInit {
       this.log.debug(
         `Attacking click of ${tag.name}`,
         'updateButtons',
-        'QuillToolbarComponent'
+        'QuillToolbarComponent',
       );
       this.attachClickEvent(tagtype, tag.metaData.buttonIndex);
     }
@@ -810,7 +1047,7 @@ export class QuillToolbarComponent implements OnInit {
     this.log.info(
       `buttonevent tracker updated for ${tagtype} to ${tagSet.length}`,
       'updateButtons',
-      'QuillToolbarComponent'
+      'QuillToolbarComponent',
     );
 
     this.log.info(`finish`, 'updateButtons', 'QuillToolbarComponent');
@@ -819,20 +1056,20 @@ export class QuillToolbarComponent implements OnInit {
   changeOccured() {
     this.log.info(`starting`, 'changeOccured', 'QuillToolbarComponent');
     let currentContent = this.htmlEncoder.encodeValue(
-      this.quill.root.innerHTML
+      this.quill.root.innerHTML,
     );
     if (currentContent != this.pages[this.pageId].page) {
       this.log.debug(
         `there is a difference since last save`,
         'changeOccured',
-        'QuillToolbarComponent'
+        'QuillToolbarComponent',
       );
       this.pages[this.pageId].saveUpToDate = false;
     } else {
       this.log.debug(
         `no change since last save`,
         'changeOccured',
-        'QuillToolbarComponent'
+        'QuillToolbarComponent',
       );
       this.pages[this.pageId].saveUpToDate = true;
     }
@@ -848,20 +1085,20 @@ export class QuillToolbarComponent implements OnInit {
     this.log.debug(
       `followinnng have been set, id = ${id} and change indicator = ${this.changeIndicator}`,
       'onNewTagSave',
-      'QuillToolbarComponent'
+      'QuillToolbarComponent',
     );
 
     if (this.updateIndicator) {
       this.log.debug(
         `update indicator present`,
         'onNewTagSave',
-        'QuillToolbarComponent'
+        'QuillToolbarComponent',
       );
       if (this.changeIndicator) {
         this.log.debug(
           `Change indicator present`,
           'onNewTagSave',
-          'QuillToolbarComponent'
+          'QuillToolbarComponent',
         );
 
         let range =
@@ -874,14 +1111,14 @@ export class QuillToolbarComponent implements OnInit {
         this.log.debug(
           `Setting the following: range = ${range} and length = ${length}`,
           'onNewTagSave',
-          'QuillToolbarComponent'
+          'QuillToolbarComponent',
         );
 
         this.quill.removeFormat(range, length);
         this.log.debug(
           `previous word removed`,
           'onNewTagSave',
-          'QuillToolbarComponent'
+          'QuillToolbarComponent',
         );
         this.updateTextInPage(
           range,
@@ -890,8 +1127,8 @@ export class QuillToolbarComponent implements OnInit {
             this.pages[this.pageId - 1].tags[this.updateType as keyof Tags][id]
               .name,
             this.updateType,
-            id
-          )
+            id,
+          ),
         );
 
         this.attachClickEvent(this.sideBarTitle, id);
@@ -902,24 +1139,24 @@ export class QuillToolbarComponent implements OnInit {
       this.log.debug(
         `update indicator absent`,
         'onNewTagSave',
-        'QuillToolbarComponent'
+        'QuillToolbarComponent',
       );
       if (this.textPresent) {
         this.log.debug(
           `text present true`,
           'onNewTagSave',
-          'QuillToolbarComponent'
+          'QuillToolbarComponent',
         );
         this.quill.deleteText(this.range.index, this.text.length);
         this.log.debug(
           `Removed the previous word`,
           'onNewTagSave',
-          'QuillToolbarComponent'
+          'QuillToolbarComponent',
         );
         this.updateTextInPage(
           this.range.index,
           this.sideBarTitle,
-          this.forValue(this.text, this.sideBarTitle, id)
+          this.forValue(this.text, this.sideBarTitle, id),
         );
 
         this.textPresent = false;
@@ -927,7 +1164,7 @@ export class QuillToolbarComponent implements OnInit {
         this.log.debug(
           `text present false`,
           'onNewTagSave',
-          'QuillToolbarComponent'
+          'QuillToolbarComponent',
         );
         this.updateTextInPage(
           this.range.index,
@@ -938,8 +1175,8 @@ export class QuillToolbarComponent implements OnInit {
             ].name,
 
             this.sideBarTitle,
-            id
-          )
+            id,
+          ),
         );
 
         this.textPresent = false;
@@ -947,7 +1184,7 @@ export class QuillToolbarComponent implements OnInit {
       this.log.debug(
         `adding the button listener`,
         'onNewTagSave',
-        'QuillToolbarComponent'
+        'QuillToolbarComponent',
       );
       this.attachClickEvent(this.sideBarTitle, id);
     }
@@ -961,7 +1198,7 @@ export class QuillToolbarComponent implements OnInit {
     this.log.debug(
       `setting ${this.icons.getIcon(icontype) + text}`,
       'forValue',
-      'QuillToolbarComponent'
+      'QuillToolbarComponent',
     );
     this.log.info(`Finished`, 'forValue', 'QuillToolbarComponent');
     return this.icons.getIcon(icontype) + text + this.setTooltip(icontype, id);
@@ -1020,7 +1257,7 @@ export class QuillToolbarComponent implements OnInit {
   private updateTextInPage(index: number, type: string, text: string) {
     this.log.info(`Starting`, 'updateTextInPage', 'QuillToolbarComponent');
     this.log.debug(
-      `padded in, index = ${index}, type = ${type} and text = ${text}`
+      `padded in, index = ${index}, type = ${type} and text = ${text}`,
     );
 
     this.quill.insertEmbed(index, type, text);
@@ -1038,7 +1275,7 @@ export class QuillToolbarComponent implements OnInit {
     this.log.debug(
       `this run is using: ButtonClass = ${buttonClass}, count = ${count} and querystring = ${queryString}`,
       'attachClickEvent',
-      'QuillToolbarComponent'
+      'QuillToolbarComponent',
     );
 
     //finds the button all the buttons on the page that matches the class passed in eg person
@@ -1049,7 +1286,7 @@ export class QuillToolbarComponent implements OnInit {
       this.log.debug(
         `Running a change : ${this.changeIndicator} or loading : ${this.loadingContent}`,
         'attachClickEvent',
-        'QuillToolbarComponent'
+        'QuillToolbarComponent',
       );
       this.log.debug(
         `Updating button that matches index number: ${
@@ -1057,7 +1294,7 @@ export class QuillToolbarComponent implements OnInit {
             .metaData.buttonIndex
         }`,
         'attachClickEvent',
-        'QuillToolbarComponent'
+        'QuillToolbarComponent',
       );
       button =
         this.elementRef.nativeElement.querySelectorAll(queryString)[
@@ -1068,22 +1305,22 @@ export class QuillToolbarComponent implements OnInit {
       this.log.debug(
         `Running a new button`,
         'attachClickEvent',
-        'QuillToolbarComponent'
+        'QuillToolbarComponent',
       );
       button =
         this.elementRef.nativeElement.querySelectorAll(queryString)[count];
     }
     //adds the event to the button
     this.renderer.listen(button, 'click', (event) =>
-      this.tagViewAndUpdate(event, id, buttonClass)
+      this.tagViewAndUpdate(event, id, buttonClass),
     );
     this.renderer.listen(button, 'hover', (event) =>
-      this.toolTipIdAndTypeSet(event, id, buttonClass)
+      this.toolTipIdAndTypeSet(event, id, buttonClass),
     );
     this.log.debug(
       `click applied to button wth id = ${id}`,
       'attachClickEvent',
-      'QuillToolbarComponent'
+      'QuillToolbarComponent',
     );
 
     if (!this.changeIndicator && !this.loadingContent) {
@@ -1096,7 +1333,7 @@ export class QuillToolbarComponent implements OnInit {
       this.log.debug(
         `Button id is updated in page to ${count}`,
         'attachClickEvent',
-        'QuillToolbarComponent'
+        'QuillToolbarComponent',
       );
 
       //increment the button so we can find the new one on the next call
@@ -1109,7 +1346,7 @@ export class QuillToolbarComponent implements OnInit {
       this.log.debug(
         `button set ${buttonClass} has been updated to ${count}`,
         'attachClickEvent',
-        'QuillToolbarComponent'
+        'QuillToolbarComponent',
       );
     }
     this.log.info(`Finish`, 'attachClickEvent', 'QuillToolbarComponent');
@@ -1128,12 +1365,12 @@ export class QuillToolbarComponent implements OnInit {
     this.log.debug(
       `change indicator = ${this.changeIndicator}`,
       'close',
-      'QuillToolbarComponent'
+      'QuillToolbarComponent',
     );
     this.log.debug(
       `update indicator = ${this.updateIndicator}`,
       'close',
-      'QuillToolbarComponent'
+      'QuillToolbarComponent',
     );
     this.log.info(`finishing`, 'close', 'QuillToolbarComponent');
   }
@@ -1155,7 +1392,7 @@ export class QuillToolbarComponent implements OnInit {
     this.log.debug(
       `opening the side menu`,
       'tagViewAndUpdate',
-      'QuillToolbarComponent'
+      'QuillToolbarComponent',
     );
     this.open();
     this.log.info(`finishing`, 'tagViewAndUpdate', 'QuillToolbarComponent');
@@ -1226,7 +1463,7 @@ export class QuillToolbarComponent implements OnInit {
     } else {
       this.tagEntry.name = this.text = this.quill.getText(
         this.range.index,
-        this.range.length
+        this.range.length,
       );
       this.tagEntry.misc = [this.sideBarTitle, this.text];
 
@@ -1237,48 +1474,53 @@ export class QuillToolbarComponent implements OnInit {
     this.open();
   }
 
-  getTagEntryExtract(name: string, referenceId?: number, tagType?:string){
+  getTagEntryExtract(name: string, referenceId?: number, tagType?: string) {
+    // let indexs: number[] = this.getIndexs(name)
+    // let rows: string[] = indexs.map(index => {
+    //   let start = index - 5 > 0? index-5 : 0
+    //   let finish = (index + 5) < this.wordMap.length -1 ? index + 5 : this.wordMap.length -1
+    //   let row = ''
+    //   for(let i=start; i<finish+1; i++){
+    //     row += this.wordMap[i].word
+    //   }
+    //   return row
+    // });
+    if (tagType) {
+    }
 
-      // let indexs: number[] = this.getIndexs(name)
-      // let rows: string[] = indexs.map(index => {
-      //   let start = index - 5 > 0? index-5 : 0
-      //   let finish = (index + 5) < this.wordMap.length -1 ? index + 5 : this.wordMap.length -1
-      //   let row = ''
-      //   for(let i=start; i<finish+1; i++){
-      //     row += this.wordMap[i].word
-      //   }
-      //   return row
-      // });
-      if(tagType){
+    // this.tagService.getExtractEvent.emit(JSON.stringify(rows))
+  }
 
+  getSentance(name: string) {
+    let indexs: number[] = this.getIndexs(name);
+    let rows: string[] = indexs.map((index) => {
+      let start = index - 5 > 0 ? index - 5 : 0;
+      let finish =
+        index + 5 < this.wordMap.length - 1
+          ? index + 5
+          : this.wordMap.length - 1;
+      let row = '';
+      for (let i = start; i < finish + 1; i++) {
+        row += this.wordMap[i].word;
       }
-
-      this.tagService.getExtractEvent.emit(JSON.stringify(rows))
+      return row;
+    });
   }
 
-  getSentance(name: string){
-    let indexs: number[] = this.getIndexs(name)
-      let rows: string[] = indexs.map(index => {
-        let start = index - 5 > 0? index-5 : 0
-        let finish = (index + 5) < this.wordMap.length -1 ? index + 5 : this.wordMap.length -1
-        let row = ''
-        for(let i=start; i<finish+1; i++){
-          row += this.wordMap[i].word
-        }
-        return row
-      });
-  }
+  getIndexs(name: string): number[] {
+    let temp: number[] = [];
 
-  getIndexs(name: string): number[]{
-    let temp: number[] = []
-    
     this.wordMap.forEach((word, i) => {
-      if(word.word == name){
-        temp.push(i)
+      if (word.word == name) {
+        temp.push(i);
       }
     });
-     this.log.debug(`index found are ${temp.toString()}`, 'getIndexs', 'QuillToolbarComponent');
-     return temp
+    this.log.debug(
+      `index found are ${temp.toString()}`,
+      'getIndexs',
+      'QuillToolbarComponent',
+    );
+    return temp;
   }
   // getTagEntryExtract(
   //   id: number,
@@ -1384,7 +1626,7 @@ export class QuillToolbarComponent implements OnInit {
     this.log.debug(
       `The passed in params are startIndex=${startIndex} and finishIndex=${finishIndex}`,
       'getTextFromEditor',
-      'QuillToolbarComponent'
+      'QuillToolbarComponent',
     );
     this.log.info('Finishing', 'getTextFromEditor', 'QuillToolbarComponent');
     return this.quill.getText(startIndex, finishIndex - startIndex);
@@ -1394,13 +1636,13 @@ export class QuillToolbarComponent implements OnInit {
     rawExtract: string,
     name: string,
     range: number,
-    nameType: string
+    nameType: string,
   ): string {
     this.log.info('Starting', 'formatExtract', 'QuillToolbarComponent');
     this.log.debug(
       `The passed in params are range :: ${range}`,
       'formatExtract',
-      'QuillToolbarComponent'
+      'QuillToolbarComponent',
     );
     let beforeName: string = rawExtract.substring(0, range - 1).trim();
     let afterName: string = rawExtract.substring(range - 1).trim();
@@ -1424,7 +1666,7 @@ export class QuillToolbarComponent implements OnInit {
       this.log.debug(
         `first button wit id ${id} and type ${type} and this will be an active=${active} highlight`,
         'highlightTag',
-        'QuillToolbarComponent'
+        'QuillToolbarComponent',
       );
       this.applyHighlight(id, type, active);
     }
@@ -1437,7 +1679,7 @@ export class QuillToolbarComponent implements OnInit {
     this.log.debug(
       `button found ${button}`,
       'applyHighlight',
-      'QuillToolbarComponent'
+      'QuillToolbarComponent',
     );
     if (active) {
       this.log.debug(`highlighting`, 'applyHighlight', 'QuillToolbarComponent');
